@@ -7,6 +7,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Proprioceptron</name>
 	<description>A virtual environment for testing and simulating machine learning algorithms</description>
+	<url>http://xeiam.com</url>
 
 	<developers>
 		<developer>
