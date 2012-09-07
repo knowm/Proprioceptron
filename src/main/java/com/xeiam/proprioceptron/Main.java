@@ -22,7 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- * @author Melpudding
+ * @author Zackkenyon
  * @create Aug 21, 2012
  */
 public class Main {

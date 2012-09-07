@@ -18,7 +18,7 @@ package com.xeiam.proprioceptron;
 import java.util.ArrayList;
 
 /**
- * @author Melpudding
+ * @author Zackkenyon
  * @create Aug 21, 2012
  */
 public class RobotArm {

@@ -21,8 +21,8 @@ public class HelloJME3 extends SimpleApplication {
   public static void main(String[] args) {
 
     HelloJME3 app = new HelloJME3();
-    // app.start(); // start the game
-    app.start(JmeContext.Type.Headless); // start the game
+    app.start(); // start the game
+    //app.start(JmeContext.Type.Headless); // start the game
   }
 
   @Override
