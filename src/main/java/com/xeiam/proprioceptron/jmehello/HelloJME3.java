@@ -6,7 +6,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import com.jme3.system.JmeContext;
 
 /**
  * @author timmolter
@@ -22,7 +21,7 @@ public class HelloJME3 extends SimpleApplication {
 
     HelloJME3 app = new HelloJME3();
     app.start(); // start the game
-    //app.start(JmeContext.Type.Headless); // start the game
+    // app.start(JmeContext.Type.Headless); // start the game
   }
 
   @Override
