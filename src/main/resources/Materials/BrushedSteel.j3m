@@ -1,0 +1,6 @@
+Material BrushedSteel : Common/MatDefs/Misc/Unshaded.j3md {
+     MaterialParameters {
+         Color : 1 1 1 1 //the identity transformation
+         ColorMap : Textures/BrushedSteel.png
+     }
+}

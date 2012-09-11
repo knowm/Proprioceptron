@@ -29,7 +29,6 @@ public class RobotArm {
    */
 
   ArrayList<Joint> arm;
-
   public RobotArm() {// example
 
     arm = new ArrayList<Joint>();
@@ -55,7 +54,7 @@ public class RobotArm {
   public void updatearm(int[] spikes) {
 
     for (int i = 0; i < spikes.length; i++) {
-      arm.get(i).omegadot = spikes[i] / 10000000.0;
+      arm.get(i).omegadot = spikes[i] / 10000000.0f;
       arm.get(i).accelerate();
       arm.get(i).move();
     }

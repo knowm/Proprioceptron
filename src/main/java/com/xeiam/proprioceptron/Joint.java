@@ -19,7 +19,7 @@ package com.xeiam.proprioceptron;
  * @author Zackkenyon
  * @create Aug 21, 2012
  */
-public class Joint {
+public class Joint implements State {
 
   // as far as the renderer and the learning algorithm is concerned, this consists of exactly
   // three values, angle, omega, and omegadot.
@@ -28,13 +28,15 @@ public class Joint {
   public Vector rod;
   public Vector dir;
   public Vector pos;
-  public double omega;
-  public double omegadot;
-  public double theta;// in radians
-  double magnitude;
-
+  public float omega;
+  public float omegadot;
+  public float theta;// in radians
+  float magnitude;
+  float[] DOF; // Joint inherits the State interface, and as such will need a way of specifying its dimension
+  int id;
   public Joint(Vector pos) {// adds a new segment pointing to the right
 
+    DOF = new float[2];
     this.pos = pos;
     omega = 0;
     omegadot = 0;
@@ -55,9 +57,9 @@ public class Joint {
   public void setangle() {
 
     if (in == null) {
-      theta = Vector.orientation(dir, Vector.UnitX()) * Math.acos(Vector.innerproduct(dir, Vector.UnitX()));
+      theta = (float) (Vector.orientation(dir, Vector.UnitX()) * Math.acos(Vector.innerproduct(dir, Vector.UnitX())));
     } else {
-      theta = Vector.orientation(dir, in.dir) * Math.acos(Vector.innerproduct(dir, in.dir));
+      theta = (float) (Vector.orientation(dir, in.dir) * Math.acos(Vector.innerproduct(dir, in.dir)));
     }
   }
 
@@ -66,7 +68,6 @@ public class Joint {
   // the tension on any rod is the centripetal force from the base of that rod.
   //
   public void accelerate() {
-
     omega += omegadot;
   }
 
@@ -82,7 +83,7 @@ public class Joint {
       return Vector.Zero();
     } else {
       double temp = globaltheta();
-      rod = new Vector(magnitude * Math.cos(temp), magnitude * Math.sin(temp));
+      rod = new Vector(magnitude * (float) Math.cos(temp), magnitude * (float) Math.sin(temp));
       return Vector.plus(in.getposition(), rod);
     }
   }
@@ -95,6 +96,39 @@ public class Joint {
 
     else {
       return theta;
+    }
+  }
+
+  public float[] getDOF() {
+
+    return DOF;
+  }
+
+  public void assignDOF() {
+
+    DOF[0] = theta;
+    DOF[1] = omega;
+  }
+
+  @Override
+  public float[] toVector() {
+
+    return DOF;
+  }
+
+  // @override
+  @Override
+  public String[] VectorDoc() {
+
+    return new String[] { "Joint #: " + id };
+  }
+
+  public void assignId() {
+
+    if (in == null) {
+      id = 0;
+    } else {
+      id = in.id + 1;
     }
   }
 }

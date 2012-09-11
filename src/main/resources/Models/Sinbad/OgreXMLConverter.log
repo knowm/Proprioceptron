@@ -1,0 +1,26 @@
+18:41:47: Creating resource group General
+18:41:47: Creating resource group Internal
+18:41:47: Creating resource group Autodetect
+18:41:47: Registering ResourceManager for type Mesh
+18:41:47: Registering ResourceManager for type Material
+18:41:47: Registering ResourceManager for type Skeleton
+18:41:47: WARNING: conversion is an older format ([MeshSerializer_v1.40]); you should upgrade it as soon as possible using the OgreMeshUpgrade tool.
+18:41:47: XMLMeshSerializer writing mesh data to C:\Users\Moobear\workspaces\proprioceptron\Proprioceptron\src\main\resources\Models\Sinbad\Sword.mesh.xml...
+18:41:47: Populating DOM...
+18:41:47: Writing submesh...
+18:41:47: Dedicated geometry bone assignments exported.
+18:41:47: Submesh exported.
+18:41:47: Writing submesh...
+18:41:47: Dedicated geometry bone assignments exported.
+18:41:47: Submesh exported.
+18:41:47: Writing submesh...
+18:41:47: Dedicated geometry bone assignments exported.
+18:41:47: Submesh exported.
+18:41:47: Writing submesh...
+18:41:47: Dedicated geometry bone assignments exported.
+18:41:47: Submesh exported.
+18:41:47: DOM populated, writing XML file..
+18:41:47: XMLMeshSerializer export successful.
+18:41:47: Unregistering ResourceManager for type Skeleton
+18:41:47: Unregistering ResourceManager for type Material
+18:41:47: Unregistering ResourceManager for type Mesh
