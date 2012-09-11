@@ -16,6 +16,7 @@
 package com.xeiam.proprioceptron;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author zackkenyon
@@ -28,44 +29,47 @@ public class RobotArm {
    * apply restoring forces. starting at tail. if greatest length difference greater than some threshold then repeat apply impulses -conserve momentum -apply changes to head and tail repeat
    */
 
-  ArrayList<Joint> arm;
+  List<Joint> joints;
 
-  public RobotArm() {// example
+  /**
+   * Constructor
+   */
+  public RobotArm() { // example
 
-    arm = new ArrayList<Joint>();
-    arm.add(new Joint(Vector.Zero()));
-    arm.add(new Joint(new Vector(1, 0)));
-    arm.add(new Joint(new Vector(3, 0)));
-    arm.add(new Joint(new Vector(4, 0)));
-    arm.add(new Joint(new Vector(8, 0)));
+    joints = new ArrayList<Joint>();
+    joints.add(new Joint(Vector.Zero()));
+    joints.add(new Joint(new Vector(1, 0)));
+    joints.add(new Joint(new Vector(3, 0)));
+    joints.add(new Joint(new Vector(4, 0)));
+    joints.add(new Joint(new Vector(8, 0)));
 
   }
 
   public void initialize() {
 
-    for (int i = 0; i < arm.size() - 1; i++) {
-      arm.get(i).setout(arm.get(i + 1));
-      arm.get(i + 1).setin(arm.get(i));
+    for (int i = 0; i < joints.size() - 1; i++) {
+      joints.get(i).setout(joints.get(i + 1));
+      joints.get(i + 1).setin(joints.get(i));
     }
-    for (int i = 0; i < arm.size() - 1; i++) {
-      arm.get(i).setangle();
+    for (int i = 0; i < joints.size() - 1; i++) {
+      joints.get(i).setangle();
     }
   }
 
-  public void updatearm(int[] spikes) {
+  public void updateRoboticArm(int[] spikes) {
 
     for (int i = 0; i < spikes.length; i++) {
-      arm.get(i).omegadot = spikes[i] / 10000000.0f;
-      arm.get(i).accelerate();
-      arm.get(i).move();
+      joints.get(i).omegadot = spikes[i] / 10000000.0f;
+      joints.get(i).accelerate();
+      joints.get(i).move();
     }
   }
 
-  public ArrayList<Vector> print() {
+  public ArrayList<Vector> getDrawList() {
 
     ArrayList<Vector> myVectors = new ArrayList<Vector>();
-    for (int i = 0; i < arm.size(); i++) {
-      myVectors.add(arm.get(i).getposition());
+    for (int i = 0; i < joints.size(); i++) {
+      myVectors.add(joints.get(i).getposition());
       // this method should only need to be called once, since this is
       // a reference
     }

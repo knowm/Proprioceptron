@@ -35,6 +35,11 @@ public class Joint implements State {
   float[] DOF; // Joint inherits the State interface, and as such will need a way of specifying its dimension
   int id;
 
+  /**
+   * Constructor
+   * 
+   * @param pos
+   */
   public Joint(Vector pos) {// adds a new segment pointing to the right
 
     DOF = new float[2];

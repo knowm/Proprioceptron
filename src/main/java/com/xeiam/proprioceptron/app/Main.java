@@ -43,11 +43,11 @@ public class Main {
     myarm.initialize();
     int[] somespikes = { -1, -3, -1, -7, 0 };
     int[] wait = { 0, 0, 0, 0, 0 };
-    myarm.updatearm(somespikes);
-    panel.setDrawList(myarm.print());
+    myarm.updateRoboticArm(somespikes);
+    panel.setDrawList(myarm.getDrawList());
     while (true) {
-      panel.setDrawList(myarm.print());
-      myarm.updatearm(wait);
+      panel.setDrawList(myarm.getDrawList());
+      myarm.updateRoboticArm(wait);
       frame.repaint();
     }
   }
