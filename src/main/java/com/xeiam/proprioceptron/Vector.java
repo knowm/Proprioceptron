@@ -16,7 +16,7 @@
 package com.xeiam.proprioceptron;
 
 /**
- * @author Zackkenyon
+ * @author zackkenyon
  * @create Aug 21, 2012
  */
 public class Vector {

@@ -16,7 +16,7 @@
 package com.xeiam.proprioceptron;
 
 /**
- * @author Zackkenyon
+ * @author zackkenyon
  * @create Aug 21, 2012
  */
 public class Joint implements State {
@@ -34,6 +34,7 @@ public class Joint implements State {
   float magnitude;
   float[] DOF; // Joint inherits the State interface, and as such will need a way of specifying its dimension
   int id;
+
   public Joint(Vector pos) {// adds a new segment pointing to the right
 
     DOF = new float[2];
@@ -68,6 +69,7 @@ public class Joint implements State {
   // the tension on any rod is the centripetal force from the base of that rod.
   //
   public void accelerate() {
+
     omega += omegadot;
   }
 
@@ -116,7 +118,6 @@ public class Joint implements State {
     return DOF;
   }
 
-  // @override
   @Override
   public String[] VectorDoc() {
 
@@ -130,5 +131,12 @@ public class Joint implements State {
     } else {
       id = in.id + 1;
     }
+  }
+
+  @Override
+  public State fromVector(float[] vec, String[] doc) {
+
+    // TODO Auto-generated method stub
+    return null;
   }
 }

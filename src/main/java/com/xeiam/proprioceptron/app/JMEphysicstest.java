@@ -1,4 +1,4 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.app;
 
 /*
  * Copyright (c) 2009-2010 jMonkeyEngine All rights reserved. <p/>
@@ -149,6 +149,7 @@ class PhysicsTestHelper {
   }
 
 }
+
 public class JMEphysicstest extends SimpleApplication implements ActionListener {
 
   private BulletAppState bulletAppState;

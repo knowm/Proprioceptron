@@ -18,7 +18,7 @@ package com.xeiam.proprioceptron;
 import java.util.ArrayList;
 
 /**
- * @author Zackkenyon
+ * @author zackkenyon
  * @create Aug 21, 2012
  */
 public class RobotArm {
@@ -29,6 +29,7 @@ public class RobotArm {
    */
 
   ArrayList<Joint> arm;
+
   public RobotArm() {// example
 
     arm = new ArrayList<Joint>();

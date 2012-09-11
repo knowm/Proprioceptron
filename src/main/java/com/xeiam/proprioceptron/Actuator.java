@@ -1,7 +1,11 @@
 package com.xeiam.proprioceptron;
 
-
+/**
+ * @author zackkenyon
+ * @create Sep 11, 2012
+ */
 public abstract class Actuator {
+
   // Actuators relate two physical states in a one to one manner, where the physical state of the system
   // needs to satisfy the "complete specification" conditions, SemiActuators must be countable to one. States
   // must be derived from pieces of the physics engine plus an array of floating point variables. the dimensions
@@ -28,63 +32,3 @@ public abstract class Actuator {
   public abstract State Mapfrom(State codomain);
 
 }
-
-
-
-abstract class SemiActuator extends Actuator {
-
-  int[] branch;
-
-  // specifies a branch, for example, the number of times a wheel has spun, this allows SemiActuators to be treated as injective.
-  public SemiActuator(State domain, State codomain, int[] branch) {
-    super(domain, codomain);
-    this.branch = branch;
-  }
-}
-
-interface State {
-
-  public String[] VectorDoc();
-  public float[] toVector();
-
-  public State fromVector(float[] vec, String[] doc);
-}
-
-class States {
-
-  // a factory which handles unions of states
-  private States() {
-
-  }
-
-  public static State union(State state1, State state2){
-    return 
-  }
-}
-
-class Actuators {
-  // a factory which handles the composition of actuators
-}
-class SimpleTorqueActuator extends Actuator {
-
-  RobotArm arm;
-
-  public SimpleTorqueActuator(RobotArm arm){
-
-    super();
-    this.arm = arm;
-
-  }
-}
-
-class ArmState implements State {
-
-  public String[] documentation;
-  public float[] vector;
-
-  public ArmState(RobotArm arm) {
-
-  }
-}
-
-

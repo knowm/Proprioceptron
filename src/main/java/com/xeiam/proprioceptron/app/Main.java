@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.app;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import com.xeiam.proprioceptron.RobotArm;
+import com.xeiam.proprioceptron.Vector;
 
 /**
  * @author Zackkenyon
