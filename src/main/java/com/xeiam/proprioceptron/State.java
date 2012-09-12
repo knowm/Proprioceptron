@@ -16,6 +16,8 @@
 package com.xeiam.proprioceptron;
 
 /**
+ * States are containers for free variables of a program. They may also specify constant values which may include states. They are also the format of the domain and the codomain of any actuator.
+ * 
  * @author zackkenyon
  * @create Sep 11, 2012
  */
@@ -26,6 +28,6 @@ public interface State {
 
   public FreeVar[] toVector();
 
-  public State fromVector(FreeVar[] vars);
+  public void addVars(FreeVar[] vars);
 
 }

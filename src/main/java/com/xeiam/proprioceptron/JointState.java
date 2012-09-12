@@ -75,7 +75,7 @@ public class JointState implements State {
   }
 
   @Override
-  public State fromVector(FreeVar[] vec) {
+  public void addVars(FreeVar[] vec) {
 
     angle = vec[0];
     angularvelocity = vec[1];
@@ -84,6 +84,5 @@ public class JointState implements State {
     tension = vec[4];
     distance = vec[5];
     energy = vec[6];
-    return this;
   }
 }

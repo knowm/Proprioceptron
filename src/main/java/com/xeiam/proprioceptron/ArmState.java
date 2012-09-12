@@ -18,7 +18,7 @@ package com.xeiam.proprioceptron;
 import java.util.ArrayList;
 
 /**
- * @author zackkenyon
+ * @author Zackkenyon
  * @create Sep 11, 2012 ArmState combines and extracts physically relevant combinations of free variables for actuators
  */
 
@@ -40,8 +40,34 @@ public class ArmState implements State {
    */
   public ArmState(ArrayList<JointState> joints) {
 
+    this.joints = joints;
+    torques = new TorqueState();
+    tensions = new TensionState();
+    angles = new AngleState();
+    positions = new PositionState();
+    angularvels = new AngularVelocityState();
+    energy = new EnergyState();
+
   }
 
+  public void initialize() {
+
+    FreeVar[] t0 = new FreeVar[joints.size()];
+    FreeVar[] t1 = new FreeVar[joints.size()];
+    FreeVar[] t2 = new FreeVar[joints.size()];
+    FreeVar[] t3 = new FreeVar[joints.size()];
+    FreeVar[] t4 = new FreeVar[joints.size()];
+    FreeVar[] t5 = new FreeVar[joints.size()];
+    FreeVar[] t6 = new FreeVar[joints.size()];
+
+    for (int i = 0; i < joints.size(); i++) {
+      t0[i] = joints.get(i).angle;
+      t1[i] = joints.get(i).angularvelocity;
+    }
+    angles.addVars(t0);
+    angularvels.addVars(t1);
+
+  }
 
   @Override
   public FreeVar[] toVector() {
@@ -50,10 +76,10 @@ public class ArmState implements State {
   }
 
   @Override
-  public State fromVector(FreeVar[] vec) {
+  public void addVars(FreeVar[] vec) {
 
     // TODO Auto-generated method stub
-    return null;
+
   }
 
   @Override
@@ -62,17 +88,18 @@ public class ArmState implements State {
     // TODO Auto-generated method stub
     return null;
   }
-  public static ArmState connect(ArmState x, JointState y) {
 
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  public static ArmState connect(JointState x, JointState y) {
-
-    // TODO Auto-generated method stub
-    return null;
-  }
+  // public static ArmState connect(ArmState x, JointState y) {
+  //
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
+  //
+  // public static ArmState connect(JointState x, JointState y) {
+  //
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
 
   /**
    * these are really angular impulses, but timing has not yet been specified
@@ -83,13 +110,7 @@ public class ArmState implements State {
   class TorqueState implements State {
 
     FreeVar[] torques;
-    String[] doc;
 
-    public TorqueState(FreeVar[] torques) {
-
-      this.torques = torques;
-      doc = new String[] { torques.length + " torques" }; // + id
-    }
 
     @Override
     public FreeVar[] toVector() {
@@ -100,15 +121,14 @@ public class ArmState implements State {
     @Override
     public String[] vectorDoc() {
 
-      return doc;
+      return new String[] { torques.length + " torques" }; // + id
     }
 
     @Override
-    public State fromVector(FreeVar[] torques) {
+    public void addVars(FreeVar[] torques) {
 
       this.torques = torques;
-      this.doc = doc;
-      return this;
+
     }
   }
 
@@ -117,11 +137,6 @@ public class ArmState implements State {
     FreeVar[] tensions;
     String[] doc;
 
-    public TensionState(FreeVar[] tensions) {
-
-      this.tensions = tensions;
-      doc = new String[] { tensions.length + " tension" }; // + id
-    }
 
     @Override
     public FreeVar[] toVector() {
@@ -136,11 +151,10 @@ public class ArmState implements State {
     }
 
     @Override
-    public State fromVector(FreeVar[] tensions) {
+    public void addVars(FreeVar[] tensions) {
 
       this.tensions = tensions;
-      this.doc = doc;
-      return this;
+
     }
   }
 
@@ -151,11 +165,6 @@ public class ArmState implements State {
     FreeVar[] unpackedpositions;
     String[] doc;
 
-    public PositionState(FreeVar[] positions) {
-
-      this.unpackedpositions = positions;
-      doc = new String[] { positions.length / 2 + "positions" }; // + id
-    }
 
     @Override
     public FreeVar[] toVector() {
@@ -170,10 +179,10 @@ public class ArmState implements State {
     }
 
     @Override
-    public State fromVector(FreeVar[] positions) {
+    public void addVars(FreeVar[] positions) {
 
       unpackedpositions = positions;
-      return this;
+
     }
   }
 
@@ -181,11 +190,6 @@ public class ArmState implements State {
 
     FreeVar[] angularvelocities;
 
-    public AngularVelocityState(FreeVar[] angularvelocities) {
-
-      this.angularvelocities = angularvelocities;
-
-    }
 
     @Override
     public FreeVar[] toVector() {
@@ -200,70 +204,77 @@ public class ArmState implements State {
     }
 
     @Override
-    public State fromVector(FreeVar[] angularvelocities) {
+    public void addVars(FreeVar[] angularvelocities) {
 
       this.angularvelocities = angularvelocities;
-      return this;
+
     }
   }
 
   class AngleState implements State {
 
-    public AngleState() {
+    // the angle will be regularly updated as the angle from the last joint. if it points in the same direction as the last joint,
+    // then the angle is 0, positive is counterclockwise, negative angles are clockwise.
+    FreeVar[] angles;
 
-      // TODO write constructor;
+    float maxangle; // collision detection will be either difficult to implement or computationally expensive without these fields.
+    float[] maxangles;
+
+
+    public void initialize() {
+
+      maxangles = new float[angles.length];
+      maxangles[0] = 360f;
+      for (int i = 1; i < angles.length; i++)
+        maxangles[i] = 170f;
+      maxangle = 360;
     }
 
     @Override
     public String[] vectorDoc() {
 
-      // TODO Auto-generated method stub
-      return null;
+      return new String[] { "AngleState * " + angles.length };
     }
 
     @Override
     public FreeVar[] toVector() {
 
-      // TODO Auto-generated method stub
-      return null;
+      return angles;
     }
 
     @Override
-    public State fromVector(FreeVar[] vars) {
+    public void addVars(FreeVar[] vars) {
 
-      // TODO Auto-generated method stub
-      return null;
+      angles = vars;
+
     }
 
   }
 
   class EnergyState implements State {
 
-    // TODO make fields.
-    public EnergyState() {
+    // this is in anticipation of giving the the learning algorithm a much finer solution. namely one in which
+    // energy usage is minimized.
+    FreeVar[] energy;
 
-      // TODO write constructor.
-    }
 
     @Override
     public String[] vectorDoc() {
 
-      // TODO Auto-generated method stub
-      return null;
+      return new String[] { "energy * " + energy.length };
     }
 
     @Override
     public FreeVar[] toVector() {
 
-      // TODO Auto-generated method stub
-      return null;
+      return energy;
     }
 
     @Override
-    public State fromVector(FreeVar[] vars) {
+    public void addVars(FreeVar[] vars) {
 
-      // TODO Auto-generated method stub
-      return null;
+      energy = vars;
+
     }
 
   }
