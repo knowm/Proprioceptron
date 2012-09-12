@@ -209,11 +209,20 @@ public class ArmState implements State {
 
   class AngleState implements State {
 
-    public AngleState() {
+    FreeVar[] angles;
 
-      // TODO write constructor;
+    float[] maxangles;
+
+    public AngleState(FreeVar[] angles) {
+
+      this.angles = angles;
     }
 
+    public void initialize() {
+
+      maxangles = new float[angles.length];
+
+    }
     @Override
     public String[] vectorDoc() {
 
