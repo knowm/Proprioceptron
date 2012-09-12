@@ -29,22 +29,25 @@ public class RobotArm {
    * apply restoring forces. starting at tail. if greatest length difference greater than some threshold then repeat apply impulses -conserve momentum -apply changes to head and tail repeat
    */
 
-  List<Joint> joints;
+  List<JointState> joints;
 
   /**
    * Constructor
    */
   public RobotArm() { // example
 
-    joints = new ArrayList<Joint>();
-    joints.add(new Joint(Vector.Zero()));
-    joints.add(new Joint(new Vector(1, 0)));
-    joints.add(new Joint(new Vector(3, 0)));
-    joints.add(new Joint(new Vector(4, 0)));
-    joints.add(new Joint(new Vector(8, 0)));
+    joints = new ArrayList<JointState>();
+    joints.add(new JointState(Vector.Zero()));
+    joints.add(new JointState(new Vector(1, 0)));
+    joints.add(new JointState(new Vector(3, 0)));
+    joints.add(new JointState(new Vector(4, 0)));
+    joints.add(new JointState(new Vector(8, 0)));
 
   }
 
+  /**
+   * javadoc
+   */
   public void initialize() {
 
     for (int i = 0; i < joints.size() - 1; i++) {

@@ -21,10 +21,11 @@ package com.xeiam.proprioceptron;
  */
 public interface State {
 
-  public String[] VectorDoc();
+  // a way of combining the free variables of a program.
+  public String[] vectorDoc();
 
-  public float[] toVector();
+  public FreeVar[] toVector();
 
-  public State fromVector(float[] vec, String[] doc);
+  public State fromVector(FreeVar[] vars);
 
 }

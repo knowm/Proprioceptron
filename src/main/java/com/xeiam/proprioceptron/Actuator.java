@@ -6,11 +6,12 @@ package com.xeiam.proprioceptron;
  */
 public abstract class Actuator {
 
-  // Actuators relate two physical states in a one to one manner, where the physical state of the system
-  // needs to satisfy the "complete specification" conditions, SemiActuators must be countable to one. States
-  // must be derived from pieces of the physics engine plus an array of floating point variables. the dimensions
-  // of the states are measured and compared for equality and the constructor will throw an exception if they are unequal.
-  // SemiActuators may also have an array of integers associated to them, for when the states are k to 1.
+  /**
+   * Actuators relate two physical states in a one to one manner, where the physical state of the system needs to satisfy the "complete specification" conditions, SemiActuators must be countable to one. States must be derived from pieces of the
+   * physics engine plus an array of floating point variables. the dimensions of the states are measured and compared for equality and the constructor will throw an exception if they are unequal. SemiActuators may also have an array of integers
+   * associated to them, for when the states are k to 1.
+   */
+
 
   // Actuators may be composed with each other, Gravity would be a zero dimension actuator for instance.
   State domain;
