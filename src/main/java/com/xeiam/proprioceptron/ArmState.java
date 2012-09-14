@@ -16,7 +16,6 @@
 package com.xeiam.proprioceptron;
 
 import java.util.ArrayList;
-
 /**
  * @author Zackkenyon
  * @create Sep 11, 2012 ArmState combines and extracts physically relevant combinations of free variables for actuators
@@ -26,12 +25,16 @@ public class ArmState implements State {
 
   public String[] documentation;
   public FreeVar[] vector;
-  public TorqueState torques;
-  public TensionState tensions;
   public AngleState angles;
-  public PositionState positions;
   public AngularVelocityState angularvels;
+  public TorqueState torques;
+  public PosXState posxs;
+  public PosYState posys;
+  public TensionState tensions;
   public EnergyState energy;
+  public DistanceFromGoalState distancefromgoal;
+  public LengthState lengths;
+  public DensityState densities;
   public ArrayList<JointState> joints;
   /**
    * Constructor
@@ -44,10 +47,13 @@ public class ArmState implements State {
     torques = new TorqueState();
     tensions = new TensionState();
     angles = new AngleState();
-    positions = new PositionState();
+    posxs = new PosXState();
+    posys = new PosYState();
+    distancefromgoal = new DistanceFromGoalState();
     angularvels = new AngularVelocityState();
     energy = new EnergyState();
-
+    lengths = new LengthState();
+    densities = new DensityState();
   }
 
   public void initialize() {
@@ -59,19 +65,40 @@ public class ArmState implements State {
     FreeVar[] t4 = new FreeVar[joints.size()];
     FreeVar[] t5 = new FreeVar[joints.size()];
     FreeVar[] t6 = new FreeVar[joints.size()];
+    FreeVar[] t7 = new FreeVar[joints.size()];
+    FreeVar[] t8 = new FreeVar[joints.size()];
+    FreeVar[] t9 = new FreeVar[joints.size()];
 
     for (int i = 0; i < joints.size(); i++) {
       t0[i] = joints.get(i).angle;
       t1[i] = joints.get(i).angularvelocity;
+      t2[i] = joints.get(i).torque;
+      t3[i] = joints.get(i).posx;
+      t4[i] = joints.get(i).posy;
+      t5[i] = joints.get(i).tension;
+      t6[i] = joints.get(i).energy;
+      t7[i] = joints.get(i).distance;
+      t8[i] = joints.get(i).length;
+      t9[i] = joints.get(i).density;
+
     }
     angles.addVars(t0);
     angularvels.addVars(t1);
+    torques.addVars(t2);
+    posxs.addVars(t3);
+    posys.addVars(t4);
+    tensions.addVars(t5);
+    energy.addVars(t6);
+    distancefromgoal.addVars(t7);
+    lengths.addVars(t8);
+    densities.addVars(t9);
 
   }
 
   @Override
   public FreeVar[] toVector() {
 
+    // doesn't do anything right now
     return vector;
   }
 
@@ -88,195 +115,4 @@ public class ArmState implements State {
     // TODO Auto-generated method stub
     return null;
   }
-
-  // public static ArmState connect(ArmState x, JointState y) {
-  //
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // public static ArmState connect(JointState x, JointState y) {
-  //
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-
-  /**
-   * these are really angular impulses, but timing has not yet been specified
-   * 
-   * @author Zackkenyon
-   * @create Sep 11, 2012
-   */
-  class TorqueState implements State {
-
-    FreeVar[] torques;
-
-
-    @Override
-    public FreeVar[] toVector() {
-
-      return torques;
-    }
-
-    @Override
-    public String[] vectorDoc() {
-
-      return new String[] { torques.length + " torques" }; // + id
-    }
-
-    @Override
-    public void addVars(FreeVar[] torques) {
-
-      this.torques = torques;
-
-    }
-  }
-
-  class TensionState implements State {
-
-    FreeVar[] tensions;
-    String[] doc;
-
-
-    @Override
-    public FreeVar[] toVector() {
-
-      return tensions;
-    }
-
-    @Override
-    public String[] vectorDoc() {
-
-      return doc;
-    }
-
-    @Override
-    public void addVars(FreeVar[] tensions) {
-
-      this.tensions = tensions;
-
-    }
-  }
-
-  class PositionState implements State {
-
-    // TODO rewrite in new posx, posy format.
-    Vector[] vectorpositions;
-    FreeVar[] unpackedpositions;
-    String[] doc;
-
-
-    @Override
-    public FreeVar[] toVector() {
-
-      return unpackedpositions;
-    }
-
-    @Override
-    public String[] vectorDoc() {
-
-      return doc;
-    }
-
-    @Override
-    public void addVars(FreeVar[] positions) {
-
-      unpackedpositions = positions;
-
-    }
-  }
-
-  class AngularVelocityState implements State {
-
-    FreeVar[] angularvelocities;
-
-
-    @Override
-    public FreeVar[] toVector() {
-
-      return angularvelocities;
-    }
-
-    @Override
-    public String[] vectorDoc() {
-
-      return new String[] { "angular velocities" }; // + id
-    }
-
-    @Override
-    public void addVars(FreeVar[] angularvelocities) {
-
-      this.angularvelocities = angularvelocities;
-
-    }
-  }
-
-  class AngleState implements State {
-
-    // the angle will be regularly updated as the angle from the last joint. if it points in the same direction as the last joint,
-    // then the angle is 0, positive is counterclockwise, negative angles are clockwise.
-    FreeVar[] angles;
-
-    float maxangle; // collision detection will be either difficult to implement or computationally expensive without these fields.
-    float[] maxangles;
-
-
-    public void initialize() {
-
-      maxangles = new float[angles.length];
-      maxangles[0] = 360f;
-      for (int i = 1; i < angles.length; i++)
-        maxangles[i] = 170f;
-      maxangle = 360;
-    }
-
-    @Override
-    public String[] vectorDoc() {
-
-      return new String[] { "AngleState * " + angles.length };
-    }
-
-    @Override
-    public FreeVar[] toVector() {
-
-      return angles;
-    }
-
-    @Override
-    public void addVars(FreeVar[] vars) {
-
-      angles = vars;
-
-    }
-
-  }
-
-  class EnergyState implements State {
-
-    // this is in anticipation of giving the the learning algorithm a much finer solution. namely one in which
-    // energy usage is minimized.
-    FreeVar[] energy;
-
-
-    @Override
-    public String[] vectorDoc() {
-
-      return new String[] { "energy * " + energy.length };
-    }
-
-    @Override
-    public FreeVar[] toVector() {
-
-      return energy;
-    }
-
-    @Override
-    public void addVars(FreeVar[] vars) {
-
-      energy = vars;
-
-    }
-
-  }
-
 }

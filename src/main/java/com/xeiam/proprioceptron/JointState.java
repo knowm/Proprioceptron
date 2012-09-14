@@ -21,18 +21,20 @@ package com.xeiam.proprioceptron;
  */
 public class JointState implements State {
 
-  protected static int DEGREES_OF_FREEDOM = 7;// listed below
+  // There will be another class of variables called fixed variables.
+  protected static int DEGREES_OF_FREEDOM = 10;// listed below
   public FreeVar angle;
   public FreeVar angularvelocity;
+  public FreeVar torque;
   public FreeVar posx;
   public FreeVar posy;
   public FreeVar tension;
   public FreeVar distance;// from goal
   public FreeVar energy;// will count total energy used
 
-  // this section is for joint descriptors, they are constant, and therefore do not contribute to the dimension of the information space.
-  float length;// determines relationship between angle and posx, posy.
-  float density;// assumed to be constant throughout length of joint, dummy variable in almost every actuator, seems wrong to ignore it.
+  // this section is for joint descriptors, they are constant, and therefore do not contribute to the dimension of the state.
+  public FreeVar length;// determines relationship between angle and posx, posy.
+  public FreeVar density;// assumed to be constant throughout length of joint, dummy variable in almost every actuator, seems wrong to ignore it.
   JointState in;// determines position
   JointState out;
 
@@ -47,9 +49,11 @@ public class JointState implements State {
     this.distance = new FreeVar(0, VarType.DISTANCEFROMGOAL);
     this.energy = new FreeVar(0, VarType.ENERGY);
 
+    this.length = new FreeVar(length, VarType.LENGTH);
+    this.density = new FreeVar(density, VarType.DENSITY);
+
     // this section specifies the unique characteristics of the joint.
-    this.length = length;
-    this.density = density;
+
     if (in != null) {
       this.in = in;
       this.in.out = this; // hax
@@ -65,7 +69,7 @@ public class JointState implements State {
   @Override
   public FreeVar[] toVector() {
 
-    return new FreeVar[] { angle, angularvelocity, posx, posy, tension, distance, energy };
+    return new FreeVar[] { angle, angularvelocity, torque, posx, posy, tension, distance, energy };
   }
 
   @Override
@@ -77,12 +81,19 @@ public class JointState implements State {
   @Override
   public void addVars(FreeVar[] vec) {
 
+    if (vec.length != DEGREES_OF_FREEDOM) {
+      System.out.println("All Free Variables must be specified in JointState.addVars");
+      System.exit(1);
+    }
     angle = vec[0];
     angularvelocity = vec[1];
-    posx = vec[2];
-    posy = vec[3];
-    tension = vec[4];
-    distance = vec[5];
-    energy = vec[6];
+    torque = vec[2];
+    posx = vec[3];
+    posy = vec[4];
+    tension = vec[5];
+    distance = vec[6];
+    energy = vec[7];
+    length = vec[8];
+    density = vec[9];
   }
 }
