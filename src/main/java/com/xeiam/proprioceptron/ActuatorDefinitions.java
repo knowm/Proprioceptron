@@ -1,6 +1,5 @@
 package com.xeiam.proprioceptron;
 
-import com.jme3.math.FastMath;
 
 class AngularVelocityActuator implements Actuator {
 
@@ -48,11 +47,11 @@ class PositionActuator implements Actuator {
   @Override
   public void actuate() {
 
-    posxs.posxs[0].var = lengths.lengths[0].var * FastMath.cos(angles.angles[0].var);
-    posys.posys[0].var = lengths.lengths[0].var * FastMath.sin(angles.angles[0].var);
+    posxs.posxs[0].var = lengths.lengths[0].var * Math.cos(angles.angles[0].var);
+    posys.posys[0].var = lengths.lengths[0].var * Math.sin(angles.angles[0].var);
     for (int i = 1; i < angles.angles.length; i++) {
-      posxs.posxs[i].var = posxs.posxs[i - 1].var + lengths.lengths[i].var * FastMath.cos(angles.angles[i].var);
-      posys.posys[i].var = posys.posys[i - 1].var + lengths.lengths[i].var * FastMath.sin(angles.angles[i].var);
+      posxs.posxs[i].var = posxs.posxs[i - 1].var + lengths.lengths[i].var * Math.cos(angles.angles[i].var);
+      posys.posys[i].var = posys.posys[i - 1].var + lengths.lengths[i].var * Math.sin(angles.angles[i].var);
     }
 
   }

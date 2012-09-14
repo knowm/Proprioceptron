@@ -138,16 +138,16 @@ class AngleState implements State {
   // then the angle is 0, positive is counterclockwise, negative angles are clockwise.
   FreeVar[] angles;
 
-  float maxangle; // collision detection will be either difficult to implement or computationally expensive without these fields.
-  float[] maxangles;
+  double maxangle; // collision detection will be either difficult to implement or computationally expensive without these fields.
+  double[] maxangles;
 
   public void initialize() {
 
-    maxangles = new float[angles.length];
-    maxangles[0] = 360f;
+    maxangles = new double[angles.length];
+    maxangles[0] = 360.0;
     for (int i = 1; i < angles.length; i++)
-      maxangles[i] = 170f;
-    maxangle = 360;
+      maxangles[i] = 170.0;
+    maxangle = 360.0;
   }
 
   @Override

@@ -35,11 +35,11 @@ public class Main {
     AngularVelocityActuator avactuator = new AngularVelocityActuator();
     PositionActuator pactuator = new PositionActuator();
     ArrayList<JointState> joints = new ArrayList<JointState>();
-    joints.add(new JointState(5f, 1f, null));
-    joints.add(new JointState(5f, 1f, joints.get(0)));
-    joints.add(new JointState(5f, 1f, joints.get(1)));
-    joints.add(new JointState(5f, 1f, joints.get(2)));
-    joints.add(new JointState(5f, 1f, joints.get(3)));
+    joints.add(new JointState(5.0, 1.0, null));
+    joints.add(new JointState(5.0, 1.0, joints.get(0)));
+    joints.add(new JointState(5.0, 1.0, joints.get(1)));
+    joints.add(new JointState(5.0, 1.0, joints.get(2)));
+    joints.add(new JointState(5.0, 1.0, joints.get(3)));
     for (int i = 0; i < joints.size(); i++) {
       joints.get(i).initialize(i * .000001f, 0f);
     }

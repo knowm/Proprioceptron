@@ -9,10 +9,10 @@ package com.xeiam.proprioceptron;
 
 public class FreeVar {
 
-  public float var;
+  public double var;
   public VarType type;
 
-  public FreeVar(float var, VarType type) {
+  public FreeVar(double var, VarType type) {
 
     this.var = var;
     this.type = type;

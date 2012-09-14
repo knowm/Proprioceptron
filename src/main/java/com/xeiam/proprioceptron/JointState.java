@@ -38,7 +38,7 @@ public class JointState implements State {
   JointState in;// determines position
   JointState out;
 
-  public JointState(float length, float density, JointState in) {
+  public JointState(double d, double e, JointState in) {
 
     // this section initializes the type of the free variables.
     this.angle = new FreeVar(0, VarType.ANGLE);
@@ -49,8 +49,8 @@ public class JointState implements State {
     this.distance = new FreeVar(0, VarType.DISTANCEFROMGOAL);
     this.energy = new FreeVar(0, VarType.ENERGY);
 
-    this.length = new FreeVar(length, VarType.LENGTH);
-    this.density = new FreeVar(density, VarType.DENSITY);
+    this.length = new FreeVar(d, VarType.LENGTH);
+    this.density = new FreeVar(e, VarType.DENSITY);
 
     // this section specifies the unique characteristics of the joint.
 
