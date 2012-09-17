@@ -22,7 +22,7 @@ package com.xeiam.proprioceptron;
 public class JointState implements State {
 
   // There will be another class of variables called fixed variables.
-  protected static int DEGREES_OF_FREEDOM = 10;// listed below
+  protected static int DEGREES_OF_FREEDOM = 10; // listed below
   public FreeVar angle;
   public FreeVar angularvelocity;
   public FreeVar torque;
@@ -66,6 +66,7 @@ public class JointState implements State {
     this.angularvelocity.var = angularmomentum;
     this.angle.var = angle;
   }
+
   @Override
   public FreeVar[] toVector() {
 

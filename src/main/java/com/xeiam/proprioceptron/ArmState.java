@@ -15,7 +15,8 @@
  */
 package com.xeiam.proprioceptron;
 
-import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Zackkenyon
  * @create Sep 11, 2012 ArmState combines and extracts physically relevant combinations of free variables for actuators
@@ -35,13 +36,14 @@ public class ArmState implements State {
   public DistanceFromGoalState distancefromgoal;
   public LengthState lengths;
   public DensityState densities;
-  public ArrayList<JointState> joints;
+  public List<JointState> joints;
+
   /**
    * Constructor
    * 
    * @param arm
    */
-  public ArmState(ArrayList<JointState> joints) {
+  public ArmState(List<JointState> joints) {
 
     this.joints = joints;
     torques = new TorqueState();
