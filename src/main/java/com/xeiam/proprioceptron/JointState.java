@@ -60,11 +60,11 @@ public class JointState implements State {
     }
   }
 
-  public void initialize(float angularmomentum, float angle) {// the system is completely determined at this point, and the actuator chain will handle the
+  public void initialize(double d, double e) {// the system is completely determined at this point, and the actuator chain will handle the
 
     // rest of the initialization logic.
-    this.angularvelocity.var = angularmomentum;
-    this.angle.var = angle;
+    this.angularvelocity.var = d;
+    this.angle.var = e;
   }
   @Override
   public FreeVar[] toVector() {

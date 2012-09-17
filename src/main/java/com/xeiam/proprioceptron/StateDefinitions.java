@@ -31,7 +31,7 @@ class TorqueState implements State {
   }
 }
 
-class TensionState implements State {
+class LinearAccelerationState implements State {
 
   FreeVar[] tensions;
   String[] doc;

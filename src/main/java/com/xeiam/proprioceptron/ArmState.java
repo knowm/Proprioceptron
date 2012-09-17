@@ -30,7 +30,7 @@ public class ArmState implements State {
   public TorqueState torques;
   public PosXState posxs;
   public PosYState posys;
-  public TensionState tensions;
+  public LinearAccelerationState tensions;
   public EnergyState energy;
   public DistanceFromGoalState distancefromgoal;
   public LengthState lengths;
@@ -45,7 +45,7 @@ public class ArmState implements State {
 
     this.joints = joints;
     torques = new TorqueState();
-    tensions = new TensionState();
+    tensions = new LinearAccelerationState();
     angles = new AngleState();
     posxs = new PosXState();
     posys = new PosYState();

@@ -41,7 +41,7 @@ public class Main {
     joints.add(new JointState(5.0, 1.0, joints.get(2)));
     joints.add(new JointState(5.0, 1.0, joints.get(3)));
     for (int i = 0; i < joints.size(); i++) {
-      joints.get(i).initialize(i * .000001f, 0f);
+      joints.get(i).initialize(i * .000001 + .000001, 0.0);
     }
     arm = new ArmState(joints);
     arm.initialize();
@@ -68,6 +68,7 @@ public class Main {
 
 class Mypanel extends JPanel {
 
+  private static final long serialVersionUID = 1L;
   PosXState drawx;
   PosYState drawy;
 

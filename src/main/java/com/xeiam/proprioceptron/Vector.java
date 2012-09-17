@@ -21,10 +21,10 @@ package com.xeiam.proprioceptron;
  */
 public class Vector {
 
-  public float x;
-  public float y;
+  public double x;
+  public double y;
 
-  public Vector(float x, float y) {
+  public Vector(double x, double y) {
 
     this.x = x;
     this.y = y;
@@ -42,7 +42,7 @@ public class Vector {
     y -= p.y;
   }
 
-  public void scaleequals(float k) {
+  public void scaleequals(double k) {
 
     x *= k;
     y *= k;
@@ -59,19 +59,19 @@ public class Vector {
 
   }
 
-  public static Vector scale(float k, Vector p) {
+  public static Vector scale(double k, Vector p) {
 
     return new Vector(k * p.x, k * p.y);
   }
 
-  public static float distance(Vector p, Vector q) {
+  public static double distance(Vector p, Vector q) {
 
     return magnitude(minus(p, q));
   }
 
-  public static float magnitude(Vector v) {
+  public static double magnitude(Vector v) {
 
-    return (float) Math.sqrt(innerproduct(v, v));
+    return Math.sqrt(innerproduct(v, v));
   }
 
   public static Vector normalize(Vector v) {
@@ -84,7 +84,7 @@ public class Vector {
     return scale(innerproduct(u, v) * 1 / magnitude(u), u);
   }
 
-  public static float innerproduct(Vector v, Vector u) {
+  public static double innerproduct(Vector v, Vector u) {
 
     return v.x * u.x + v.y * u.y;
   }
@@ -105,11 +105,11 @@ public class Vector {
 
   public static Vector UnitX() {
 
-    return (new Vector(1.0f, 0));
+    return (new Vector(1.0, 0));
   }
 
   public static Vector UnitY() {
 
-    return (new Vector(0, 1.0f));
+    return (new Vector(0, 1.0));
   }
 }
