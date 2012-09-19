@@ -1,15 +1,14 @@
 package com.xeiam.proprioceptron;
 
-class PosYState implements State {
+class TensionState implements State {
 
-  // TODO rewrite in new posx, posy format.
-  FreeVar[] posys;
+  FreeVar[] tensions;
   String[] doc;
 
   @Override
   public FreeVar[] toVector() {
 
-    return posys;
+    return tensions;
   }
 
   @Override
@@ -19,9 +18,9 @@ class PosYState implements State {
   }
 
   @Override
-  public void addVars(FreeVar[] posys) {
+  public void addVars(FreeVar[] tensions) {
 
-    this.posys = posys;
+    this.tensions = tensions;
 
   }
 }

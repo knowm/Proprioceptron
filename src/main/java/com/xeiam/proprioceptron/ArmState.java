@@ -28,12 +28,12 @@ public class ArmState implements State {
   public AngleState angles;
   public AngularVelocityState angularvels;
   public TorqueState torques;
-  public PosXState posxs;
-  public PosYState posys;
-  public LinearAccelerationState tensions;
+  public PositionState positions;
+  public TensionState tensions;
   public EnergyState energy;
   public DistanceFromGoalState distancefromgoal;
   public LengthState lengths;
+  public DirectionState directions;
   public DensityState densities;
   public ArrayList<JointState> joints;
   /**
@@ -45,15 +45,15 @@ public class ArmState implements State {
 
     this.joints = joints;
     torques = new TorqueState();
-    tensions = new LinearAccelerationState();
+    tensions = new TensionState();
     angles = new AngleState();
-    posxs = new PosXState();
-    posys = new PosYState();
+    positions = new PositionState();
     distancefromgoal = new DistanceFromGoalState();
     angularvels = new AngularVelocityState();
     energy = new EnergyState();
     lengths = new LengthState();
     densities = new DensityState();
+    directions = new DirectionState();
   }
 
   public void initialize() {
@@ -73,25 +73,25 @@ public class ArmState implements State {
       t0[i] = joints.get(i).angle;
       t1[i] = joints.get(i).angularvelocity;
       t2[i] = joints.get(i).torque;
-      t3[i] = joints.get(i).posx;
-      t4[i] = joints.get(i).posy;
-      t5[i] = joints.get(i).tension;
-      t6[i] = joints.get(i).energy;
-      t7[i] = joints.get(i).distance;
-      t8[i] = joints.get(i).length;
-      t9[i] = joints.get(i).density;
+      t3[i] = joints.get(i).position;
+      t4[i] = joints.get(i).tension;
+      t5[i] = joints.get(i).energy;
+      t6[i] = joints.get(i).distance;
+      t7[i] = joints.get(i).length;
+      t8[i] = joints.get(i).density;
+      t9[i] = joints.get(i).direction;
 
     }
     angles.addVars(t0);
     angularvels.addVars(t1);
     torques.addVars(t2);
-    posxs.addVars(t3);
-    posys.addVars(t4);
-    tensions.addVars(t5);
-    energy.addVars(t6);
-    distancefromgoal.addVars(t7);
-    lengths.addVars(t8);
-    densities.addVars(t9);
+    positions.addVars(t3);
+    tensions.addVars(t4);
+    energy.addVars(t5);
+    distancefromgoal.addVars(t6);
+    lengths.addVars(t7);
+    densities.addVars(t8);
+    directions.addVars(t9);
 
   }
 

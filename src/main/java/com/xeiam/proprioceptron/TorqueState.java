@@ -1,7 +1,7 @@
 package com.xeiam.proprioceptron;
 
 /**
- * these are really angular impulses, but timing has not yet been specified
+ * TorqueState contains information about the linear acceleration of the joints perpendicular to the direction of the rod. counterclockwise is positive, units are newtons*meters.
  * 
  * @author Zackkenyon
  * @create Sep 11, 2012

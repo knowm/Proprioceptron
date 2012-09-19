@@ -18,8 +18,8 @@ class DensityState implements State {
   }
 
   @Override
-  public void addVars(FreeVar[] vars) {
+  public void addVars(FreeVar[] densities) {
 
-    densities = vars;
+    this.densities = densities;
   }
 }

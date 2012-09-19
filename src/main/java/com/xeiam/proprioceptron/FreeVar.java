@@ -10,12 +10,40 @@ package com.xeiam.proprioceptron;
 public class FreeVar {
 
   // multidimensional support in future. not really sure how to do this objectively.
-  public double var;
+  private double var;
   public VarType type;
-
+  private Dimensional dimvar;
   public FreeVar(double var, VarType type) {
 
-    this.var = var;
+    setVar(var);
     this.type = type;
   }
+
+  public FreeVar(Dimensional dimvar, VarType type) {
+
+    setDimensional(dimvar);
+    this.type = type;
+  }
+
+  public Dimensional getDimensional() {
+
+    return dimvar;
+  }
+
+  public void setDimensional(Dimensional dimvar) { // will require a cast to do object specific logic...
+
+    this.dimvar = dimvar;
+  }
+
+  public double getVar() {
+
+    return var;
+  }
+
+  public void setVar(double var) {
+
+    this.var = var;
+  }
+  
+
 }

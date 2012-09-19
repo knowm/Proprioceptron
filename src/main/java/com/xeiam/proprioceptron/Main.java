@@ -34,6 +34,10 @@ public class Main {
     ArmState arm;
     AngularVelocityActuator avactuator = new AngularVelocityActuator();
     PositionActuator pactuator = new PositionActuator();
+    CentrifugalForceActuator cfactuator = new CentrifugalForceActuator();
+    DirectionActuator dactuator = new DirectionActuator();
+    TensionActuator tnactuator = new TensionActuator();
+    TorqueActuator tqactuator = new TorqueActuator();
     ArrayList<JointState> joints = new ArrayList<JointState>();
     joints.add(new JointState(5.0, 1.0, null));
     joints.add(new JointState(5.0, 1.0, joints.get(0)));
@@ -47,10 +51,17 @@ public class Main {
     arm.initialize();
     pactuator.setDomain(arm.angles, arm.lengths);
     avactuator.setDomain(arm.angularvels);
-    pactuator.setRange(arm.posxs, arm.posys);
+    cfactuator.setDomain(arm.positions, arm.lengths, arm.densities, arm.angularvels, arm.directions);
+    dactuator.setDomain(arm.angles, arm.lengths);
+    tnactuator.setDomain(arm.tensions, arm.directions, arm.densities, arm.lengths);
+    tqactuator.setDomain(arm.torques, arm.lengths, arm.densities, arm.directions, arm.angles);
+    pactuator.setRange(arm.positions);
     avactuator.setRange(arm.angles);
-
-    panel.setDrawList(arm.posxs, arm.posys);
+    cfactuator.setRange(arm.tensions);
+    dactuator.setRange(arm.directions);
+    tnactuator.setRange(arm.torques);
+    tqactuator.setRange(arm.angularvels, arm.tensions);
+    panel.setDrawList(arm.positions.positions);
     frame.add(panel);
     
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,36 +69,42 @@ public class Main {
     frame.setVisible(true);
 
     while (true) {
+      //
+
       avactuator.actuate();
       pactuator.actuate();
+      dactuator.actuate();
+      cfactuator.actuate();
+
+      tnactuator.actuate();
+      tqactuator.actuate();
+
+
       frame.repaint();
+
     }
   }
-
 }
 
 class Mypanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  PosXState drawx;
-  PosYState drawy;
+  FreeVar[] drawlist;
 
-  public void setDrawList(PosXState xs, PosYState ys) {
+  public void setDrawList(FreeVar[] todraw) {
 
-    drawx = xs;
-    drawy = ys;
-
+    drawlist = todraw.clone();
   }
 
   @Override
   public void paint(Graphics g) {
 
-    g.drawLine(300, 300, (int) (10 * drawx.posxs[0].var) + 300, (int) (10 * drawy.posys[0].var) + 300);
-    for (int i = 0; i < drawx.posxs.length - 1; i++) {// draw the rods
-      g.drawLine((int) (10 * drawx.posxs[i].var) + 300, (int) (10 * drawy.posys[i].var) + 300, (int) (10 * drawx.posxs[i + 1].var) + 300, (int) (10 * drawy.posys[i + 1].var) + 300);
+    g.drawLine(300, 300, (int) (10 * drawlist[0].getDimensional().toArray()[0]) + 300, (int) (10 * drawlist[0].getDimensional().toArray()[1]) + 300);
+    for (int i = 0; i < drawlist.length - 1; i++) {// draw the rods
+      g.drawLine((int) (10 * drawlist[i].getDimensional().toArray()[0]) + 300, (int) (10 * drawlist[i].getDimensional().toArray()[1]) + 300, (int) (10 * drawlist[i+1].getDimensional().toArray()[0]) + 300, (int) (10 * drawlist[i+1].getDimensional().toArray()[1]) + 300);
     }
-    for (int i = 0; i < drawx.posxs.length; i++) {
-      g.fillOval((int) (10 * drawx.posxs[i].var) + 295, (int) (10 * drawy.posys[i].var) + 295, 10, 10);
+    for (int i = 0; i < drawlist.length; i++) {
+      g.fillOval((int) (10 * drawlist[i].getDimensional().toArray()[0]) + 295, (int) (10 * drawlist[i].getDimensional().toArray()[1]) + 295, 10, 10);
     }
   }
 }

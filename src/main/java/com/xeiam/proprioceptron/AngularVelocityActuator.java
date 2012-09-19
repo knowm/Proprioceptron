@@ -19,7 +19,7 @@ class AngularVelocityActuator implements Actuator {
   public void actuate() {
 
     for (int i = 0; i < angularvelocities.angularvelocities.length; i++) {
-      angles.angles[i].var += angularvelocities.angularvelocities[i].var;
+      angles.angles[i].setVar(angles.angles[i].getVar() + angularvelocities.angularvelocities[i].getVar());
     }
   }
 }

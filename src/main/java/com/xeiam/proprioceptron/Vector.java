@@ -19,7 +19,8 @@ package com.xeiam.proprioceptron;
  * @author zackkenyon
  * @create Aug 21, 2012
  */
-public class Vector {
+// an attempt at Cs struct funtionality.
+public class Vector implements Dimensional {
 
   public double x;
   public double y;
@@ -28,6 +29,19 @@ public class Vector {
 
     this.x = x;
     this.y = y;
+  }
+
+  public static Vector fromPolar(double length, double rotation) {
+
+    double x = length * Math.cos(rotation);
+    double y = length * Math.sin(rotation);
+    return new Vector(x, y);
+  }
+
+  @Override
+  public double[] toArray() {
+
+    return new double[] { x, y };
   }
 
   public void plusequals(Vector p) {
@@ -48,6 +62,17 @@ public class Vector {
     y *= k;
   }
 
+  public void rotateequals(double rotate, double length /* for persistence */) {// slightly faster to do cos,sin, outside, and take as args
+
+    double x_ = x * Math.sin(rotate) + y * Math.cos(rotate);
+    y = x * Math.cos(rotate) - y * Math.sin(rotate);
+    x = x_;
+  }
+
+  public static Vector invert(Vector p) {
+
+    return new Vector(-p.x, -p.y);
+  }
   public static Vector plus(Vector p, Vector q) {
 
     return new Vector(p.x + q.x, p.y + q.y);
@@ -69,6 +94,10 @@ public class Vector {
     return magnitude(minus(p, q));
   }
 
+  public static double argument(Vector v) {
+
+    return Math.atan(v.y / v.x);
+  }
   public static double magnitude(Vector v) {
 
     return Math.sqrt(innerproduct(v, v));
@@ -76,12 +105,12 @@ public class Vector {
 
   public static Vector normalize(Vector v) {
 
-    return scale(1.0f / magnitude(v), v);
+    return scale(1.0 / magnitude(v), v);
   }
 
   public static Vector project(Vector v, Vector u) {
 
-    return scale(innerproduct(u, v) * 1 / magnitude(u), u);
+    return scale(innerproduct(u, v) * 1.0 / magnitude(u), u);
   }
 
   public static double innerproduct(Vector v, Vector u) {

@@ -1,10 +1,14 @@
 package com.xeiam.proprioceptron;
 
-
+/**
+ * Takes the angles and lengths of the rods and retrieves positions
+ * 
+ * @author Zackkenyon
+ * @create Sep 18, 2012
+ */
 class PositionActuator implements Actuator {
 
-  PosXState posxs;
-  PosYState posys;
+  PositionState positionstate;
   AngleState angles;
   LengthState lengths;
 
@@ -14,20 +18,19 @@ class PositionActuator implements Actuator {
     this.lengths = lengths;
   }
 
-  public void setRange(PosXState posxs, PosYState posys) {
+  public void setRange(PositionState positionstate) {
 
-    this.posxs = posxs;
-    this.posys = posys;
+    this.positionstate = positionstate;
   }
 
   @Override
   public void actuate() {
-
-    posxs.posxs[0].var = lengths.lengths[0].var * Math.cos(angles.angles[0].var);
-    posys.posys[0].var = lengths.lengths[0].var * Math.sin(angles.angles[0].var);
+    
+    positionstate.positions[0].setDimensional (Vector.fromPolar(lengths.lengths[0].getVar(), angles.angles[0].getVar()));
+    
     for (int i = 1; i < angles.angles.length; i++) {
-      posxs.posxs[i].var = posxs.posxs[i - 1].var + lengths.lengths[i].var * Math.cos(angles.angles[i].var);
-      posys.posys[i].var = posys.posys[i - 1].var + lengths.lengths[i].var * Math.sin(angles.angles[i].var);
+      // not great for garbage collector. also quite lengthy. is a quick fix for a painting concurrency problem I was having.
+      positionstate.positions[i].setDimensional(Vector.plus((Vector) positionstate.positions[i - 1].getDimensional(), Vector.fromPolar(lengths.lengths[i].getVar(), angles.angles[i].getVar())));
     }
 
   }
