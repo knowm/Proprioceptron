@@ -15,18 +15,25 @@
  */
 package com.xeiam.proprioceptron.state;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.xeiam.proprioceptron.FreeVar;
+import com.xeiam.proprioceptron.actuator.AngularVelocityActuator;
+import com.xeiam.proprioceptron.actuator.CentrifugalForceActuator;
+import com.xeiam.proprioceptron.actuator.DirectionActuator;
+import com.xeiam.proprioceptron.actuator.PositionActuator;
+import com.xeiam.proprioceptron.actuator.TensionActuator;
+import com.xeiam.proprioceptron.actuator.TorqueActuator;
 
 /**
+ * ArmState combines and extracts physically relevant combinations of free variables for actuators
+ * 
  * @author Zackkenyon
- * @create Sep 11, 2012 ArmState combines and extracts physically relevant combinations of free variables for actuators
+ * @create Sep 11, 2012
  */
+public class Arm implements State {
 
-public class ArmState implements State {
-
-  public String[] documentation;
+  public List<Joint> joints;
   public FreeVar[] vector;
   public AngleState angles;
   public AngularVelocityState angularvels;
@@ -38,14 +45,20 @@ public class ArmState implements State {
   public LengthState lengths;
   public DirectionState directions;
   public DensityState densities;
-  public ArrayList<JointState> joints;
+
+  public PositionActuator pactuator = new PositionActuator();
+  public AngularVelocityActuator avactuator = new AngularVelocityActuator();
+  public CentrifugalForceActuator cfactuator = new CentrifugalForceActuator();
+  public DirectionActuator dactuator = new DirectionActuator();
+  public TensionActuator tnactuator = new TensionActuator();
+  public TorqueActuator tqactuator = new TorqueActuator();
 
   /**
    * Constructor
    * 
    * @param arm
    */
-  public ArmState(ArrayList<JointState> joints) {
+  public Arm(List<Joint> joints) {
 
     this.joints = joints;
     torques = new TorqueState();
@@ -58,6 +71,7 @@ public class ArmState implements State {
     lengths = new LengthState();
     densities = new DensityState();
     directions = new DirectionState();
+
   }
 
   public void initialize() {
@@ -97,6 +111,30 @@ public class ArmState implements State {
     densities.addVars(t8);
     directions.addVars(t9);
 
+    pactuator.setDomain(angles, lengths);
+    avactuator.setDomain(angularvels);
+    cfactuator.setDomain(positions, lengths, densities, angularvels, directions);
+    dactuator.setDomain(angles, lengths);
+    tnactuator.setDomain(tensions, directions, densities, lengths);
+    tqactuator.setDomain(torques, lengths, densities, directions, angles);
+    pactuator.setRange(positions);
+    avactuator.setRange(angles);
+    cfactuator.setRange(tensions);
+    dactuator.setRange(directions);
+    tnactuator.setRange(torques);
+    tqactuator.setRange(angularvels, tensions);
+
+  }
+
+  public void update() {
+
+    avactuator.actuate();
+    pactuator.actuate();
+    dactuator.actuate();
+    cfactuator.actuate();
+    tnactuator.actuate();
+    tqactuator.actuate();
+
   }
 
   @Override
@@ -119,4 +157,5 @@ public class ArmState implements State {
     // TODO Auto-generated method stub
     return null;
   }
+
 }
