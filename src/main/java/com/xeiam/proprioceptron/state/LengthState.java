@@ -1,8 +1,10 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
-class LengthState implements State {
+import com.xeiam.proprioceptron.FreeVar;
 
-  FreeVar[] lengths;
+public class LengthState implements State {
+
+  public FreeVar[] lengths;
 
   @Override
   public String[] vectorDoc() {

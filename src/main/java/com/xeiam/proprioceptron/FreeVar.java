@@ -13,6 +13,7 @@ public class FreeVar {
   private double var;
   public VarType type;
   private Dimensional dimvar;
+
   public FreeVar(double var, VarType type) {
 
     setVar(var);
@@ -44,6 +45,5 @@ public class FreeVar {
 
     this.var = var;
   }
-  
 
 }

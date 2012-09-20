@@ -1,4 +1,11 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.actuator;
+
+import com.xeiam.proprioceptron.Vector;
+import com.xeiam.proprioceptron.state.DensityState;
+import com.xeiam.proprioceptron.state.DirectionState;
+import com.xeiam.proprioceptron.state.LengthState;
+import com.xeiam.proprioceptron.state.TensionState;
+import com.xeiam.proprioceptron.state.TorqueState;
 
 /**
  * takes the centripetal forces calulated in CentrifugalForceActuator and propogates them through rigid bodies producing instantaneous torques and further tensions.

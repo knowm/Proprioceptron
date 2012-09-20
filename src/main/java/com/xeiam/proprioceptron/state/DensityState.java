@@ -1,9 +1,10 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
+import com.xeiam.proprioceptron.FreeVar;
 
-class DensityState implements State {
+public class DensityState implements State {
 
-  FreeVar[] densities;
+  public FreeVar[] densities;
 
   @Override
   public String[] vectorDoc() {

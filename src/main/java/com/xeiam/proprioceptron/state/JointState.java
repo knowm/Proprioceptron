@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
+
+import com.xeiam.proprioceptron.FreeVar;
+import com.xeiam.proprioceptron.VarType;
+import com.xeiam.proprioceptron.Vector;
 
 /**
  * @author zackkenyon
@@ -66,6 +70,7 @@ public class JointState implements State {
     this.angularvelocity.setVar(d);
     this.angle.setVar(e);
   }
+
   @Override
   public FreeVar[] toVector() {
 

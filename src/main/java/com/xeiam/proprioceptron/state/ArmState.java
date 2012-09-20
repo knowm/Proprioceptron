@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
 import java.util.ArrayList;
+
+import com.xeiam.proprioceptron.FreeVar;
+
 /**
  * @author Zackkenyon
  * @create Sep 11, 2012 ArmState combines and extracts physically relevant combinations of free variables for actuators
@@ -36,6 +39,7 @@ public class ArmState implements State {
   public DirectionState directions;
   public DensityState densities;
   public ArrayList<JointState> joints;
+
   /**
    * Constructor
    * 

@@ -1,10 +1,12 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
-class AngleState implements State {
+import com.xeiam.proprioceptron.FreeVar;
+
+public class AngleState implements State {
 
   // the angle will be regularly updated as the angle from the last joint. if it points in the same direction as the last joint,
   // then the angle is 0, positive is counterclockwise, negative angles are clockwise.
-  FreeVar[] angles;
+  public FreeVar[] angles;
 
   double maxangle; // collision detection will be either difficult to implement or computationally expensive without these fields.
   double[] maxangles;

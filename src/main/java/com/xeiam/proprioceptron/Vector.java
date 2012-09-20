@@ -73,6 +73,7 @@ public class Vector implements Dimensional {
 
     return new Vector(-p.x, -p.y);
   }
+
   public static Vector plus(Vector p, Vector q) {
 
     return new Vector(p.x + q.x, p.y + q.y);
@@ -98,6 +99,7 @@ public class Vector implements Dimensional {
 
     return Math.atan(v.y / v.x);
   }
+
   public static double magnitude(Vector v) {
 
     return Math.sqrt(innerproduct(v, v));

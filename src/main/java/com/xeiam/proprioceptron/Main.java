@@ -21,6 +21,15 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.xeiam.proprioceptron.actuator.AngularVelocityActuator;
+import com.xeiam.proprioceptron.actuator.CentrifugalForceActuator;
+import com.xeiam.proprioceptron.actuator.DirectionActuator;
+import com.xeiam.proprioceptron.actuator.PositionActuator;
+import com.xeiam.proprioceptron.actuator.TensionActuator;
+import com.xeiam.proprioceptron.actuator.TorqueActuator;
+import com.xeiam.proprioceptron.state.ArmState;
+import com.xeiam.proprioceptron.state.JointState;
+
 /**
  * @author Zackkenyon
  * @create Aug 21, 2012
@@ -63,7 +72,7 @@ public class Main {
     tqactuator.setRange(arm.angularvels, arm.tensions);
     panel.setDrawList(arm.positions.positions);
     frame.add(panel);
-    
+
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(600, 600);
     frame.setVisible(true);
@@ -78,7 +87,6 @@ public class Main {
 
       tnactuator.actuate();
       tqactuator.actuate();
-
 
       frame.repaint();
 
@@ -101,7 +109,8 @@ class Mypanel extends JPanel {
 
     g.drawLine(300, 300, (int) (10 * drawlist[0].getDimensional().toArray()[0]) + 300, (int) (10 * drawlist[0].getDimensional().toArray()[1]) + 300);
     for (int i = 0; i < drawlist.length - 1; i++) {// draw the rods
-      g.drawLine((int) (10 * drawlist[i].getDimensional().toArray()[0]) + 300, (int) (10 * drawlist[i].getDimensional().toArray()[1]) + 300, (int) (10 * drawlist[i+1].getDimensional().toArray()[0]) + 300, (int) (10 * drawlist[i+1].getDimensional().toArray()[1]) + 300);
+      g.drawLine((int) (10 * drawlist[i].getDimensional().toArray()[0]) + 300, (int) (10 * drawlist[i].getDimensional().toArray()[1]) + 300, (int) (10 * drawlist[i + 1].getDimensional().toArray()[0]) + 300,
+          (int) (10 * drawlist[i + 1].getDimensional().toArray()[1]) + 300);
     }
     for (int i = 0; i < drawlist.length; i++) {
       g.fillOval((int) (10 * drawlist[i].getDimensional().toArray()[0]) + 295, (int) (10 * drawlist[i].getDimensional().toArray()[1]) + 295, 10, 10);

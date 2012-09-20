@@ -1,6 +1,8 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
-class DirectionState implements State {
+import com.xeiam.proprioceptron.FreeVar;
+
+public class DirectionState implements State {
 
   public FreeVar[] directions;
 

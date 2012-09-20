@@ -1,9 +1,11 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
-class TensionState implements State {
+import com.xeiam.proprioceptron.FreeVar;
 
-  FreeVar[] tensions;
-  String[] doc;
+public class TensionState implements State {
+
+  public FreeVar[] tensions;
+  public String[] doc;
 
   @Override
   public FreeVar[] toVector() {

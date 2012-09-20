@@ -1,8 +1,10 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
-class AngularVelocityState implements State {
+import com.xeiam.proprioceptron.FreeVar;
 
-  FreeVar[] angularvelocities;
+public class AngularVelocityState implements State {
+
+  public FreeVar[] angularvelocities;
 
   @Override
   public FreeVar[] toVector() {

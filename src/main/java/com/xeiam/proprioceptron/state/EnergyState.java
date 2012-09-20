@@ -1,6 +1,8 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
-class EnergyState implements State {
+import com.xeiam.proprioceptron.FreeVar;
+
+public class EnergyState implements State {
 
   // this is in anticipation of giving the the learning algorithm a much finer solution. namely one in which
   // energy usage is minimized.

@@ -1,6 +1,8 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
-class DistanceFromGoalState implements State {
+import com.xeiam.proprioceptron.FreeVar;
+
+public class DistanceFromGoalState implements State {
 
   FreeVar[] distances;
 

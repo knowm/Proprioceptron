@@ -1,9 +1,10 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
 
+import com.xeiam.proprioceptron.FreeVar;
 
 public class PositionState implements State {
 
-  FreeVar[] positions;
+  public FreeVar[] positions;
 
   @Override
   public String[] vectorDoc() {
@@ -14,7 +15,6 @@ public class PositionState implements State {
   @Override
   public FreeVar[] toVector() {
 
-    // TODO Auto-generated method stub
     return positions;
   }
 

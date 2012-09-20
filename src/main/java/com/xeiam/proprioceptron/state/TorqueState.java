@@ -1,4 +1,6 @@
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
+
+import com.xeiam.proprioceptron.FreeVar;
 
 /**
  * TorqueState contains information about the linear acceleration of the joints perpendicular to the direction of the rod. counterclockwise is positive, units are newtons*meters.
@@ -6,9 +8,9 @@ package com.xeiam.proprioceptron;
  * @author Zackkenyon
  * @create Sep 11, 2012
  */
-class TorqueState implements State {
+public class TorqueState implements State {
 
-  FreeVar[] torques;
+  public FreeVar[] torques;
 
   @Override
   public FreeVar[] toVector() {

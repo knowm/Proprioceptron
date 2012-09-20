@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron;
+package com.xeiam.proprioceptron.state;
+
+import com.xeiam.proprioceptron.FreeVar;
 
 /**
  * States are containers for free variables of a program. They may also specify constant values which may include states. They are also the format of the domain and the codomain of any actuator.
