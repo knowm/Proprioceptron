@@ -21,6 +21,17 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.xeiam.proprioceptron.actuators.AngularVelocityActuator;
+import com.xeiam.proprioceptron.actuators.CentrifugalForceActuator;
+import com.xeiam.proprioceptron.actuators.DirectionActuator;
+import com.xeiam.proprioceptron.actuators.PositionActuator;
+import com.xeiam.proprioceptron.actuators.TensionActuator;
+import com.xeiam.proprioceptron.actuators.TorqueActuator;
+import com.xeiam.proprioceptron.states.ArmState;
+import com.xeiam.proprioceptron.states.JointState;
+
+
+
 /**
  * @author Zackkenyon
  * @create Aug 21, 2012
@@ -62,6 +73,7 @@ public class Main {
     tnactuator.setRange(arm.torques);
     tqactuator.setRange(arm.angularvels, arm.tensions);
     panel.setDrawList(arm.positions.positions);
+    panel.setTestDrawList(arm.tensions.tensions);
     frame.add(panel);
     
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -75,9 +87,9 @@ public class Main {
       pactuator.actuate();
       dactuator.actuate();
       cfactuator.actuate();
-
-      tnactuator.actuate();
-      tqactuator.actuate();
+      //
+      // tnactuator.actuate();
+      // tqactuator.actuate();
 
 
       frame.repaint();
@@ -90,10 +102,15 @@ class Mypanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
   FreeVar[] drawlist;
-
+  FreeVar[] testdrawlist;
   public void setDrawList(FreeVar[] todraw) {
 
-    drawlist = todraw.clone();
+    drawlist = todraw;
+  }
+
+  public void setTestDrawList(FreeVar[] todraw) {
+
+    testdrawlist = todraw;
   }
 
   @Override
@@ -105,6 +122,7 @@ class Mypanel extends JPanel {
     }
     for (int i = 0; i < drawlist.length; i++) {
       g.fillOval((int) (10 * drawlist[i].getDimensional().toArray()[0]) + 295, (int) (10 * drawlist[i].getDimensional().toArray()[1]) + 295, 10, 10);
+      g.fillOval((int) (10e12 * testdrawlist[i].getDimensional().toArray()[0]) + 295, (int) (10e12 * testdrawlist[i].getDimensional().toArray()[1]) + 295, 10, 10);
     }
   }
 }
