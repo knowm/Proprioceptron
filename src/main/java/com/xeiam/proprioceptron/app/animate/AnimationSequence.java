@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.xeiam.proprioceptron.ActuationCommand;
 import com.xeiam.proprioceptron.ActuationSequence;
-import com.xeiam.proprioceptron.state.Arm;
+import com.xeiam.proprioceptron.states.Arm;
 
 /**
  * @author timmolter

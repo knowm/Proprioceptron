@@ -1,6 +1,7 @@
 package com.xeiam.proprioceptron.actuator;
 
 import com.xeiam.proprioceptron.Vector;
+import com.xeiam.proprioceptron.actuators.Actuator;
 import com.xeiam.proprioceptron.state.AngleState;
 import com.xeiam.proprioceptron.state.LengthState;
 import com.xeiam.proprioceptron.state.PositionState;

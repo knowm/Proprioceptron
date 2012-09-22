@@ -1,6 +1,5 @@
 package com.xeiam.proprioceptron.actuators;
 
-import com.xeiam.proprioceptron.Actuator;
 import com.xeiam.proprioceptron.Vector;
 import com.xeiam.proprioceptron.states.AngularVelocityState;
 import com.xeiam.proprioceptron.states.DensityState;
@@ -8,8 +7,6 @@ import com.xeiam.proprioceptron.states.DirectionState;
 import com.xeiam.proprioceptron.states.LengthState;
 import com.xeiam.proprioceptron.states.PositionState;
 import com.xeiam.proprioceptron.states.TensionState;
-
-
 
 public class CentrifugalForceActuator implements Actuator {
 

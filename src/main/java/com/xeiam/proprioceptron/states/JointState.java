@@ -16,7 +16,6 @@
 package com.xeiam.proprioceptron.states;
 
 import com.xeiam.proprioceptron.FreeVar;
-import com.xeiam.proprioceptron.State;
 import com.xeiam.proprioceptron.VarType;
 import com.xeiam.proprioceptron.Vector;
 

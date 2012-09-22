@@ -18,7 +18,6 @@ package com.xeiam.proprioceptron.states;
 import java.util.ArrayList;
 
 import com.xeiam.proprioceptron.FreeVar;
-import com.xeiam.proprioceptron.State;
 /**
  * @author Zackkenyon
  * @create Sep 11, 2012 ArmState combines and extracts physically relevant combinations of free variables for actuators

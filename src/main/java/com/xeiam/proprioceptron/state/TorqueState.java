@@ -1,6 +1,7 @@
 package com.xeiam.proprioceptron.state;
 
 import com.xeiam.proprioceptron.FreeVar;
+import com.xeiam.proprioceptron.states.State;
 
 /**
  * TorqueState contains information about the linear acceleration of the joints perpendicular to the direction of the rod. counterclockwise is positive, units are newtons*meters.

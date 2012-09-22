@@ -1,4 +1,4 @@
-package com.xeiam.proprioceptron.actuator;
+package com.xeiam.proprioceptron.actuators;
 
 /**
  * @author zackkenyon

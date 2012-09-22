@@ -1,6 +1,7 @@
 package com.xeiam.proprioceptron.state;
 
 import com.xeiam.proprioceptron.FreeVar;
+import com.xeiam.proprioceptron.states.State;
 
 public class DensityState implements State {
 

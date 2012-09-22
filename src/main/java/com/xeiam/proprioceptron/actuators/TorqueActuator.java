@@ -1,6 +1,5 @@
 package com.xeiam.proprioceptron.actuators;
 
-import com.xeiam.proprioceptron.Actuator;
 import com.xeiam.proprioceptron.Vector;
 import com.xeiam.proprioceptron.states.AngleState;
 import com.xeiam.proprioceptron.states.AngularVelocityState;
@@ -9,9 +8,6 @@ import com.xeiam.proprioceptron.states.DirectionState;
 import com.xeiam.proprioceptron.states.LengthState;
 import com.xeiam.proprioceptron.states.TensionState;
 import com.xeiam.proprioceptron.states.TorqueState;
-
-
-
 
 public class TorqueActuator implements Actuator {
 

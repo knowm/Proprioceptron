@@ -1,7 +1,6 @@
 package com.xeiam.proprioceptron.states;
 
 import com.xeiam.proprioceptron.FreeVar;
-import com.xeiam.proprioceptron.State;
 
 public class LengthState implements State {
 

@@ -1,5 +1,6 @@
 package com.xeiam.proprioceptron.actuator;
 
+import com.xeiam.proprioceptron.actuators.Actuator;
 import com.xeiam.proprioceptron.state.AngleState;
 import com.xeiam.proprioceptron.state.AngularVelocityState;
 

@@ -28,8 +28,8 @@ import com.xeiam.proprioceptron.actuator.DirectionActuator;
 import com.xeiam.proprioceptron.actuator.PositionActuator;
 import com.xeiam.proprioceptron.actuator.TensionActuator;
 import com.xeiam.proprioceptron.actuator.TorqueActuator;
-import com.xeiam.proprioceptron.state.Arm;
 import com.xeiam.proprioceptron.state.Joint;
+import com.xeiam.proprioceptron.states.Arm;
 
 /**
  * @author Zackkenyon

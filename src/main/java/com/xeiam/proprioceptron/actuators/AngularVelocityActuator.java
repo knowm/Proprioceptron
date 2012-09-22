@@ -1,10 +1,7 @@
 package com.xeiam.proprioceptron.actuators;
 
-import com.xeiam.proprioceptron.Actuator;
 import com.xeiam.proprioceptron.states.AngleState;
 import com.xeiam.proprioceptron.states.AngularVelocityState;
-
-
 
 public class AngularVelocityActuator implements Actuator {
 

@@ -23,7 +23,7 @@ import java.awt.Toolkit;
 import javax.swing.JPanel;
 
 import com.xeiam.proprioceptron.ActuationSequence;
-import com.xeiam.proprioceptron.state.Arm;
+import com.xeiam.proprioceptron.states.Arm;
 
 /**
  * @author timmolter

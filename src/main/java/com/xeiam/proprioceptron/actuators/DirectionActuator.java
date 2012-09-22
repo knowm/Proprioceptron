@@ -1,12 +1,9 @@
 package com.xeiam.proprioceptron.actuators;
 
-import com.xeiam.proprioceptron.Actuator;
 import com.xeiam.proprioceptron.Vector;
 import com.xeiam.proprioceptron.states.AngleState;
 import com.xeiam.proprioceptron.states.DirectionState;
 import com.xeiam.proprioceptron.states.LengthState;
-
-
 
 public class DirectionActuator implements Actuator {
 
@@ -33,5 +30,5 @@ public class DirectionActuator implements Actuator {
     }
 
   }
-  
+
 }

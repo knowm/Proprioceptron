@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron.state;
+package com.xeiam.proprioceptron.states;
 
 import com.xeiam.proprioceptron.FreeVar;
 
