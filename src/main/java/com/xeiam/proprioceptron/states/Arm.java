@@ -18,23 +18,12 @@ package com.xeiam.proprioceptron.states;
 import java.util.List;
 
 import com.xeiam.proprioceptron.FreeVar;
-import com.xeiam.proprioceptron.actuator.AngularVelocityActuator;
-import com.xeiam.proprioceptron.actuator.CentrifugalForceActuator;
-import com.xeiam.proprioceptron.actuator.DirectionActuator;
-import com.xeiam.proprioceptron.actuator.PositionActuator;
-import com.xeiam.proprioceptron.actuator.TensionActuator;
-import com.xeiam.proprioceptron.actuator.TorqueActuator;
-import com.xeiam.proprioceptron.state.AngleState;
-import com.xeiam.proprioceptron.state.AngularVelocityState;
-import com.xeiam.proprioceptron.state.DensityState;
-import com.xeiam.proprioceptron.state.DirectionState;
-import com.xeiam.proprioceptron.state.DistanceFromGoalState;
-import com.xeiam.proprioceptron.state.EnergyState;
-import com.xeiam.proprioceptron.state.Joint;
-import com.xeiam.proprioceptron.state.LengthState;
-import com.xeiam.proprioceptron.state.PositionState;
-import com.xeiam.proprioceptron.state.TensionState;
-import com.xeiam.proprioceptron.state.TorqueState;
+import com.xeiam.proprioceptron.actuators.AngularVelocityActuator;
+import com.xeiam.proprioceptron.actuators.CentrifugalForceActuator;
+import com.xeiam.proprioceptron.actuators.DirectionActuator;
+import com.xeiam.proprioceptron.actuators.PositionActuator;
+import com.xeiam.proprioceptron.actuators.TensionActuator;
+import com.xeiam.proprioceptron.actuators.TorqueActuator;
 
 /**
  * ArmState combines and extracts physically relevant combinations of free variables for actuators

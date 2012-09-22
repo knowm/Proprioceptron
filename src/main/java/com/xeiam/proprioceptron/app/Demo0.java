@@ -22,8 +22,8 @@ import com.xeiam.proprioceptron.ActuationCommand;
 import com.xeiam.proprioceptron.ActuationSequence;
 import com.xeiam.proprioceptron.app.animate.RoboticArmFrame;
 import com.xeiam.proprioceptron.app.animate.RoboticArmPanel;
-import com.xeiam.proprioceptron.state.Joint;
 import com.xeiam.proprioceptron.states.Arm;
+import com.xeiam.proprioceptron.states.Joint;
 
 /**
  * Demo0 shows a predetermined (hard-coded) sequence of movements of an arm with a single joint. It should look like a fly swatter hitting a surface and springing back up into neutral position

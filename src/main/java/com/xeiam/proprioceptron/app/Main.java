@@ -22,14 +22,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.xeiam.proprioceptron.FreeVar;
-import com.xeiam.proprioceptron.actuator.AngularVelocityActuator;
-import com.xeiam.proprioceptron.actuator.CentrifugalForceActuator;
-import com.xeiam.proprioceptron.actuator.DirectionActuator;
-import com.xeiam.proprioceptron.actuator.PositionActuator;
-import com.xeiam.proprioceptron.actuator.TensionActuator;
-import com.xeiam.proprioceptron.actuator.TorqueActuator;
-import com.xeiam.proprioceptron.state.Joint;
+import com.xeiam.proprioceptron.actuators.AngularVelocityActuator;
+import com.xeiam.proprioceptron.actuators.CentrifugalForceActuator;
+import com.xeiam.proprioceptron.actuators.DirectionActuator;
+import com.xeiam.proprioceptron.actuators.PositionActuator;
+import com.xeiam.proprioceptron.actuators.TensionActuator;
+import com.xeiam.proprioceptron.actuators.TorqueActuator;
 import com.xeiam.proprioceptron.states.Arm;
+import com.xeiam.proprioceptron.states.Joint;
 
 /**
  * @author Zackkenyon

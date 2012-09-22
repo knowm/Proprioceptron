@@ -5,7 +5,7 @@ import com.xeiam.proprioceptron.FreeVar;
 public class TensionState implements State {
 
   public FreeVar[] tensions;
-  String[] doc;
+  public String[] doc;
 
   @Override
   public FreeVar[] toVector() {

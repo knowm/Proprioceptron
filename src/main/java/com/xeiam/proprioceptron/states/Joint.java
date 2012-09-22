@@ -23,26 +23,33 @@ import com.xeiam.proprioceptron.Vector;
  * @author zackkenyon
  * @create Aug 21, 2012
  */
-public class JointState implements State {
+public class Joint implements State {
 
   // There will be another class of variables called fixed variables.
-  protected static int DEGREES_OF_FREEDOM = 10;// listed below
+  protected static int DEGREES_OF_FREEDOM = 10; // listed below
   public FreeVar angle;
   public FreeVar angularvelocity;
   public FreeVar torque;
   public FreeVar position;
   public FreeVar tension;
-  public FreeVar distance;// from goal
-  public FreeVar energy;// will count total energy used
+  public FreeVar distance; // from goal
+  public FreeVar energy; // will count total energy used
   public FreeVar direction;
 
   // this section is for joint descriptors, they are constant, and therefore do not contribute to the dimension of the state.
-  public FreeVar length;// determines relationship between angle and posx, posy.
-  public FreeVar density;// assumed to be constant throughout length of joint, dummy variable in almost every actuator, seems wrong to ignore it.
-  JointState in;// determines position
-  JointState out;
+  public FreeVar length; // determines relationship between angle and posx, posy.
+  public FreeVar density; // assumed to be constant throughout length of joint, dummy variable in almost every actuator, seems wrong to ignore it.
+  Joint in; // determines position
+  Joint out;
 
-  public JointState(double d, double e, JointState in) {
+  /**
+   * Constructor
+   * 
+   * @param d
+   * @param e
+   * @param in
+   */
+  public Joint(double d, double e, Joint in) {
 
     // this section initializes the type of the free variables.
     this.angle = new FreeVar(0, VarType.ANGLE);
@@ -64,12 +71,18 @@ public class JointState implements State {
     }
   }
 
-  public void initialize(double d, double e) {// the system is completely determined at this point, and the actuator chain will handle the
+  /**
+   * the system is completely determined at this point, and the actuator chain will handle therest of the initialization logic
+   * 
+   * @param d
+   * @param e
+   */
+  public void initialize(double d, double e) {
 
-    // rest of the initialization logic.
     this.angularvelocity.setVar(d);
     this.angle.setVar(e);
   }
+
   @Override
   public FreeVar[] toVector() {
 
