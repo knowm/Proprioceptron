@@ -16,18 +16,41 @@
 package com.xeiam.proprioceptron;
 
 /**
- * States are containers for free variables of a program. They may also specify constant values which may include states. They are also the format of the domain and the codomain of any actuator.
- * 
- * @author zackkenyon
- * @create Sep 11, 2012
+ * @author timmolter
+ * @create Sep 20, 2012
+ * @immutable
  */
-public interface State {
+public final class ActuationCommand {
 
-  // a way of combining the free variables of a program.
-  public String[] vectorDoc();
+  private final String servoId;
+  private final int angle;
 
-  public FreeVar[] toVector();
+  /**
+   * Constructor
+   * 
+   * @param servoId
+   * @param position
+   */
+  public ActuationCommand(String servoId, int position) {
 
-  public void addVars(FreeVar[] vars);
+    this.servoId = servoId;
+    this.angle = position;
+  }
+
+  public String getServoId() {
+
+    return servoId;
+  }
+
+  public int getAngle() {
+
+    return angle;
+  }
+
+  @Override
+  public String toString() {
+
+    return "ActuationCommand [servoId=" + servoId + ", position=" + angle + "]";
+  }
 
 }
