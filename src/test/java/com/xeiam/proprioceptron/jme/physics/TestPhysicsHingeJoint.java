@@ -30,12 +30,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.xeiam.proprioceptron.jme;
+package com.xeiam.proprioceptron.jme.physics;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.input.KeyInput;
@@ -97,7 +98,8 @@ public class TestPhysicsHingeJoint extends SimpleApplication implements AnalogLi
     rootNode.attachChild(holderNode);
     getPhysicsSpace().add(holderNode);
 
-    Node hammerNode = PhysicsTestHelper.createPhysicsTestNode(assetManager, new BoxCollisionShape(new Vector3f(.3f, .3f, .3f)), 1);
+    // Node hammerNode = PhysicsTestHelper.createPhysicsTestNode(assetManager, new BoxCollisionShape(new Vector3f(.3f, .3f, .3f)), 1);
+    Node hammerNode = PhysicsTestHelper.createPhysicsTestNode(assetManager, new SphereCollisionShape(.3f), 1);
     hammerNode.getControl(RigidBodyControl.class).setPhysicsLocation(new Vector3f(0f, -1, 0f));
     rootNode.attachChild(hammerNode);
     getPhysicsSpace().add(hammerNode);

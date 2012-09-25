@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron.jme;
+package com.xeiam.proprioceptron.jme.hello;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
