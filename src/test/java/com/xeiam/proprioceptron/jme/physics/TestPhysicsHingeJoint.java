@@ -59,13 +59,13 @@ public class TestPhysicsHingeJoint extends SimpleApplication implements AnalogLi
   @Override
   public void onAnalog(String binding, float value, float tpf) {
 
-    // if (binding.equals("Left")) {
-    // joint.enableMotor(true, 1, .1f);
-    // } else if (binding.equals("Right")) {
-    // joint.enableMotor(true, -1, .1f);
-    // } else if (binding.equals("Swing")) {
-    // joint.enableMotor(false, 0, 0);
-    // }
+    if (binding.equals("Left")) {
+      joint.enableMotor(true, 1, .1f);
+    } else if (binding.equals("Right")) {
+      joint.enableMotor(true, -1, .1f);
+    } else if (binding.equals("Swing")) {
+      joint.enableMotor(false, 0, 0);
+    }
   }
 
   @Override
@@ -74,7 +74,7 @@ public class TestPhysicsHingeJoint extends SimpleApplication implements AnalogLi
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-    // setupKeys();
+    setupKeys();
     setupJoint();
   }
 

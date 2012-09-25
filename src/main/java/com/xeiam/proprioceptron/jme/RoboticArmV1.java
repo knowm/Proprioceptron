@@ -16,30 +16,27 @@
 package com.xeiam.proprioceptron.jme;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
-import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Node;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.shape.Box;
 
 /**
  * @author timmolter
  * @create Sep 25, 2012
  */
-public class RoboticArmV0 extends SimpleApplication implements AnalogListener {
+public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
   /** BulletAppState allows using bullet physics in an Application. */
   private BulletAppState bulletAppState;
 
-  private HingeJoint hingeJoint;
+  Geometry blue;
 
   @Override
   public void simpleInitApp() {
@@ -52,8 +49,18 @@ public class RoboticArmV0 extends SimpleApplication implements AnalogListener {
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
     RoboticArmUtils.createWorld(rootNode, assetManager, bulletAppState.getPhysicsSpace());
+
+    /** create a blue box at coordinates (1,-1,1) */
+    Box box1 = new Box(new Vector3f(0, 1, 0), .1f, 1, .1f);
+    blue = new Geometry("Box", box1);
+    Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    mat1.setColor("Color", ColorRGBA.Blue);
+    blue.setMaterial(mat1);
+    blue.move(0, 0, 0);
+
+    rootNode.attachChild(blue);
+
     setupKeys();
-    setupJoint();
   }
 
   private void setupKeys() {
@@ -63,46 +70,13 @@ public class RoboticArmV0 extends SimpleApplication implements AnalogListener {
     inputManager.addListener(this, "Left", "Right");
   }
 
-  private void setupJoint() {
-
-    Node baseNode = createPhysicsNode(assetManager, new BoxCollisionShape(new Vector3f(.3f, .2f, .3f)), 0);
-    baseNode.getControl(RigidBodyControl.class).setPhysicsLocation(Vector3f.ZERO);
-    rootNode.attachChild(baseNode);
-    bulletAppState.getPhysicsSpace().add(baseNode);
-
-    // Node hammerNode = PhysicsTestHelper.createPhysicsTestNode(assetManager, new BoxCollisionShape(new Vector3f(.3f, .3f, .3f)), 1);
-    Node hammerNode = createPhysicsNode(assetManager, new SphereCollisionShape(.2f), 1);
-    hammerNode.getControl(RigidBodyControl.class).setPhysicsLocation(new Vector3f(0f, 2f, 0f));
-    rootNode.attachChild(hammerNode);
-    bulletAppState.getPhysicsSpace().add(hammerNode);
-
-    hingeJoint = new HingeJoint(baseNode.getControl(RigidBodyControl.class), hammerNode.getControl(RigidBodyControl.class), Vector3f.ZERO, new Vector3f(0f, -2f, 0f), Vector3f.UNIT_Z, Vector3f.UNIT_Z);
-    bulletAppState.getPhysicsSpace().add(hingeJoint);
-  }
-
-  /**
-   * creates an empty node with a RigidBodyControl
-   * 
-   * @param manager
-   * @param shape
-   * @param mass
-   * @return
-   */
-  private Node createPhysicsNode(AssetManager manager, CollisionShape shape, float mass) {
-
-    Node node = new Node("PhysicsNode");
-    RigidBodyControl control = new RigidBodyControl(shape, mass);
-    node.addControl(control);
-    return node;
-  }
-
   @Override
   public void onAnalog(String binding, float value, float tpf) {
 
     if (binding.equals("Left")) {
-      hingeJoint.enableMotor(true, 1, .1f);
+      blue.rotate(0, 0, value * speed);
     } else if (binding.equals("Right")) {
-      hingeJoint.enableMotor(true, -1, .1f);
+      blue.rotate(0, 0, -1 * value * speed);
     }
   }
 
@@ -116,7 +90,7 @@ public class RoboticArmV0 extends SimpleApplication implements AnalogListener {
 
   public static void main(String[] args) {
 
-    RoboticArmV0 app = new RoboticArmV0();
+    RoboticArmV1 app = new RoboticArmV1();
     app.start();
   }
 
