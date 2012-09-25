@@ -37,7 +37,7 @@ public class RoboticArmV0 extends SimpleApplication {
 
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
-    RoboticArmUtils.createPhysicsTestWorld(rootNode, assetManager, bulletAppState.getPhysicsSpace());
+    RoboticArmUtils.createWorld(rootNode, assetManager, bulletAppState.getPhysicsSpace());
 
   }
 

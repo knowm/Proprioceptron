@@ -31,7 +31,7 @@ import com.jme3.scene.shape.Box;
  */
 public class RoboticArmUtils {
 
-  public static void createPhysicsTestWorld(Node rootNode, AssetManager assetManager, PhysicsSpace space) {
+  public static void createWorld(Node rootNode, AssetManager assetManager, PhysicsSpace space) {
 
     AmbientLight light = new AmbientLight();
     light.setColor(ColorRGBA.LightGray);
