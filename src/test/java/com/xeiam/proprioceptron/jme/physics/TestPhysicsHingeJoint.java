@@ -56,24 +56,16 @@ public class TestPhysicsHingeJoint extends SimpleApplication implements AnalogLi
     app.start();
   }
 
-  private void setupKeys() {
-
-    inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_H));
-    inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
-    inputManager.addMapping("Swing", new KeyTrigger(KeyInput.KEY_SPACE));
-    inputManager.addListener(this, "Left", "Right", "Swing");
-  }
-
   @Override
   public void onAnalog(String binding, float value, float tpf) {
 
-    if (binding.equals("Left")) {
-      joint.enableMotor(true, 1, .1f);
-    } else if (binding.equals("Right")) {
-      joint.enableMotor(true, -1, .1f);
-    } else if (binding.equals("Swing")) {
-      joint.enableMotor(false, 0, 0);
-    }
+    // if (binding.equals("Left")) {
+    // joint.enableMotor(true, 1, .1f);
+    // } else if (binding.equals("Right")) {
+    // joint.enableMotor(true, -1, .1f);
+    // } else if (binding.equals("Swing")) {
+    // joint.enableMotor(false, 0, 0);
+    // }
   }
 
   @Override
@@ -82,13 +74,16 @@ public class TestPhysicsHingeJoint extends SimpleApplication implements AnalogLi
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-    setupKeys();
+    // setupKeys();
     setupJoint();
   }
 
-  private PhysicsSpace getPhysicsSpace() {
+  private void setupKeys() {
 
-    return bulletAppState.getPhysicsSpace();
+    inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_H));
+    inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
+    inputManager.addMapping("Swing", new KeyTrigger(KeyInput.KEY_SPACE));
+    inputManager.addListener(this, "Left", "Right", "Swing");
   }
 
   public void setupJoint() {
@@ -106,6 +101,11 @@ public class TestPhysicsHingeJoint extends SimpleApplication implements AnalogLi
 
     joint = new HingeJoint(holderNode.getControl(RigidBodyControl.class), hammerNode.getControl(RigidBodyControl.class), Vector3f.ZERO, new Vector3f(0f, -1, 0f), Vector3f.UNIT_Z, Vector3f.UNIT_Z);
     getPhysicsSpace().add(joint);
+  }
+
+  private PhysicsSpace getPhysicsSpace() {
+
+    return bulletAppState.getPhysicsSpace();
   }
 
   @Override

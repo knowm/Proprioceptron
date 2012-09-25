@@ -31,7 +31,7 @@ import com.jme3.scene.shape.Box;
  */
 public class RoboticArmUtils {
 
-  public static void createWorld(Node rootNode, AssetManager assetManager, PhysicsSpace space) {
+  public static void createWorld(Node rootNode, AssetManager assetManager, PhysicsSpace physicsSpace) {
 
     AmbientLight light = new AmbientLight();
     light.setColor(ColorRGBA.LightGray);
@@ -40,13 +40,13 @@ public class RoboticArmUtils {
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
 
-    Box floorBox = new Box(10, 0.25f, 10);
+    Box floorBox = new Box(10, 1f, 10);
     Geometry floorGeometry = new Geometry("Floor", floorBox);
     floorGeometry.setMaterial(material);
-    floorGeometry.setLocalTranslation(0, -5, 0);
+    floorGeometry.setLocalTranslation(0, -1, 0);
     floorGeometry.addControl(new RigidBodyControl(0));
     rootNode.attachChild(floorGeometry);
-    space.add(floorGeometry);
+    physicsSpace.add(floorGeometry);
 
   }
 
