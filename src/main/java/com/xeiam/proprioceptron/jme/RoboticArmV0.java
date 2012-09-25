@@ -17,6 +17,8 @@ package com.xeiam.proprioceptron.jme;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 
 /**
  * @author timmolter
@@ -30,9 +32,20 @@ public class RoboticArmV0 extends SimpleApplication {
   @Override
   public void simpleInitApp() {
 
+    cam.setLocation(new Vector3f(0f, 0f, 15f));
+    cam.setRotation(new Quaternion(0f, 1f, -.13f, 0f));
+
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
     RoboticArmUtils.createPhysicsTestWorld(rootNode, assetManager, bulletAppState.getPhysicsSpace());
+
+  }
+
+  @Override
+  public void simpleUpdate(float tpf) {
+
+    System.out.println(cam.getLocation());
+    System.out.println(cam.getRotation());
 
   }
 
