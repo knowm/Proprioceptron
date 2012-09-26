@@ -27,6 +27,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * @author timmolter
@@ -34,41 +35,54 @@ import com.jme3.scene.shape.Sphere;
  */
 public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
-  private final static int NUM_JOINTS = 3;
+  private int numJoints;
 
-  Node[] pivots;
-  Geometry[] sections;
-  Geometry[] joints;
-  Geometry head;
+  private Node[] pivots;
+  private Geometry[] sections;
+  private Geometry[] joints;
+  private Geometry head;
+
+  private Geometry target;
 
   /**
    * Constructor
    */
-  public RoboticArmV1() {
+  public RoboticArmV1(int numJoints) {
+
+    this.numJoints = numJoints;
 
   }
 
   @Override
   public void simpleInitApp() {
 
-    pivots = new Node[NUM_JOINTS];
-    sections = new Geometry[NUM_JOINTS];
-    joints = new Geometry[NUM_JOINTS];
+    pivots = new Node[numJoints];
+    sections = new Geometry[numJoints];
+    joints = new Geometry[numJoints];
 
-    // Material for Box
+    // Material for Robotic Arm
     Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-    mat.setFloat("m_Shininess", 0.1f);
+    mat.setFloat("m_Shininess", .5f);
     mat.setBoolean("m_UseMaterialColors", true);
-    mat.setColor("m_Ambient", ColorRGBA.LightGray);
+    mat.setColor("m_Ambient", ColorRGBA.White.mult(1.3f));
     mat.setColor("m_Diffuse", new ColorRGBA(.5f, .5f, .5f, 1f));
     mat.setColor("m_Specular", ColorRGBA.White);
-    mat.setReceivesShadows(true);
+
+    Material matTarget = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+    matTarget.setTexture("DiffuseMap", assetManager.loadTexture("Textures/Terrain/Pond/Pond.jpg"));
+    matTarget.setTexture("NormalMap", assetManager.loadTexture("Textures/Terrain/Pond/Pond_normal.png"));
+    matTarget.setBoolean("UseMaterialColors", true);
+    matTarget.setColor("Specular", ColorRGBA.White);
+    matTarget.setColor("Diffuse", ColorRGBA.White);
+    matTarget.setFloat("Shininess", 5f); // [1,128]
 
     // elongated box for arm sections
     Box box = new Box(new Vector3f(0, 1, 0), .1f, 1, .1f);
     Sphere sphereSmall = new Sphere(20, 20, .2f);
+    sphereSmall.setTextureMode(Sphere.TextureMode.Projected);
+    TangentBinormalGenerator.generate(sphereSmall);
 
-    for (int i = 0; i < NUM_JOINTS; i++) {
+    for (int i = 0; i < numJoints; i++) {
 
       // Create pivots
       Node pivot = new Node("pivot");
@@ -88,19 +102,33 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
     // Create Head
     Sphere sphereBig = new Sphere(20, 20, .3f);
+    sphereBig.setTextureMode(Sphere.TextureMode.Projected);
+    TangentBinormalGenerator.generate(sphereBig);
     head = new Geometry("head", sphereBig);
     head.setMaterial(mat);
 
-    cam.setLocation(new Vector3f(0f, 5f, 15f));
-    cam.setRotation(new Quaternion(0f, 1f, -.13f, 0f));
+    // Create Target
+    Sphere sphereTarget = new Sphere(30, 30, .8f);
+    sphereTarget.setTextureMode(Sphere.TextureMode.Projected);
+    TangentBinormalGenerator.generate(sphereTarget);
+    target = new Geometry("head", sphereTarget);
+    target.setMaterial(matTarget);
+
+    // Change Camera position
+    cam.setLocation(new Vector3f(0f, 5f, 17f));
+    cam.setRotation(new Quaternion(0f, 1f, -.08f, 0f));
 
     // Create World
     RoboticArmUtils.createWorld(rootNode, assetManager);
 
+    // Place target
+    target.move(2.03f * numJoints, 2.03f * numJoints, 0);
+    rootNode.attachChild(target);
+
     // Create robotic Arm
     rootNode.attachChild(pivots[0]);
 
-    for (int i = 0; i < NUM_JOINTS; i++) {
+    for (int i = 0; i < numJoints; i++) {
 
       if (i > 0) {
         pivots[i].move(0, 2, 0);
@@ -108,15 +136,18 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
       pivots[i].attachChild(sections[i]);
       pivots[i].attachChild(joints[i]);
-      if (i < NUM_JOINTS - 1) {
+      if (i < numJoints - 1) {
         pivots[i].attachChild(pivots[i + 1]);
       }
     }
 
     head.move(0, 2, 0);
-    pivots[NUM_JOINTS - 1].attachChild(head);
+    pivots[numJoints - 1].attachChild(head);
 
     setupKeys();
+
+    setDisplayStatView(false);
+    setDisplayFps(false);
   }
 
   private void setupKeys() {
@@ -158,7 +189,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
   public static void main(String[] args) {
 
-    RoboticArmV1 app = new RoboticArmV1();
+    RoboticArmV1 app = new RoboticArmV1(3);
     app.setShowSettings(false);
     app.start();
   }

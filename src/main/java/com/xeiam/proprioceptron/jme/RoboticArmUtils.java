@@ -17,7 +17,7 @@ package com.xeiam.proprioceptron.jme;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.light.PointLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -34,14 +34,25 @@ public class RoboticArmUtils {
   public static void createWorld(Node rootNode, AssetManager assetManager) {
 
     // AmbientLight light = new AmbientLight();
-    // light.setColor(ColorRGBA.White);
+    // light.setColor(ColorRGBA.White.mult(1.3f));
     // rootNode.addLight(light);
 
-    PointLight pl = new PointLight();
-    pl.setPosition(new Vector3f(-2, 4, 3));
-    pl.setColor(new ColorRGBA(1f, 1f, 0.8f, 0.4f));
-    pl.setRadius(0f);
-    rootNode.addLight(pl);
+    // PointLight pl = new PointLight();
+    // pl.setPosition(new Vector3f(-2, 4, 3));
+    // pl.setColor(new ColorRGBA(1f, 1f, 0.8f, 0.4f));
+    // pl.setRadius(0f);
+    // rootNode.addLight(pl);
+
+    // DirectionalLight sun = new DirectionalLight();
+    // sun.setColor(ColorRGBA.White);
+    // sun.setDirection(new Vector3f(0, -.5f, -.5f).normalizeLocal());
+    // rootNode.addLight(sun);
+
+    /** Must add a light to make the lit object visible! */
+    DirectionalLight sun = new DirectionalLight();
+    sun.setDirection(new Vector3f(1, 0, -2).normalizeLocal());
+    sun.setColor(ColorRGBA.White);
+    rootNode.addLight(sun);
 
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
