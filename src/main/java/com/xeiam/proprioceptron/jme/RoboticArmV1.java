@@ -34,27 +34,28 @@ import com.jme3.scene.shape.Sphere;
  */
 public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
-  Geometry section0;
-  Node pivot0;
+  private final static int NUM_JOINTS = 3;
 
-  Geometry section1;
-  Node pivot1;
+  Node[] pivots;
+  Geometry[] sections;
+  Geometry[] joints;
+  Geometry head;
+
+  /**
+   * Constructor
+   */
+  public RoboticArmV1() {
+
+  }
 
   @Override
   public void simpleInitApp() {
 
-    cam.setLocation(new Vector3f(0f, 5f, 15f));
-    cam.setRotation(new Quaternion(0f, 1f, -.13f, 0f));
+    pivots = new Node[NUM_JOINTS];
+    sections = new Geometry[NUM_JOINTS];
+    joints = new Geometry[NUM_JOINTS];
 
-    // bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-
-    RoboticArmUtils.createWorld(rootNode, assetManager);
-
-    Box box = new Box(new Vector3f(0, 1, 0), .1f, 1, .1f);
-
-    // ///////////////////////////////////
-
-    section0 = new Geometry("Box", box);
+    // Material for Box
     Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
     mat.setFloat("m_Shininess", 0.1f);
     mat.setBoolean("m_UseMaterialColors", true);
@@ -62,42 +63,58 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     mat.setColor("m_Diffuse", new ColorRGBA(.5f, .5f, .5f, 1f));
     mat.setColor("m_Specular", ColorRGBA.White);
     mat.setReceivesShadows(true);
-    section0.setMaterial(mat);
 
+    // elongated box for arm sections
+    Box box = new Box(new Vector3f(0, 1, 0), .1f, 1, .1f);
     Sphere sphereSmall = new Sphere(20, 20, .2f);
-    Geometry sphere0 = new Geometry("joint", sphereSmall);
-    sphere0.setMaterial(mat);
 
-    pivot0 = new Node("pivot");
+    for (int i = 0; i < NUM_JOINTS; i++) {
 
-    // ///////////////////////////////////
+      // Create pivots
+      Node pivot = new Node("pivot");
+      pivots[i] = pivot;
 
-    section1 = new Geometry("Box", box);
-    section1.setMaterial(mat);
+      // Create sections
+      Geometry section = new Geometry("Box", box);
+      section.setMaterial(mat);
+      sections[i] = section;
 
-    Geometry sphere1 = new Geometry("joint", sphereSmall);
-    sphere1.setMaterial(mat);
+      // create joints
+      Geometry sphere = new Geometry("joint", sphereSmall);
+      sphere.setMaterial(mat);
+      joints[i] = sphere;
 
-    pivot1 = new Node("pivot");
+    }
 
+    // Create Head
     Sphere sphereBig = new Sphere(20, 20, .3f);
-    Geometry head = new Geometry("head", sphereBig);
+    head = new Geometry("head", sphereBig);
     head.setMaterial(mat);
 
-    // ///////////////////////////////////
+    cam.setLocation(new Vector3f(0f, 5f, 15f));
+    cam.setRotation(new Quaternion(0f, 1f, -.13f, 0f));
 
-    rootNode.attachChild(pivot0);
+    // Create World
+    RoboticArmUtils.createWorld(rootNode, assetManager);
 
-    pivot0.attachChild(section0);
-    pivot0.attachChild(sphere0);
-    pivot0.attachChild(pivot1);
+    // Create robotic Arm
+    rootNode.attachChild(pivots[0]);
 
-    pivot1.move(0, 2, 0);
-    pivot1.attachChild(section1);
-    pivot1.attachChild(sphere1);
+    for (int i = 0; i < NUM_JOINTS; i++) {
+
+      if (i > 0) {
+        pivots[i].move(0, 2, 0);
+      }
+
+      pivots[i].attachChild(sections[i]);
+      pivots[i].attachChild(joints[i]);
+      if (i < NUM_JOINTS - 1) {
+        pivots[i].attachChild(pivots[i + 1]);
+      }
+    }
 
     head.move(0, 2, 0);
-    pivot1.attachChild(head);
+    pivots[NUM_JOINTS - 1].attachChild(head);
 
     setupKeys();
   }
@@ -108,20 +125,26 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     inputManager.addMapping("Right0", new KeyTrigger(KeyInput.KEY_P));
     inputManager.addMapping("Left1", new KeyTrigger(KeyInput.KEY_K));
     inputManager.addMapping("Right1", new KeyTrigger(KeyInput.KEY_O));
-    inputManager.addListener(this, "Left0", "Right0", "Left1", "Right1");
+    inputManager.addMapping("Left2", new KeyTrigger(KeyInput.KEY_J));
+    inputManager.addMapping("Right2", new KeyTrigger(KeyInput.KEY_I));
+    inputManager.addListener(this, "Left0", "Right0", "Left1", "Right1", "Left2", "Right2");
   }
 
   @Override
   public void onAnalog(String binding, float value, float tpf) {
 
     if (binding.equals("Left0")) {
-      pivot0.rotate(0, 0, value * speed);
+      pivots[0].rotate(0, 0, value * speed);
     } else if (binding.equals("Right0")) {
-      pivot0.rotate(0, 0, -1 * value * speed);
+      pivots[0].rotate(0, 0, -1 * value * speed);
     } else if (binding.equals("Left1")) {
-      pivot1.rotate(0, 0, value * speed);
+      pivots[1].rotate(0, 0, value * speed);
     } else if (binding.equals("Right1")) {
-      pivot1.rotate(0, 0, -1 * value * speed);
+      pivots[1].rotate(0, 0, -1 * value * speed);
+    } else if (binding.equals("Left2")) {
+      pivots[2].rotate(0, 0, value * speed);
+    } else if (binding.equals("Right2")) {
+      pivots[2].rotate(0, 0, -1 * value * speed);
     }
   }
 
