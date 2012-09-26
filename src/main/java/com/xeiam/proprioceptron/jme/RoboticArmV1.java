@@ -16,7 +16,6 @@
 package com.xeiam.proprioceptron.jme;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.bullet.BulletAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -27,15 +26,13 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
 
 /**
  * @author timmolter
  * @create Sep 25, 2012
  */
 public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
-
-  /** BulletAppState allows using bullet physics in an Application. */
-  private BulletAppState bulletAppState;
 
   Geometry section0;
   Node pivot0;
@@ -49,44 +46,58 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     cam.setLocation(new Vector3f(0f, 5f, 15f));
     cam.setRotation(new Quaternion(0f, 1f, -.13f, 0f));
 
-    bulletAppState = new BulletAppState();
-    stateManager.attach(bulletAppState);
-    bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+    // bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
-    RoboticArmUtils.createWorld(rootNode, assetManager, bulletAppState.getPhysicsSpace());
+    RoboticArmUtils.createWorld(rootNode, assetManager);
 
     Box box = new Box(new Vector3f(0, 1, 0), .1f, 1, .1f);
 
     // ///////////////////////////////////
 
     section0 = new Geometry("Box", box);
-    Material mat0 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    mat0.setColor("Color", ColorRGBA.Blue);
-    section0.setMaterial(mat0);
+    Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+    mat.setFloat("m_Shininess", 0.1f);
+    mat.setBoolean("m_UseMaterialColors", true);
+    mat.setColor("m_Ambient", ColorRGBA.LightGray);
+    mat.setColor("m_Diffuse", new ColorRGBA(.5f, .5f, .5f, 1f));
+    mat.setColor("m_Specular", ColorRGBA.White);
+    mat.setReceivesShadows(true);
+    section0.setMaterial(mat);
+
+    Sphere sphereSmall = new Sphere(20, 20, .2f);
+    Geometry sphere0 = new Geometry("joint", sphereSmall);
+    sphere0.setMaterial(mat);
 
     pivot0 = new Node("pivot");
 
     // ///////////////////////////////////
 
     section1 = new Geometry("Box", box);
-    Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    mat1.setColor("Color", ColorRGBA.Green);
-    section1.setMaterial(mat1);
+    section1.setMaterial(mat);
+
+    Geometry sphere1 = new Geometry("joint", sphereSmall);
+    sphere1.setMaterial(mat);
 
     pivot1 = new Node("pivot");
 
+    Sphere sphereBig = new Sphere(20, 20, .3f);
+    Geometry head = new Geometry("head", sphereBig);
+    head.setMaterial(mat);
+
     // ///////////////////////////////////
-    // pivot0.move(0, 0, 0);
-    //
-    // section1.move(0, 2, 0);
-    // pivot1.attachChild(section0);
 
     rootNode.attachChild(pivot0);
-    pivot1.move(0, 2, 0);
-    pivot0.attachChild(pivot1);
 
     pivot0.attachChild(section0);
+    pivot0.attachChild(sphere0);
+    pivot0.attachChild(pivot1);
+
+    pivot1.move(0, 2, 0);
     pivot1.attachChild(section1);
+    pivot1.attachChild(sphere1);
+
+    head.move(0, 2, 0);
+    pivot1.attachChild(head);
 
     setupKeys();
   }
@@ -125,6 +136,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
   public static void main(String[] args) {
 
     RoboticArmV1 app = new RoboticArmV1();
+    app.setShowSettings(false);
     app.start();
   }
 

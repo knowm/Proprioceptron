@@ -16,11 +16,11 @@
 package com.xeiam.proprioceptron.jme;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.light.AmbientLight;
+import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -31,22 +31,28 @@ import com.jme3.scene.shape.Box;
  */
 public class RoboticArmUtils {
 
-  public static void createWorld(Node rootNode, AssetManager assetManager, PhysicsSpace physicsSpace) {
+  public static void createWorld(Node rootNode, AssetManager assetManager) {
 
-    AmbientLight light = new AmbientLight();
-    light.setColor(ColorRGBA.LightGray);
-    rootNode.addLight(light);
+    // AmbientLight light = new AmbientLight();
+    // light.setColor(ColorRGBA.White);
+    // rootNode.addLight(light);
+
+    PointLight pl = new PointLight();
+    pl.setPosition(new Vector3f(-2, 4, 3));
+    pl.setColor(new ColorRGBA(1f, 1f, 0.8f, 0.4f));
+    pl.setRadius(0f);
+    rootNode.addLight(pl);
 
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
 
-    Box floorBox = new Box(10, 1f, 10);
+    Box floorBox = new Box(6, .5f, 6);
     Geometry floorGeometry = new Geometry("Floor", floorBox);
     floorGeometry.setMaterial(material);
-    floorGeometry.setLocalTranslation(0, -1, 0);
+    floorGeometry.setLocalTranslation(0, -.5f, 0);
     floorGeometry.addControl(new RigidBodyControl(0));
     rootNode.attachChild(floorGeometry);
-    physicsSpace.add(floorGeometry);
+    // physicsSpace.add(floorGeometry);
 
   }
 
