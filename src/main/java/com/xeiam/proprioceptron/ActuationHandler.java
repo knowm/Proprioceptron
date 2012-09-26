@@ -50,9 +50,14 @@ public class ActuationHandler {
     actuationCommands.add(actuationCommand);
   }
 
+  public void addActuator(Actuator actuator, boolean isstable) {
+
+    actuators.add(actuator, isstable);
+  }
+
   public void addActuator(Actuator actuator) {
 
-    actuators.add(actuator);
+    actuators.add(actuator, false);
   }
 
   public void initialize() {
@@ -73,7 +78,7 @@ public class ActuationHandler {
    */
   public Actuator getNextActuator() {
 
-    if (actuationCommands.peek()!=null)
+    if (actuationCommands.peek() != null && actuators.isStable())
       return actuationCommands.poll();
     else
       return actuators.next();
