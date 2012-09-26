@@ -59,8 +59,8 @@ public class Demo0 {
     ActuationCommand clockwiseaccelerate = new ActuationCommand(new State[] { arm.angularvels }, new int[][] { { 0 } }, new FreeVar[][] { { new FreeVar(.0000001, VarType.ANGULARVELOCITY) } });
     ActuationCommand counterclockwiseaccelerate = new ActuationCommand(new State[] { arm.angularvels }, new int[][] { { 0 } }, new FreeVar[][] { { new FreeVar(-.0000001, VarType.ANGULARVELOCITY) } });
     handler.addActuationCommand(counterclockwiseaccelerate);
-    handler.addActuator(arm.avactuator);
-    handler.addActuator(arm.pactuator);
+    handler.addActuator(arm.avactuator, false);
+    handler.addActuator(arm.pactuator, true);
 
     // 3. Create a camera
     Camera armCamera = new Camera(arm);
