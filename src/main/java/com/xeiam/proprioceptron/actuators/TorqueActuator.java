@@ -37,11 +37,11 @@ public class TorqueActuator implements Actuator {
   @Override
   public void actuate() {
 
-    for (int i = 0; i < lengths.lengths.length; i++) {
+    for (int i = 0; i < lengths.vars.length; i++) {
       // first we add the torque to the angular momentum
-      angularvelocities.angularvelocities[i].setVar(angularvelocities.angularvelocities[i].getVar() + torques.torques[i].getVar() / lengths.lengths[i].getVar() / densities.densities[i].getVar() / 2.0);
+      angularvelocities.vars[i].setVar(angularvelocities.vars[i].getVar() + torques.vars[i].getVar() / lengths.vars[i].getVar() / densities.vars[i].getVar() / 2.0);
       // then we construct a new tension vector to oppose the torque.
-      ((Vector) tensions.tensions[i].getDimensional()).plusequals(Vector.project(Vector.fromPolar(torques.torques[i].getVar(), angles.angles[i].getVar()), (Vector) directions.directions[i].getDimensional()));
+      ((Vector) tensions.vars[i].getDimensional()).plusequals(Vector.project(Vector.fromPolar(torques.vars[i].getVar(), angles.vars[i].getVar()), (Vector) directions.vars[i].getDimensional()));
       // note that this does not give us a closed form for angular velocity at time t, I have to do some more math to see if there is one at all, but this converges pretty quickly,
     }
   }

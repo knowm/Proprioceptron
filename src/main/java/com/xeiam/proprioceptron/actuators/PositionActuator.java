@@ -31,11 +31,11 @@ public class PositionActuator implements Actuator {
   @Override
   public void actuate() {
 
-    positionstate.positions[0].setDimensional(Vector.fromPolar(lengths.lengths[0].getVar(), angles.angles[0].getVar()));
+    positionstate.vars[0].setDimensional(Vector.fromPolar(lengths.vars[0].getVar(), angles.vars[0].getVar()));
 
-    for (int i = 1; i < angles.angles.length; i++) {
+    for (int i = 1; i < angles.vars.length; i++) {
       // not great for garbage collector. also quite lengthy. is a quick fix for a painting concurrency problem I was having.
-      positionstate.positions[i].setDimensional(Vector.plus((Vector) positionstate.positions[i - 1].getDimensional(), Vector.fromPolar(lengths.lengths[i].getVar(), angles.angles[i].getVar())));
+      positionstate.vars[i].setDimensional(Vector.plus((Vector) positionstate.vars[i - 1].getDimensional(), Vector.fromPolar(lengths.vars[i].getVar(), angles.vars[i].getVar())));
     }
 
   }

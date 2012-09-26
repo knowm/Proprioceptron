@@ -1,28 +1,11 @@
 package com.xeiam.proprioceptron.states;
 
-import com.xeiam.proprioceptron.FreeVar;
 
-public class DistanceFromGoalState implements State {
-
-  FreeVar[] distances;
+public class DistanceFromGoalState extends State {
 
   @Override
   public String[] vectorDoc() {
 
-    return new String[] { "distancesfromgoal * " + distances.length };
+    return new String[] { "distancesfromgoal * " + vars.length };
   }
-
-  @Override
-  public FreeVar[] toVector() {
-
-    return distances;
-  }
-
-  @Override
-  public void addVars(FreeVar[] vars) {
-
-    distances = vars;
-
-  }
-
 }

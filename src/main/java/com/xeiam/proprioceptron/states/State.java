@@ -23,13 +23,27 @@ import com.xeiam.proprioceptron.FreeVar;
  * @author zackkenyon
  * @create Sep 11, 2012
  */
-public interface State {
+public abstract class State {
 
-  // a way of combining the free variables of a program.
-  public String[] vectorDoc();
+  public FreeVar[] vars;
 
-  public FreeVar[] toVector();
+  public abstract String[] vectorDoc();
 
-  public void addVars(FreeVar[] vars);
+  public FreeVar[] getVars() {
+
+    return vars;
+  }
+
+  public void setVars(FreeVar[] vars) {
+
+    this.vars = vars;
+  }
+
+  public void addToVars(FreeVar[] vars) {
+
+    for (int i = 0; i < vars.length; i++) {
+      this.vars[i].plusequals(vars[i]);
+    }
+  }
 
 }

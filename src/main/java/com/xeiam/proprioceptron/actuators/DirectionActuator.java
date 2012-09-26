@@ -25,8 +25,8 @@ public class DirectionActuator implements Actuator {
   @Override
   public void actuate() {
 
-    for (int i = 0; i < angles.angles.length; i++) {
-      directions.directions[i].setDimensional(Vector.fromPolar(lengths.lengths[i].getVar(), angles.angles[i].getVar()));
+    for (int i = 0; i < angles.vars.length; i++) {
+      directions.vars[i].setDimensional(Vector.fromPolar(lengths.vars[i].getVar(), angles.vars[i].getVar()));
     }
 
   }

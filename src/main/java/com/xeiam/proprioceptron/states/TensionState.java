@@ -1,28 +1,11 @@
 package com.xeiam.proprioceptron.states;
 
-import com.xeiam.proprioceptron.FreeVar;
 
-public class TensionState implements State {
-
-  public FreeVar[] tensions;
-  public String[] doc;
-
-  @Override
-  public FreeVar[] toVector() {
-
-    return tensions;
-  }
+public class TensionState extends State {
 
   @Override
   public String[] vectorDoc() {
 
-    return doc;
-  }
-
-  @Override
-  public void addVars(FreeVar[] tensions) {
-
-    this.tensions = tensions;
-
+    return null;
   }
 }

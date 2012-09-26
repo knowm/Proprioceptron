@@ -15,42 +15,57 @@
  */
 package com.xeiam.proprioceptron;
 
+import com.xeiam.proprioceptron.actuators.Actuator;
+import com.xeiam.proprioceptron.states.State;
+
 /**
  * @author timmolter
  * @create Sep 20, 2012
  * @immutable
  */
-public final class ActuationCommand {
+public class ActuationCommand implements Actuator {
 
-  private final String servoId;
-  private final int angle;
+  // private final String servoId;
+  final State[] toActuate;
+  final int[][] indices;
+  final FreeVar[][] values;
 
+
+  // seems ram expensive
   /**
-   * Constructor
+   * Constructor- takes a list of states to update on, which elements of these states to update on, and what values to give them.
    * 
-   * @param servoId
-   * @param position
+   * @param toActuate
+   * @param indices
+   * @param values
    */
-  public ActuationCommand(String servoId, int position) {
+  public ActuationCommand(State[] toActuate, int[][] indices, FreeVar[][] values) {
 
-    this.servoId = servoId;
-    this.angle = position;
+    this.toActuate = toActuate;
+    this.indices = indices;
+    this.values = values;
+
   }
-
-  public String getServoId() {
-
-    return servoId;
-  }
-
-  public int getAngle() {
-
-    return angle;
-  }
-
   @Override
-  public String toString() {
+  public void actuate() {
 
-    return "ActuationCommand [servoId=" + servoId + ", position=" + angle + "]";
+    for (int i = 0; i < toActuate.length; i++) {
+
+      for (int j = 0; j < toActuate.length; j++) {
+        toActuate[i].getVars()[indices[i][j]].plusequals(values[i][j]);
+      }
+    }
   }
+
+  // public String getServoId() {
+  //
+  // return servoId;
+  // }
+
+
+  // @Override
+  // public String toString() {
+  //
+  // return "ActuationCommand [servoId=" + servoId + ", position=" + angle + "]";
 
 }

@@ -46,4 +46,11 @@ public class FreeVar {
     this.var = var;
   }
 
+  public void plusequals(FreeVar freevar) {
+    if (dimvar != null)
+      dimvar.plusequals(freevar.getDimensional());
+    else
+      var += freevar.getVar();
+  }
+
 }

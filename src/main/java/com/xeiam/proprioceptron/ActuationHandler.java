@@ -15,23 +15,29 @@
  */
 package com.xeiam.proprioceptron;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+
+import com.xeiam.proprioceptron.actuators.Actuator;
 
 /**
- * @author timmolter
+ * @author Zackkenyon
  * @create Sep 20, 2012
  */
-public class ActuationSequence {
+public class ActuationHandler {
 
-  private List<ActuationCommand> actuationCommands;
+  private final Queue<ActuationCommand> actuationCommands;
+  private final CycleQueue<Actuator> actuators;
 
   /**
    * Constructor
    */
-  public ActuationSequence() {
+  public ActuationHandler() {
 
-    actuationCommands = new ArrayList<ActuationCommand>();
+    actuationCommands = new LinkedList<ActuationCommand>();
+    actuators = new CycleQueue<Actuator>();
+
   }
 
   /**
@@ -44,6 +50,14 @@ public class ActuationSequence {
     actuationCommands.add(actuationCommand);
   }
 
+  public void addActuator(Actuator actuator) {
+
+    actuators.add(actuator);
+  }
+
+  public void initialize() {
+
+  }
   /**
    * Add a List of ActuationCommand to the ActuationSequence
    * 
@@ -55,11 +69,14 @@ public class ActuationSequence {
   }
 
   /**
-   * @return the actuationCommands
+   * @return the next actuator in the loop.
    */
-  public List<ActuationCommand> getActuationCommands() {
+  public Actuator getNextActuator() {
 
-    return actuationCommands;
+    if (actuationCommands.peek()!=null)
+      return actuationCommands.poll();
+    else
+      return actuators.next();
   }
 
 }

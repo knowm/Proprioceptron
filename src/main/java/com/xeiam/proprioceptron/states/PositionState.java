@@ -1,28 +1,11 @@
 package com.xeiam.proprioceptron.states;
 
-import com.xeiam.proprioceptron.FreeVar;
 
-public class PositionState implements State {
-
-  public FreeVar[] positions;
+public class PositionState extends State {
 
   @Override
   public String[] vectorDoc() {
 
-    return new String[] { "Positions * " + positions.length };
+    return new String[] { "Positions * " + vars.length };
   }
-
-  @Override
-  public FreeVar[] toVector() {
-
-    return positions;
-  }
-
-  @Override
-  public void addVars(FreeVar[] positions) {
-
-    this.positions = positions;
-
-  }
-
 }

@@ -42,11 +42,11 @@ public class TensionActuator implements Actuator {
   @Override
   public void actuate() {
 
-    for (int i = tensions.tensions.length - 1; i > 0; i--) {
-      Vector temp = Vector.project((Vector) tensions.tensions[i].getDimensional(), (Vector) directions.directions[i].getDimensional());
-      ((Vector) tensions.tensions[i - 1].getDimensional()).plusequals(temp);
-      temp = Vector.minus((Vector) tensions.tensions[i].getDimensional(), temp);
-      torques.torques[i].setVar(Vector.magnitude(temp) * Vector.orientation(temp, (Vector) directions.directions[i].getDimensional()));
+    for (int i = tensions.vars.length - 1; i > 0; i--) {
+      Vector temp = Vector.project((Vector) tensions.vars[i].getDimensional(), (Vector) directions.vars[i].getDimensional());
+      ((Vector) tensions.vars[i - 1].getDimensional()).plusequals(temp);
+      temp = Vector.minus((Vector) tensions.vars[i].getDimensional(), temp);
+      torques.vars[i].setVar(Vector.magnitude(temp) * Vector.orientation(temp, (Vector) directions.vars[i].getDimensional()));
     }
   }
 }

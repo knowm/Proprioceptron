@@ -31,10 +31,9 @@ import com.xeiam.proprioceptron.actuators.TorqueActuator;
  * @author Zackkenyon
  * @create Sep 11, 2012
  */
-public class Arm implements State {
+public class Arm extends State {
 
   public List<Joint> joints;
-  public FreeVar[] vector;
   public AngleState angles;
   public AngularVelocityState angularvels;
   public TorqueState torques;
@@ -100,16 +99,16 @@ public class Arm implements State {
       t9[i] = joints.get(i).direction;
 
     }
-    angles.addVars(t0);
-    angularvels.addVars(t1);
-    torques.addVars(t2);
-    positions.addVars(t3);
-    tensions.addVars(t4);
-    energy.addVars(t5);
-    distancefromgoal.addVars(t6);
-    lengths.addVars(t7);
-    densities.addVars(t8);
-    directions.addVars(t9);
+    angles.setVars(t0);
+    angularvels.setVars(t1);
+    torques.setVars(t2);
+    positions.setVars(t3);
+    tensions.setVars(t4);
+    energy.setVars(t5);
+    distancefromgoal.setVars(t6);
+    lengths.setVars(t7);
+    densities.setVars(t8);
+    directions.setVars(t9);
 
     pactuator.setDomain(angles, lengths);
     avactuator.setDomain(angularvels);
@@ -137,19 +136,6 @@ public class Arm implements State {
 
   }
 
-  @Override
-  public FreeVar[] toVector() {
-
-    // doesn't do anything right now
-    return vector;
-  }
-
-  @Override
-  public void addVars(FreeVar[] vec) {
-
-    // TODO Auto-generated method stub
-
-  }
 
   @Override
   public String[] vectorDoc() {

@@ -22,9 +22,6 @@ import java.awt.Toolkit;
 
 import javax.swing.JPanel;
 
-import com.xeiam.proprioceptron.ActuationSequence;
-import com.xeiam.proprioceptron.states.Arm;
-
 /**
  * @author timmolter
  * @create Sep 20, 2012
@@ -34,22 +31,17 @@ public class RoboticArmPanel extends JPanel implements Runnable {
   private Thread animatorThread;
   private static final int FRAME_RATE = 30;
 
-  /** Arm Variables **/
-  private Arm arm;
-
   /** Animation Variables **/
-  private int counter = 0;
-  private AnimationSequence animationSequence;
+  private final Camera armCamera;
 
   /**
    * Constructor
    */
-  public RoboticArmPanel(Arm arm, ActuationSequence actuationSequence) {
+  public RoboticArmPanel(Camera camera) {
 
-    setPreferredSize(new Dimension(500, 500));
+    setPreferredSize(new Dimension(600, 600));
 
-    this.arm = arm;
-    this.animationSequence = new AnimationSequence(arm, actuationSequence);
+    this.armCamera = camera;
 
   }
 
@@ -57,16 +49,12 @@ public class RoboticArmPanel extends JPanel implements Runnable {
   public void paint(Graphics g) {
 
     super.paint(g);
-
-    if (counter >= animationSequence.getArmStateSnapshots().size()) {
-      counter = 0;
-    }
-
-    ArmStateSnapshot armStateSnapshot = animationSequence.getArmStateSnapshots().get(counter++);
-    armStateSnapshot.paint((Graphics2D) g);
-
+    armCamera.takeSnapshot();
+    armCamera.paint((Graphics2D) g);
+    armCamera.validate();
     Toolkit.getDefaultToolkit().sync();
     g.dispose();
+
   }
 
   @Override
@@ -79,7 +67,6 @@ public class RoboticArmPanel extends JPanel implements Runnable {
     while (true) {
 
       repaint();
-
       timeDiff = System.currentTimeMillis() - beforeTime;
       sleep = FRAME_RATE - timeDiff;
 

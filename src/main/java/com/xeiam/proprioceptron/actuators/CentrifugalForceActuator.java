@@ -36,9 +36,8 @@ public class CentrifugalForceActuator implements Actuator {
   @Override
   public void actuate() {
 
-    for (int i = 0; i < lengths.lengths.length; i++) {
-      tensions.tensions[i].setDimensional(Vector.scale(angularvels.angularvelocities[i].getVar() * angularvels.angularvelocities[i].getVar() / lengths.lengths[i].getVar(),
-          (Vector) directions.directions[i].getDimensional()));
+    for (int i = 0; i < lengths.vars.length; i++) {
+      tensions.vars[i].setDimensional(Vector.scale(angularvels.vars[i].getVar() * angularvels.vars[i].getVar() / lengths.vars[i].getVar(), (Vector) directions.vars[i].getDimensional()));
     }
   }
 }

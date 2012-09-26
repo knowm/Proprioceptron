@@ -23,7 +23,7 @@ import com.xeiam.proprioceptron.Vector;
  * @author zackkenyon
  * @create Aug 21, 2012
  */
-public class Joint implements State {
+public class Joint extends State {
 
   // There will be another class of variables called fixed variables.
   protected static int DEGREES_OF_FREEDOM = 10; // listed below
@@ -84,7 +84,7 @@ public class Joint implements State {
   }
 
   @Override
-  public FreeVar[] toVector() {
+  public FreeVar[] getVars() {
 
     return new FreeVar[] { angle, angularvelocity, torque, position, tension, distance, energy };
   }
@@ -96,7 +96,7 @@ public class Joint implements State {
   }
 
   @Override
-  public void addVars(FreeVar[] vec) {
+  public void setVars(FreeVar[] vec) {
 
     if (vec.length != DEGREES_OF_FREEDOM) {
       // TODO obsolete

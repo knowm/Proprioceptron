@@ -19,11 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.xeiam.proprioceptron.ActuationCommand;
-import com.xeiam.proprioceptron.ActuationSequence;
+import com.xeiam.proprioceptron.ActuationHandler;
+import com.xeiam.proprioceptron.FreeVar;
+import com.xeiam.proprioceptron.VarType;
+import com.xeiam.proprioceptron.app.animate.Camera;
 import com.xeiam.proprioceptron.app.animate.RoboticArmFrame;
 import com.xeiam.proprioceptron.app.animate.RoboticArmPanel;
 import com.xeiam.proprioceptron.states.Arm;
 import com.xeiam.proprioceptron.states.Joint;
+import com.xeiam.proprioceptron.states.State;
 
 /**
  * Demo0 shows a predetermined (hard-coded) sequence of movements of an arm with a single joint. It should look like a fly swatter hitting a surface and springing back up into neutral position
@@ -44,23 +48,36 @@ public class Demo0 {
 
     // TODO hide this initialization inside Joint or Arm
     for (int i = 0; i < joints.size(); i++) {
-      joints.get(i).initialize(i * .000001 + .000001, 0.0);
+      joints.get(i).initialize(0.0, 0.0);
     }
     Arm arm = new Arm(joints);
     arm.initialize();
 
     // 2. create a actuation sequence
-    ActuationSequence actuationSequence = new ActuationSequence();
-    actuationSequence.addActuationCommand(new ActuationCommand("0", 0));
-    actuationSequence.addActuationCommand(new ActuationCommand("0", 45));
-    actuationSequence.addActuationCommand(new ActuationCommand("0", 90));
-    actuationSequence.addActuationCommand(new ActuationCommand("0", 45));
-    actuationSequence.addActuationCommand(new ActuationCommand("0", 0));
-    actuationSequence.addActuationCommand(new ActuationCommand("0", -45));
-    actuationSequence.addActuationCommand(new ActuationCommand("0", -90));
-    actuationSequence.addActuationCommand(new ActuationCommand("0", -45));
+    ActuationHandler handler = new ActuationHandler();
 
-    new RoboticArmFrame(new RoboticArmPanel(arm, actuationSequence));
+    ActuationCommand clockwiseaccelerate = new ActuationCommand(new State[] { arm.angularvels }, new int[][] { { 0 } }, new FreeVar[][] { { new FreeVar(.0000001, VarType.ANGULARVELOCITY) } });
+    ActuationCommand counterclockwiseaccelerate = new ActuationCommand(new State[] { arm.angularvels }, new int[][] { { 0 } }, new FreeVar[][] { { new FreeVar(-.0000001, VarType.ANGULARVELOCITY) } });
+    handler.addActuationCommand(counterclockwiseaccelerate);
+    handler.addActuator(arm.avactuator);
+    handler.addActuator(arm.pactuator);
+
+    // 3. Create a camera
+    Camera armCamera = new Camera(arm);
+
+    new RoboticArmFrame(new RoboticArmPanel(armCamera));
+
+    while (true) {
+      if (arm.angles.vars[0].getVar() > 0 && arm.angularvels.vars[0].getVar() >= 0.0) {
+        handler.addActuationCommand(counterclockwiseaccelerate);
+
+      }
+      if (arm.angles.vars[0].getVar() < -Math.PI && arm.angularvels.vars[0].getVar() <= 0.0) {
+        handler.addActuationCommand(clockwiseaccelerate);
+      }
+      handler.getNextActuator().actuate();
+
+    }
 
   }
 

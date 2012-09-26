@@ -17,6 +17,7 @@ package com.xeiam.proprioceptron.app.animate;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 
 /**
  * @author timmolter
@@ -25,19 +26,25 @@ import java.awt.geom.Ellipse2D;
 public final class ArmStateSnapshot {
 
   // Dummy variables
-  private final int xPosition;
-  private final int yPosition;
+  private final int x1Position;
+  private final int x2Position;
+  private final int y1Position;
+  private final int y2Position;
 
   /**
    * Constructor
    * 
-   * @param xPosition
-   * @param yPosition
+   * @param x1Position
+   * @param y1Position
+   * @param x2Position
+   * @param y2Position
    */
-  public ArmStateSnapshot(int xPosition, int yPosition) {
+  public ArmStateSnapshot(int x1Position, int y1Position, int x2Position, int y2Position) {
 
-    this.xPosition = xPosition;
-    this.yPosition = yPosition;
+    this.x1Position = x1Position;
+    this.y1Position = y1Position;
+    this.x2Position = x2Position;
+    this.y2Position = y2Position;
   }
 
   /**
@@ -48,8 +55,12 @@ public final class ArmStateSnapshot {
     // TODO Make this method actually paint the Arm
 
     // Dummy paint
-    Ellipse2D nodeBackground = new Ellipse2D.Double(xPosition, yPosition, 11, 11);
-    g2d.fill(nodeBackground);
+    // Ellipse2D nodeBackgroundTail = new Ellipse2D.Double(x1Position - 5.5, y1Position - 5.5, 11, 11);
+    Ellipse2D nodeBackgroundHead = new Ellipse2D.Double(x2Position - 5.5, y2Position - 5.5, 11, 11);
+    Line2D segment = new Line2D.Double(x1Position, y1Position, x2Position, y2Position);
+    // g2d.fill(nodeBackgroundTail);
+    g2d.fill(nodeBackgroundHead);
+    g2d.draw(segment);
 
   }
 

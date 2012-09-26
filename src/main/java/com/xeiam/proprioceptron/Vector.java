@@ -44,10 +44,11 @@ public class Vector implements Dimensional {
     return new double[] { x, y };
   }
 
-  public void plusequals(Vector p) {
+  @Override
+  public void plusequals(Dimensional p) {
 
-    x += p.x;
-    y += p.y;
+    x += ((Vector) p).x;
+    y += ((Vector) p).y;
   }
 
   public void minusequals(Vector p) {
