@@ -16,6 +16,7 @@
 package com.xeiam.proprioceptron.jme;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -36,6 +37,8 @@ import com.jme3.util.TangentBinormalGenerator;
 public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
   private int numJoints;
+
+  BitmapText hudText;
 
   private Node[] pivots;
   private Geometry[] sections;
@@ -146,6 +149,14 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
     setupKeys();
 
+    hudText = new BitmapText(guiFont, false);
+    hudText.setSize(24); // font size
+    hudText.setColor(ColorRGBA.White); // font color
+    hudText.setText("D="); // the text
+    hudText.setLocalTranslation(10, settings.getHeight() - 10, 0); // position
+    guiNode.attachChild(hudText);
+
+    // hide scene graph statistics
     setDisplayStatView(false);
     setDisplayFps(false);
   }
@@ -182,6 +193,11 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
   @Override
   public void simpleUpdate(float tpf) {
 
+    Vector3f headCoords = head.getWorldTranslation();
+    Vector3f targetCoords = target.getWorldTranslation();
+    float dist = headCoords.distance(targetCoords);
+
+    hudText.setText("D= " + dist);
     // System.out.println(cam.getLocation());
     // System.out.println(cam.getRotation());
 
