@@ -46,7 +46,8 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
   private int numJoints;
 
-  BitmapText hudText;
+  BitmapText hudDistanceText;
+  BitmapText hudPositionText;
 
   private Node[] pivots;
   private Geometry[] sections;
@@ -181,12 +182,18 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
     setupKeys();
 
-    hudText = new BitmapText(guiFont, false);
-    hudText.setSize(24); // font size
-    hudText.setColor(ColorRGBA.White); // font color
-    hudText.setText("D="); // the text
-    hudText.setLocalTranslation(10, settings.getHeight() - 10, 0); // position
-    guiNode.attachChild(hudText);
+    hudDistanceText = new BitmapText(guiFont, false);
+    hudDistanceText.setSize(24); // font size
+    hudDistanceText.setColor(ColorRGBA.White); // font color
+    hudDistanceText.setText("D="); // the text
+    hudDistanceText.setLocalTranslation(10, settings.getHeight() - 10, 0); // position
+    guiNode.attachChild(hudDistanceText);
+
+    hudPositionText = new BitmapText(guiFont, false);
+    hudPositionText.setSize(16); // font size
+    hudPositionText.setColor(ColorRGBA.White); // font color
+    hudPositionText.setLocalTranslation(10, hudPositionText.getLineHeight(), 0); // position
+    guiNode.attachChild(hudPositionText);
 
     // hide scene graph statistics
     setDisplayStatView(false);
@@ -225,20 +232,30 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
   @Override
   public void simpleUpdate(float tpf) {
 
+    // hudPositionText
+    Vector3f[] relativePositions = new Vector3f[numJoints];
+    for (int i = 0; i < numJoints; i++) {
+      if (i == (numJoints - 1)) { // head relative to last joint
+        relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation()).divide(2 * SECTION_LENGTH);
+      } else {
+        relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * SECTION_LENGTH);
+      }
+    }
+    String positionString = "";
+    for (int i = 0; i < relativePositions.length; i++) {
+      positionString += relativePositions[i].toString() + " ";
+    }
+    hudPositionText.setText(positionString);
+
+    // hudDistanceText
     Vector3f targetCoords = target.getWorldTranslation();
-
-    // Vector3f headCoords = head.getWorldTranslation();
-    // float dist = headCoords.distance(targetCoords);
-
     Vector3f leftEyeCoords = leftEye.getWorldTranslation();
     float distL = leftEyeCoords.distance(targetCoords) - TARGET_RADIUS;
-
     Vector3f rightEyeCoords = rightEye.getWorldTranslation();
     float distR = rightEyeCoords.distance(targetCoords) - TARGET_RADIUS;
-
     float distAve = (distL + distR) / 2;
+    hudDistanceText.setText(" DL= " + distL + " DR= " + distR + " D= " + distAve);
 
-    hudText.setText(" DL= " + distL + " DR= " + distR + " D= " + distAve);
     // System.out.println(cam.getLocation());
     // System.out.println(cam.getRotation());
 
@@ -246,7 +263,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
   public static void main(String[] args) {
 
-    RoboticArmV1 app = new RoboticArmV1(1);
+    RoboticArmV1 app = new RoboticArmV1(3);
     app.setShowSettings(false);
     app.start();
   }
