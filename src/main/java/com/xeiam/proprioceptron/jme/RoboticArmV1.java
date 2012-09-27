@@ -36,6 +36,8 @@ import com.jme3.util.TangentBinormalGenerator;
  */
 public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
+  private static final float HEAD_RADIUS = 0.3f;
+
   private int numJoints;
 
   BitmapText hudText;
@@ -43,7 +45,10 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
   private Node[] pivots;
   private Geometry[] sections;
   private Geometry[] joints;
+  private Node headNode;
   private Geometry head;
+  private Geometry leftEye;
+  private Geometry rightEye;
 
   private Geometry target;
 
@@ -104,11 +109,18 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     }
 
     // Create Head
-    Sphere sphereBig = new Sphere(20, 20, .3f);
+    headNode = new Node("headNode");
+    Sphere sphereBig = new Sphere(20, 20, HEAD_RADIUS);
     sphereBig.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereBig);
     head = new Geometry("head", sphereBig);
     head.setMaterial(mat);
+    // eyes
+    Sphere sphereTiny = new Sphere(20, 20, .1f);
+    leftEye = new Geometry("leftEye", sphereTiny);
+    leftEye.setMaterial(mat);
+    rightEye = new Geometry("rightEye", sphereTiny);
+    rightEye.setMaterial(mat);
 
     // Create Target
     Sphere sphereTarget = new Sphere(30, 30, .8f);
@@ -144,8 +156,14 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
       }
     }
 
-    head.move(0, 2, 0);
-    pivots[numJoints - 1].attachChild(head);
+    headNode.move(0, 2, 0);
+    headNode.attachChild(head);
+    float shift = (float) Math.sqrt(HEAD_RADIUS * HEAD_RADIUS / 2.0);
+    leftEye.move(-1.0f * shift, shift, 0);
+    headNode.attachChild(leftEye);
+    rightEye.move(shift, shift, 0);
+    headNode.attachChild(rightEye);
+    pivots[numJoints - 1].attachChild(headNode);
 
     setupKeys();
 
@@ -193,11 +211,20 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
   @Override
   public void simpleUpdate(float tpf) {
 
-    Vector3f headCoords = head.getWorldTranslation();
     Vector3f targetCoords = target.getWorldTranslation();
+
+    Vector3f headCoords = head.getWorldTranslation();
     float dist = headCoords.distance(targetCoords);
 
-    hudText.setText("D= " + dist);
+    Vector3f leftEyeCoords = leftEye.getWorldTranslation();
+    float distL = leftEyeCoords.distance(targetCoords);
+
+    Vector3f rightEyeCoords = rightEye.getWorldTranslation();
+    float distR = rightEyeCoords.distance(targetCoords);
+
+    float distAve = (distL + distR) / 2;
+
+    hudText.setText(" DL= " + distL + " DR= " + distR + " D= " + distAve);
     // System.out.println(cam.getLocation());
     // System.out.println(cam.getRotation());
 
