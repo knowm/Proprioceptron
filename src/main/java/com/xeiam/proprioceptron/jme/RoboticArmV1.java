@@ -27,7 +27,9 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Dome;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.system.AppSettings;
 import com.jme3.util.TangentBinormalGenerator;
 
 /**
@@ -38,6 +40,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
   private static final float JOINT_RADIUS = 0.2f;
   private static final float HEAD_RADIUS = 0.3f;
+  private static final float PIN_LENGTH = 1.0f;
   private static final float EYE_RADIUS = 0.1f;
   private static final float TARGET_RADIUS = 0.8f;
 
@@ -54,6 +57,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
   private Geometry[] joints;
   private Node headNode;
   private Geometry head;
+  private Geometry pin;
   private Geometry leftEye;
   private Geometry rightEye;
 
@@ -79,21 +83,21 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     sections = new Geometry[numJoints];
     joints = new Geometry[numJoints];
 
+    // scene background color
+    viewPort.setBackgroundColor(new ColorRGBA(.5f, .8f, .99f, 1.0f));
+
     // Material for Robotic Arm
     Material matRoboticArm = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-    matRoboticArm.setFloat("m_Shininess", .5f);
     matRoboticArm.setBoolean("m_UseMaterialColors", true);
-    matRoboticArm.setColor("m_Ambient", ColorRGBA.White.mult(1.3f));
-    matRoboticArm.setColor("m_Diffuse", new ColorRGBA(.5f, .5f, .5f, 1f));
+    matRoboticArm.setColor("m_Diffuse", new ColorRGBA(.9f, .9f, .9f, 1f));
     matRoboticArm.setColor("m_Specular", ColorRGBA.White);
+    matRoboticArm.setFloat("m_Shininess", 50f); // [1,128], lower is shinier
 
     Material matTarget = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-    matTarget.setTexture("DiffuseMap", assetManager.loadTexture("Textures/Terrain/Pond/Pond.jpg"));
-    matTarget.setTexture("NormalMap", assetManager.loadTexture("Textures/Terrain/Pond/Pond_normal.png"));
     matTarget.setBoolean("UseMaterialColors", true);
-    matTarget.setColor("Specular", ColorRGBA.White);
-    matTarget.setColor("Diffuse", ColorRGBA.White);
-    matTarget.setFloat("Shininess", 5f); // [1,128]
+    matTarget.setColor("m_Specular", ColorRGBA.White);
+    matTarget.setColor("Diffuse", ColorRGBA.Red);
+    matTarget.setFloat("Shininess", 128f); // [1,128]
 
     // elongated box for arm sections
     Box box = new Box(new Vector3f(0, SECTION_LENGTH, 0), SECTION_CROSS_DIM, SECTION_LENGTH, SECTION_CROSS_DIM);
@@ -126,6 +130,11 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     TangentBinormalGenerator.generate(sphereHead);
     head = new Geometry("head", sphereHead);
     head.setMaterial(matRoboticArm);
+    // pin
+    Dome cone = new Dome(Vector3f.ZERO, 2, 4, PIN_LENGTH, false);
+    pin = new Geometry("pin", cone);
+    pin.scale(0.1f, 1, 0.1f);
+    pin.setMaterial(matRoboticArm);
     // eyes
     Sphere sphereEye = new Sphere(20, 20, EYE_RADIUS);
     leftEye = new Geometry("leftEye", sphereEye);
@@ -148,10 +157,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     RoboticArmUtils.createWorld(rootNode, assetManager);
 
     // Place target
-    float arcRadius = 2 * SECTION_LENGTH * numJoints + TARGET_RADIUS + HEAD_RADIUS;
-    float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
-    float y = (float) Math.sqrt(arcRadius * arcRadius - x * x);
-    target.move(x, y, 0);
+    moveTarget();
     rootNode.attachChild(target);
 
     // Create robotic Arm
@@ -173,6 +179,8 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     // place Head
     headNode.move(0, 2 * SECTION_LENGTH, 0);
     headNode.attachChild(head);
+    pin.move(0, 1.0f * HEAD_RADIUS, 0);
+    headNode.attachChild(pin);
     float shift = (float) Math.sqrt(HEAD_RADIUS * HEAD_RADIUS / 2.0);
     leftEye.move(-1.0f * shift, shift, 0);
     headNode.attachChild(leftEye);
@@ -253,19 +261,37 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     float distL = leftEyeCoords.distance(targetCoords) - TARGET_RADIUS;
     Vector3f rightEyeCoords = rightEye.getWorldTranslation();
     float distR = rightEyeCoords.distance(targetCoords) - TARGET_RADIUS;
-    float distAve = (distL + distR) / 2;
-    hudDistanceText.setText(" DL= " + distL + " DR= " + distR + " D= " + distAve);
+    // pin distance
+    Vector3f pinTipCoords = pin.getWorldTranslation();
+    float pinDistance = pinTipCoords.distance(targetCoords) - TARGET_RADIUS - PIN_LENGTH;
+    // float distAve = (distL + distR) / 2;
+    hudDistanceText.setText(" DL= " + distL + " DR= " + distR + " D= " + pinDistance);
 
     // System.out.println(cam.getLocation());
     // System.out.println(cam.getRotation());
 
+    if (pinDistance < 0.005f) {
+      moveTarget();
+    }
+
+  }
+
+  private void moveTarget() {
+
+    float arcRadius = 2 * SECTION_LENGTH * numJoints + TARGET_RADIUS + PIN_LENGTH + HEAD_RADIUS;
+    float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
+    float y = (float) Math.sqrt(arcRadius * arcRadius - x * x);
+    target.center();
+    target.move(x, y, 0);
   }
 
   public static void main(String[] args) {
 
     RoboticArmV1 app = new RoboticArmV1(3);
     app.setShowSettings(false);
+    AppSettings settings = new AppSettings(true);
+    settings.setTitle("Proprioceptron");
+    app.setSettings(settings);
     app.start();
   }
-
 }
