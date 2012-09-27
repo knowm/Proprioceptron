@@ -37,14 +37,6 @@ import com.jme3.util.TangentBinormalGenerator;
  */
 public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
-  private static final float JOINT_RADIUS = 0.2f;
-  private static final float HEAD_RADIUS = 0.3f;
-  private static final float EYE_RADIUS = 0.1f;
-  private static final float TARGET_RADIUS = 0.8f;
-
-  private static final float SECTION_LENGTH = 1.0f;
-  private static final float SECTION_CROSS_DIM = 0.1f;
-
   private int numJoints;
 
   BitmapText hudDistanceText;
@@ -81,14 +73,14 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     joints = new Geometry[numJoints];
 
     // scene background color
-    viewPort.setBackgroundColor(new ColorRGBA(.5f, .8f, .99f, 1.0f));
+    // viewPort.setBackgroundColor(new ColorRGBA(.5f, .8f, .99f, 1.0f));
 
     // Material for Robotic Arm
     Material matRoboticArm = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
     matRoboticArm.setBoolean("m_UseMaterialColors", true);
-    matRoboticArm.setColor("m_Diffuse", new ColorRGBA(.9f, .9f, .9f, 1f));
-    matRoboticArm.setColor("m_Specular", ColorRGBA.White);
-    matRoboticArm.setFloat("m_Shininess", 50f); // [1,128], lower is shinier
+    matRoboticArm.setColor("m_Diffuse", new ColorRGBA(.7f, 1.0f, .7f, 1f));
+    matRoboticArm.setColor("m_Specular", new ColorRGBA(.7f, 1.0f, .7f, 1f));
+    matRoboticArm.setFloat("m_Shininess", 50f); // [1,128] lower is shinier
 
     Material matTarget = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
     matTarget.setBoolean("UseMaterialColors", true);
@@ -97,8 +89,8 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     matTarget.setFloat("Shininess", 128f); // [1,128]
 
     // elongated box for arm sections
-    Box box = new Box(new Vector3f(0, SECTION_LENGTH, 0), SECTION_CROSS_DIM, SECTION_LENGTH, SECTION_CROSS_DIM);
-    Sphere sphereJoint = new Sphere(20, 20, JOINT_RADIUS);
+    Box box = new Box(new Vector3f(0, 0, Constants.SECTION_LENGTH), Constants.SECTION_CROSS_DIM, Constants.SECTION_CROSS_DIM, Constants.SECTION_LENGTH);
+    Sphere sphereJoint = new Sphere(20, 20, Constants.JOINT_RADIUS);
     sphereJoint.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereJoint);
 
@@ -122,29 +114,29 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
     // Create Head
     headNode = new Node("headNode");
-    Sphere sphereHead = new Sphere(20, 20, HEAD_RADIUS);
+    Sphere sphereHead = new Sphere(20, 20, Constants.HEAD_RADIUS);
     sphereHead.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereHead);
     head = new Geometry("head", sphereHead);
     head.setMaterial(matRoboticArm);
 
     // eyes
-    Sphere sphereEye = new Sphere(20, 20, EYE_RADIUS);
+    Sphere sphereEye = new Sphere(20, 20, Constants.EYE_RADIUS);
     leftEye = new Geometry("leftEye", sphereEye);
     leftEye.setMaterial(matRoboticArm);
     rightEye = new Geometry("rightEye", sphereEye);
     rightEye.setMaterial(matRoboticArm);
 
     // Create Target
-    Sphere sphereTarget = new Sphere(30, 30, TARGET_RADIUS);
+    Sphere sphereTarget = new Sphere(30, 30, Constants.TARGET_RADIUS);
     sphereTarget.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereTarget);
     target = new Geometry("head", sphereTarget);
     target.setMaterial(matTarget);
 
     // Change Camera position
-    cam.setLocation(new Vector3f(0f, 5f, 17f));
-    cam.setRotation(new Quaternion(0f, 1f, -.08f, 0f));
+    cam.setLocation(new Vector3f(0f, 20f, 0f));
+    cam.setRotation(new Quaternion(0f, .707f, -.707f, 0f));
 
     // Create World
     RoboticArmUtils.createWorld(rootNode, assetManager);
@@ -159,7 +151,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     for (int i = 0; i < numJoints; i++) {
 
       if (i > 0) {
-        pivots[i].move(0, 2 * SECTION_LENGTH, 0);
+        pivots[i].move(0, 0, 2 * Constants.SECTION_LENGTH);
       }
 
       pivots[i].attachChild(sections[i]);
@@ -170,12 +162,12 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     }
 
     // place Head
-    headNode.move(0, 2 * SECTION_LENGTH, 0);
+    headNode.move(0, 0, 2 * Constants.SECTION_LENGTH);
     headNode.attachChild(head);
-    float shift = (float) Math.sqrt(HEAD_RADIUS * HEAD_RADIUS / 2.0);
-    leftEye.move(-1.0f * shift, shift, 0);
+    float shift = (float) Math.sqrt(Constants.HEAD_RADIUS * Constants.HEAD_RADIUS / 2.0);
+    leftEye.move(-1.0f * shift, 0, shift);
     headNode.attachChild(leftEye);
-    rightEye.move(shift, shift, 0);
+    rightEye.move(shift, 0, shift);
     headNode.attachChild(rightEye);
     pivots[numJoints - 1].attachChild(headNode);
 
@@ -214,24 +206,24 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
   public void onAnalog(String binding, float value, float tpf) {
 
     if (binding.equals("Left0")) {
-      pivots[0].rotate(0, 0, value * speed);
+      pivots[0].rotate(0, value * speed, 0);
     } else if (binding.equals("Right0")) {
-      pivots[0].rotate(0, 0, -1 * value * speed);
+      pivots[0].rotate(0, -1 * value * speed, 0);
     } else if (binding.equals("Left1")) {
       if (pivots.length > 1) {
-        pivots[1].rotate(0, 0, value * speed);
+        pivots[1].rotate(0, value * speed, 0);
       }
     } else if (binding.equals("Right1")) {
       if (pivots.length > 1) {
-        pivots[1].rotate(0, 0, -1 * value * speed);
+        pivots[1].rotate(0, -1 * value * speed, 0);
       }
     } else if (binding.equals("Left2")) {
       if (pivots.length > 2) {
-        pivots[2].rotate(0, 0, value * speed);
+        pivots[2].rotate(0, value * speed, 0);
       }
     } else if (binding.equals("Right2")) {
       if (pivots.length > 2) {
-        pivots[2].rotate(0, 0, -1 * value * speed);
+        pivots[2].rotate(0, -1 * value * speed, 0);
       }
     }
   }
@@ -243,9 +235,9 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     Vector3f[] relativePositions = new Vector3f[numJoints];
     for (int i = 0; i < numJoints; i++) {
       if (i == (numJoints - 1)) { // head relative to last joint
-        relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation()).divide(2 * SECTION_LENGTH);
+        relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation()).divide(2 * Constants.SECTION_LENGTH);
       } else {
-        relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * SECTION_LENGTH);
+        relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * Constants.SECTION_LENGTH);
       }
     }
     String positionString = "";
@@ -257,12 +249,12 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     // hudDistanceText
     Vector3f targetCoords = target.getWorldTranslation();
     Vector3f leftEyeCoords = leftEye.getWorldTranslation();
-    float distL = leftEyeCoords.distance(targetCoords) - TARGET_RADIUS;
+    float distL = leftEyeCoords.distance(targetCoords) - Constants.TARGET_RADIUS;
     Vector3f rightEyeCoords = rightEye.getWorldTranslation();
-    float distR = rightEyeCoords.distance(targetCoords) - TARGET_RADIUS;
+    float distR = rightEyeCoords.distance(targetCoords) - Constants.TARGET_RADIUS;
     // pin distance
     Vector3f headCoords = head.getWorldTranslation();
-    float headDistance = headCoords.distance(targetCoords) - TARGET_RADIUS - HEAD_RADIUS;
+    float headDistance = headCoords.distance(targetCoords) - Constants.TARGET_RADIUS - Constants.HEAD_RADIUS;
     // float distAve = (distL + distR) / 2;
     hudDistanceText.setText(" DL= " + distL + " DR= " + distR + " D= " + headDistance);
 
@@ -277,19 +269,19 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
   private void moveTarget() {
 
-    float arcRadius = 2 * SECTION_LENGTH * numJoints + TARGET_RADIUS + HEAD_RADIUS;
+    float arcRadius = (float) (Math.random() * 2 * Constants.SECTION_LENGTH * numJoints + Constants.TARGET_RADIUS + Constants.HEAD_RADIUS);
     float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
-    float y = (float) Math.sqrt(arcRadius * arcRadius - x * x);
+    float z = (float) (Math.sqrt(arcRadius * arcRadius - x * x)) * (Math.random() > 0.5 ? 1 : -1);
     target.center();
-    target.move(x, y, 0);
+    target.move(x, 0, z);
   }
 
   public static void main(String[] args) {
 
-    RoboticArmV1 app = new RoboticArmV1(1);
+    RoboticArmV1 app = new RoboticArmV1(3);
     app.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
-    settings.setResolution(640, 480);
+    settings.setResolution(480, 480);
     settings.setTitle("Proprioceptron");
     app.setSettings(settings);
     app.start();
