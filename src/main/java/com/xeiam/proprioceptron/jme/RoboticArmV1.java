@@ -144,8 +144,11 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
     // Place target
     float arcRadius = 2 * SECTION_LENGTH * numJoints + TARGET_RADIUS + HEAD_RADIUS;
-    float shiftTarget = (float) Math.sqrt(arcRadius * arcRadius / 2.0);
-    target.move(shiftTarget, shiftTarget, 0);
+    float x = (float) (Math.random() * arcRadius);
+    float y = (float) Math.sqrt(arcRadius * arcRadius - x * x);
+
+    // float shiftTarget = (float) Math.sqrt(arcRadius * arcRadius / 2.0);
+    target.move(x, y, 0);
     rootNode.attachChild(target);
 
     // Create robotic Arm
@@ -222,8 +225,8 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
     Vector3f targetCoords = target.getWorldTranslation();
 
-    Vector3f headCoords = head.getWorldTranslation();
-    float dist = headCoords.distance(targetCoords);
+    // Vector3f headCoords = head.getWorldTranslation();
+    // float dist = headCoords.distance(targetCoords);
 
     Vector3f leftEyeCoords = leftEye.getWorldTranslation();
     float distL = leftEyeCoords.distance(targetCoords);
@@ -241,7 +244,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
   public static void main(String[] args) {
 
-    RoboticArmV1 app = new RoboticArmV1(2);
+    RoboticArmV1 app = new RoboticArmV1(3);
     app.setShowSettings(false);
     app.start();
   }
