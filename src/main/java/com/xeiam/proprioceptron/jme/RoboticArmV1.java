@@ -36,7 +36,13 @@ import com.jme3.util.TangentBinormalGenerator;
  */
 public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
+  private static final float JOINT_RADIUS = 0.2f;
   private static final float HEAD_RADIUS = 0.3f;
+  private static final float EYE_RADIUS = 0.1f;
+  private static final float TARGET_RADIUS = 0.8f;
+
+  private static final float SECTION_LENGTH = 1.0f;
+  private static final float SECTION_CROSS_DIM = 0.1f;
 
   private int numJoints;
 
@@ -69,12 +75,12 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     joints = new Geometry[numJoints];
 
     // Material for Robotic Arm
-    Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-    mat.setFloat("m_Shininess", .5f);
-    mat.setBoolean("m_UseMaterialColors", true);
-    mat.setColor("m_Ambient", ColorRGBA.White.mult(1.3f));
-    mat.setColor("m_Diffuse", new ColorRGBA(.5f, .5f, .5f, 1f));
-    mat.setColor("m_Specular", ColorRGBA.White);
+    Material matRoboticArm = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+    matRoboticArm.setFloat("m_Shininess", .5f);
+    matRoboticArm.setBoolean("m_UseMaterialColors", true);
+    matRoboticArm.setColor("m_Ambient", ColorRGBA.White.mult(1.3f));
+    matRoboticArm.setColor("m_Diffuse", new ColorRGBA(.5f, .5f, .5f, 1f));
+    matRoboticArm.setColor("m_Specular", ColorRGBA.White);
 
     Material matTarget = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
     matTarget.setTexture("DiffuseMap", assetManager.loadTexture("Textures/Terrain/Pond/Pond.jpg"));
@@ -85,10 +91,10 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     matTarget.setFloat("Shininess", 5f); // [1,128]
 
     // elongated box for arm sections
-    Box box = new Box(new Vector3f(0, 1, 0), .1f, 1, .1f);
-    Sphere sphereSmall = new Sphere(20, 20, .2f);
-    sphereSmall.setTextureMode(Sphere.TextureMode.Projected);
-    TangentBinormalGenerator.generate(sphereSmall);
+    Box box = new Box(new Vector3f(0, SECTION_LENGTH, 0), SECTION_CROSS_DIM, SECTION_LENGTH, SECTION_CROSS_DIM);
+    Sphere sphereJoint = new Sphere(20, 20, JOINT_RADIUS);
+    sphereJoint.setTextureMode(Sphere.TextureMode.Projected);
+    TangentBinormalGenerator.generate(sphereJoint);
 
     for (int i = 0; i < numJoints; i++) {
 
@@ -98,32 +104,32 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
       // Create sections
       Geometry section = new Geometry("Box", box);
-      section.setMaterial(mat);
+      section.setMaterial(matRoboticArm);
       sections[i] = section;
 
       // create joints
-      Geometry sphere = new Geometry("joint", sphereSmall);
-      sphere.setMaterial(mat);
+      Geometry sphere = new Geometry("joint", sphereJoint);
+      sphere.setMaterial(matRoboticArm);
       joints[i] = sphere;
 
     }
 
     // Create Head
     headNode = new Node("headNode");
-    Sphere sphereBig = new Sphere(20, 20, HEAD_RADIUS);
-    sphereBig.setTextureMode(Sphere.TextureMode.Projected);
-    TangentBinormalGenerator.generate(sphereBig);
-    head = new Geometry("head", sphereBig);
-    head.setMaterial(mat);
+    Sphere sphereHead = new Sphere(20, 20, HEAD_RADIUS);
+    sphereHead.setTextureMode(Sphere.TextureMode.Projected);
+    TangentBinormalGenerator.generate(sphereHead);
+    head = new Geometry("head", sphereHead);
+    head.setMaterial(matRoboticArm);
     // eyes
-    Sphere sphereTiny = new Sphere(20, 20, .1f);
-    leftEye = new Geometry("leftEye", sphereTiny);
-    leftEye.setMaterial(mat);
-    rightEye = new Geometry("rightEye", sphereTiny);
-    rightEye.setMaterial(mat);
+    Sphere sphereEye = new Sphere(20, 20, EYE_RADIUS);
+    leftEye = new Geometry("leftEye", sphereEye);
+    leftEye.setMaterial(matRoboticArm);
+    rightEye = new Geometry("rightEye", sphereEye);
+    rightEye.setMaterial(matRoboticArm);
 
     // Create Target
-    Sphere sphereTarget = new Sphere(30, 30, .8f);
+    Sphere sphereTarget = new Sphere(30, 30, TARGET_RADIUS);
     sphereTarget.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereTarget);
     target = new Geometry("head", sphereTarget);
@@ -137,7 +143,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     RoboticArmUtils.createWorld(rootNode, assetManager);
 
     // Place target
-    target.move(2.03f * numJoints, 2.03f * numJoints, 0);
+    target.move(2.03f * numJoints * SECTION_LENGTH, 2.03f * numJoints * SECTION_LENGTH, 0);
     rootNode.attachChild(target);
 
     // Create robotic Arm
@@ -146,7 +152,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     for (int i = 0; i < numJoints; i++) {
 
       if (i > 0) {
-        pivots[i].move(0, 2, 0);
+        pivots[i].move(0, 2 * SECTION_LENGTH, 0);
       }
 
       pivots[i].attachChild(sections[i]);
@@ -156,7 +162,8 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
       }
     }
 
-    headNode.move(0, 2, 0);
+    // place Head
+    headNode.move(0, 2 * SECTION_LENGTH, 0);
     headNode.attachChild(head);
     float shift = (float) Math.sqrt(HEAD_RADIUS * HEAD_RADIUS / 2.0);
     leftEye.move(-1.0f * shift, shift, 0);
@@ -232,7 +239,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
   public static void main(String[] args) {
 
-    RoboticArmV1 app = new RoboticArmV1(3);
+    RoboticArmV1 app = new RoboticArmV1(1);
     app.setShowSettings(false);
     app.start();
   }
