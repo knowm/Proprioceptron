@@ -37,7 +37,7 @@ import com.jme3.util.TangentBinormalGenerator;
  */
 public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
-  private int numJoints;
+  private final int numJoints;
 
   BitmapText hudDistanceText;
   BitmapText hudPositionText;
@@ -207,21 +207,26 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
 
     if (binding.equals("Left0")) {
       pivots[0].rotate(0, value * speed, 0);
-    } else if (binding.equals("Right0")) {
+    }
+    if (binding.equals("Right0")) {
       pivots[0].rotate(0, -1 * value * speed, 0);
-    } else if (binding.equals("Left1")) {
+    }
+    if (binding.equals("Left1")) {
       if (pivots.length > 1) {
         pivots[1].rotate(0, value * speed, 0);
       }
-    } else if (binding.equals("Right1")) {
+    }
+    if (binding.equals("Right1")) {
       if (pivots.length > 1) {
         pivots[1].rotate(0, -1 * value * speed, 0);
       }
-    } else if (binding.equals("Left2")) {
+    }
+    if (binding.equals("Left2")) {
       if (pivots.length > 2) {
         pivots[2].rotate(0, value * speed, 0);
       }
-    } else if (binding.equals("Right2")) {
+    }
+    if (binding.equals("Right2")) {
       if (pivots.length > 2) {
         pivots[2].rotate(0, -1 * value * speed, 0);
       }
