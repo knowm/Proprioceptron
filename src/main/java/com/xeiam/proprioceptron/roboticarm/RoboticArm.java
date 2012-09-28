@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron.jme;
+package com.xeiam.proprioceptron.roboticarm;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
@@ -28,16 +35,23 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.system.AppSettings;
 import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * @author timmolter
  * @create Sep 25, 2012
  */
-public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
+public class RoboticArm extends SimpleApplication implements AnalogListener, ActionListener {
 
   private final int numJoints;
+  private boolean enableKeys = false;
+  private List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
+
+  /** prevents calculation of state when there are no arm movements */
+  private boolean wasMovement = true;
+
+  private EnvState oldEnvState;
+  private EnvState newEnvState;
 
   BitmapText hudDistanceText;
   BitmapText hudPositionText;
@@ -55,7 +69,7 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
   /**
    * Constructor
    */
-  public RoboticArmV1(int numJoints) {
+  public RoboticArm(int numJoints) {
 
     if (numJoints > 3) {
       throw new IllegalArgumentException("Only 3 or less joints are acceptable at this time");
@@ -120,10 +134,10 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     head = new Geometry("head", sphereHead);
     head.setMaterial(matRoboticArm);
 
-    // eyes
+    // Create eyes
     Sphere sphereEye = new Sphere(20, 20, Constants.EYE_RADIUS);
     leftEye = new Geometry("leftEye", sphereEye);
-    leftEye.setMaterial(matRoboticArm);
+    leftEye.setMaterial(matTarget);
     rightEye = new Geometry("rightEye", sphereEye);
     rightEye.setMaterial(matRoboticArm);
 
@@ -165,9 +179,9 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     headNode.move(0, 0, 2 * Constants.SECTION_LENGTH);
     headNode.attachChild(head);
     float shift = (float) Math.sqrt(Constants.HEAD_RADIUS * Constants.HEAD_RADIUS / 2.0);
-    leftEye.move(-1.0f * shift, 0, shift);
+    leftEye.move(shift, 0, shift);
     headNode.attachChild(leftEye);
-    rightEye.move(shift, 0, shift);
+    rightEye.move(-1.0f * shift, 0, shift);
     headNode.attachChild(rightEye);
     pivots[numJoints - 1].attachChild(headNode);
 
@@ -189,6 +203,10 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     // hide scene graph statistics
     setDisplayStatView(false);
     setDisplayFps(false);
+
+    // init env state
+    simpleUpdate(0.0f);
+
   }
 
   private void setupKeys() {
@@ -203,71 +221,96 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
   }
 
   @Override
+  public void onAction(String binding, boolean keyPressed, float tpf) {
+
+    // detect when buttons were released
+    if (!keyPressed) {
+      wasMovement = true;
+    }
+  }
+
+  @Override
   public void onAnalog(String binding, float value, float tpf) {
 
-    if (binding.equals("Left0")) {
-      pivots[0].rotate(0, value * speed, 0);
-    }
-    if (binding.equals("Right0")) {
-      pivots[0].rotate(0, -1 * value * speed, 0);
-    }
-    if (binding.equals("Left1")) {
-      if (pivots.length > 1) {
-        pivots[1].rotate(0, value * speed, 0);
+    if (enableKeys) {
+
+      if (binding.equals("Left0")) {
+        pivots[0].rotate(0, value * speed, 0);
       }
-    }
-    if (binding.equals("Right1")) {
-      if (pivots.length > 1) {
-        pivots[1].rotate(0, -1 * value * speed, 0);
+      if (binding.equals("Right0")) {
+        pivots[0].rotate(0, -1 * value * speed, 0);
       }
-    }
-    if (binding.equals("Left2")) {
-      if (pivots.length > 2) {
-        pivots[2].rotate(0, value * speed, 0);
+      if (binding.equals("Left1")) {
+        if (pivots.length > 1) {
+          pivots[1].rotate(0, value * speed, 0);
+        }
       }
-    }
-    if (binding.equals("Right2")) {
-      if (pivots.length > 2) {
-        pivots[2].rotate(0, -1 * value * speed, 0);
+      if (binding.equals("Right1")) {
+        if (pivots.length > 1) {
+          pivots[1].rotate(0, -1 * value * speed, 0);
+        }
       }
+      if (binding.equals("Left2")) {
+        if (pivots.length > 2) {
+          pivots[2].rotate(0, value * speed, 0);
+        }
+      }
+      if (binding.equals("Right2")) {
+        if (pivots.length > 2) {
+          pivots[2].rotate(0, -1 * value * speed, 0);
+        }
+      }
+
     }
   }
 
   @Override
   public void simpleUpdate(float tpf) {
 
-    // hudPositionText
-    Vector3f[] relativePositions = new Vector3f[numJoints];
-    for (int i = 0; i < numJoints; i++) {
-      if (i == (numJoints - 1)) { // head relative to last joint
-        relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation()).divide(2 * Constants.SECTION_LENGTH);
-      } else {
-        relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * Constants.SECTION_LENGTH);
+    if (wasMovement) {
+
+      // update old state
+      oldEnvState = newEnvState;
+
+      // hudPositionText
+      Vector3f[] relativePositions = new Vector3f[numJoints];
+      for (int i = 0; i < numJoints; i++) {
+        if (i == (numJoints - 1)) { // head relative to last joint
+          relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation()).divide(2 * Constants.SECTION_LENGTH);
+        } else {
+          relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * Constants.SECTION_LENGTH);
+        }
       }
-    }
-    String positionString = "";
-    for (int i = 0; i < relativePositions.length; i++) {
-      positionString += relativePositions[i].toString() + " ";
-    }
-    hudPositionText.setText(positionString);
+      String positionString = "";
+      for (int i = 0; i < relativePositions.length; i++) {
+        positionString += relativePositions[i].toString() + " ";
+      }
+      hudPositionText.setText(positionString);
 
-    // hudDistanceText
-    Vector3f targetCoords = target.getWorldTranslation();
-    Vector3f leftEyeCoords = leftEye.getWorldTranslation();
-    float distL = leftEyeCoords.distance(targetCoords) - Constants.TARGET_RADIUS;
-    Vector3f rightEyeCoords = rightEye.getWorldTranslation();
-    float distR = rightEyeCoords.distance(targetCoords) - Constants.TARGET_RADIUS;
-    // pin distance
-    Vector3f headCoords = head.getWorldTranslation();
-    float headDistance = headCoords.distance(targetCoords) - Constants.TARGET_RADIUS - Constants.HEAD_RADIUS;
-    // float distAve = (distL + distR) / 2;
-    hudDistanceText.setText(" DL= " + distL + " DR= " + distR + " D= " + headDistance);
+      // hudDistanceText
+      Vector3f targetCoords = target.getWorldTranslation();
+      Vector3f leftEyeCoords = leftEye.getWorldTranslation();
+      float distL = leftEyeCoords.distance(targetCoords) - Constants.TARGET_RADIUS;
+      Vector3f rightEyeCoords = rightEye.getWorldTranslation();
+      float distR = rightEyeCoords.distance(targetCoords) - Constants.TARGET_RADIUS;
+      // pin distance
+      Vector3f headCoords = head.getWorldTranslation();
+      float headDistance = headCoords.distance(targetCoords) - Constants.TARGET_RADIUS - Constants.HEAD_RADIUS;
+      // float distAve = (distL + distR) / 2;
+      hudDistanceText.setText(" DL= " + distL + " DR= " + distR + " D= " + headDistance);
 
-    // System.out.println(cam.getLocation());
-    // System.out.println(cam.getRotation());
+      // System.out.println(cam.getLocation());
+      // System.out.println(cam.getRotation());
 
-    if (headDistance < 0.005f) {
-      moveTarget();
+      boolean wasCollision = headDistance < 0.005f;
+      if (wasCollision) {
+        moveTarget();
+      }
+
+      newEnvState = new EnvState(distL, distR, headDistance, relativePositions, wasCollision);
+      wasMovement = false;
+
+      notifyListeners();
     }
 
   }
@@ -281,14 +324,27 @@ public class RoboticArmV1 extends SimpleApplication implements AnalogListener {
     target.move(x, 0, z);
   }
 
-  public static void main(String[] args) {
+  /**
+   * @param enableKeys the enableKeys to set
+   */
+  public void setEnableKeys(boolean enableKeys) {
 
-    RoboticArmV1 app = new RoboticArmV1(3);
-    app.setShowSettings(false);
-    AppSettings settings = new AppSettings(true);
-    settings.setResolution(480, 480);
-    settings.setTitle("Proprioceptron");
-    app.setSettings(settings);
-    app.start();
+    this.enableKeys = enableKeys;
   }
+
+  public void addChangeListener(PropertyChangeListener newListener) {
+
+    listeners.add(newListener);
+  }
+
+  private void notifyListeners() {
+
+    PropertyChangeEvent pce = new PropertyChangeEvent(this, "", oldEnvState, newEnvState);
+
+    for (Iterator<PropertyChangeListener> iterator = listeners.iterator(); iterator.hasNext();) {
+      PropertyChangeListener observer = iterator.next();
+      observer.propertyChange(pce);
+    }
+  }
+
 }
