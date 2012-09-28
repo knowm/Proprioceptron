@@ -17,6 +17,7 @@ package com.xeiam.proprioceptron.roboticarm;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 import com.jme3.system.AppSettings;
 
@@ -26,16 +27,19 @@ import com.jme3.system.AppSettings;
  * @author timmolter
  * @create Sep 28, 2012
  */
-public class SimpleTestBrain implements PropertyChangeListener {
+public class SimpleBrainApp implements PropertyChangeListener {
 
   private static final int NUM_JOINTS = 2;
 
+  private SimpleBrain simpleBrain;
   private RoboticArm roboticArm;
 
   /**
    * Constructor
    */
-  public SimpleTestBrain() {
+  public SimpleBrainApp() {
+
+    simpleBrain = new SimpleBrain();
 
     roboticArm = new RoboticArm(NUM_JOINTS);
     roboticArm.setShowSettings(false);
@@ -51,17 +55,17 @@ public class SimpleTestBrain implements PropertyChangeListener {
 
   public static void main(String[] args) {
 
-    SimpleTestBrain stm = new SimpleTestBrain();
+    SimpleBrainApp stm = new SimpleBrainApp();
   }
 
   @Override
-  public void propertyChange(PropertyChangeEvent arg0) {
+  public void propertyChange(PropertyChangeEvent pce) {
 
-    System.out.println(arg0.getOldValue() + " : " + arg0.getNewValue().toString());
+    List<JointCommand> jointCommands = simpleBrain.update(pce);
 
+    // System.out.println(newEnvState.getDistHead());
+
+    roboticArm.moveJoints(jointCommands);
   }
-  // 1. Fire up Game Environment
-
-  // 2. Plugin Brain
 
 }

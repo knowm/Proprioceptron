@@ -137,7 +137,7 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
     // Create eyes
     Sphere sphereEye = new Sphere(20, 20, Constants.EYE_RADIUS);
     leftEye = new Geometry("leftEye", sphereEye);
-    leftEye.setMaterial(matTarget);
+    leftEye.setMaterial(matRoboticArm);
     rightEye = new Geometry("rightEye", sphereEye);
     rightEye.setMaterial(matRoboticArm);
 
@@ -231,6 +231,8 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
 
   @Override
   public void onAnalog(String binding, float value, float tpf) {
+
+    System.out.println(value * speed);
 
     if (enableKeys) {
 
@@ -345,6 +347,19 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
       PropertyChangeListener observer = iterator.next();
       observer.propertyChange(pce);
     }
+  }
+
+  public void moveJoints(List<JointCommand> jointCommands) {
+
+    for (JointCommand jointCommand : jointCommands) {
+
+      for (int i = 0; i < jointCommand.getSteps(); i++) {
+
+        pivots[jointCommand.getJointNumber()].rotate(0f, jointCommand.getDirection() * .005f * speed, 0f);
+      }
+    }
+
+    onAction("", false, 0); // tell it movement is done
   }
 
 }
