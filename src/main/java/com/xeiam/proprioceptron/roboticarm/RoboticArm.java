@@ -45,7 +45,7 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
 
   private final int numJoints;
   private boolean enableKeys = false;
-  private List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
+  private final List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
 
   /** prevents calculation of state when there are no arm movements */
   private boolean wasMovement = true;
@@ -232,7 +232,7 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
   @Override
   public void onAnalog(String binding, float value, float tpf) {
 
-    System.out.println(value * speed);
+    // System.out.println(value * speed);
 
     if (enableKeys) {
 
