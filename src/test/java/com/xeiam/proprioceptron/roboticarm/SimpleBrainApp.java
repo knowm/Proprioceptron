@@ -17,7 +17,9 @@ package com.xeiam.proprioceptron.roboticarm;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.jme3.system.AppSettings;
 
@@ -31,8 +33,8 @@ public class SimpleBrainApp implements PropertyChangeListener {
 
   private static final int NUM_JOINTS = 2;
 
-  private SimpleBrain simpleBrain;
-  private RoboticArm roboticArm;
+  private final SimpleBrain simpleBrain;
+  private final RoboticArm roboticArm;
 
   /**
    * Constructor
@@ -68,4 +70,34 @@ public class SimpleBrainApp implements PropertyChangeListener {
     roboticArm.moveJoints(jointCommands);
   }
 
+  private class SimpleBrain {
+
+    private final Random random = new Random();
+
+    /**
+     * @param pce
+     */
+    public List<JointCommand> update(PropertyChangeEvent pce) {
+
+      EnvState oldEnvState = (EnvState) pce.getOldValue();
+      EnvState newEnvState = (EnvState) pce.getNewValue();
+
+      List<JointCommand> jointCommands = new ArrayList<JointCommand>();
+
+      // simulate a pause
+      try {
+        Thread.sleep(10);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
+      int numJoints = newEnvState.getRelativePositions().length;
+      for (int i = 0; i < numJoints; i++) {
+        jointCommands.add(new JointCommand(i, random.nextDouble() > 0.5 ? 1 : -1, random.nextInt(50)));
+      }
+
+      return jointCommands;
+
+    }
+  }
 }
