@@ -1,4 +1,4 @@
-package com.xeiam.proprioceptron.game;
+package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
@@ -13,7 +13,7 @@ import com.jme3.scene.shape.Sphere;
 
 public class MatrixPhysicsObjectFactory {
 
-  public static void MakeRedPill(float x, float y, Node rootNode, PhysicsSpace space, AssetManager assetManager) {
+  public static void makeRedPill(float x, float y, Node rootNode, PhysicsSpace space, AssetManager assetManager) {
 
     // load and make materials
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -32,7 +32,7 @@ public class MatrixPhysicsObjectFactory {
     space.add(pillGeometry);
   }
 
-  public static void MakeBluePill(float x, float y, Node rootNode, PhysicsSpace space, AssetManager assetManager) {
+  public static void makeBluePill(float x, float y, Node rootNode, PhysicsSpace space, AssetManager assetManager) {
 
     // load and make materials
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -52,7 +52,7 @@ public class MatrixPhysicsObjectFactory {
     space.add(pillGeometry);
   }
 
-  public static void MakeLevelEnvironment(Node rootNode, PhysicsSpace space, AssetManager assetManager) {
+  public static void makeLevelEnvironment(Node rootNode, PhysicsSpace space, AssetManager assetManager) {
 
     // set the lighting.
     AmbientLight light = new AmbientLight();
@@ -104,7 +104,7 @@ public class MatrixPhysicsObjectFactory {
 
   }
 
-  public static void MakeCharacter(Node rootNode, PhysicsSpace space, AssetManager assetManager) {
+  public static void makeCharacter(Node rootNode, PhysicsSpace space, AssetManager assetManager) {
 
     // load and make materials
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -123,15 +123,15 @@ public class MatrixPhysicsObjectFactory {
 
   }
 
-  public static void SetCameraPosition() {
+  public static void setCameraPosition() {
 
   }
 
-  public static void MakeHumanUpdater() {
+  public static void makeHumanUpdater() {
 
   }
 
-  public static void MakeAIUpdater() {
+  public static void makeAIUpdater() {
 
   }
 }

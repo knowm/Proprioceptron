@@ -1,4 +1,4 @@
-package com.xeiam.proprioceptron.game;
+package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
@@ -19,12 +19,6 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   // hackety hack
   Vector3f dirfacing;
 
-  public static void main(String[] args) {
-
-    TheMatrix app = new TheMatrix();
-    app.start();
-  }
-
   @Override
   public void simpleInitApp() {
 
@@ -36,10 +30,10 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
     stateManager.attach(bulletAppState);
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
-    MatrixPhysicsObjectFactory.MakeLevelEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-    MatrixPhysicsObjectFactory.MakeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-    MatrixPhysicsObjectFactory.MakeBluePill(4, 3, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-    MatrixPhysicsObjectFactory.MakeRedPill(9, 13, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    MatrixPhysicsObjectFactory.makeLevelEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    MatrixPhysicsObjectFactory.makeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    MatrixPhysicsObjectFactory.makeBluePill(4, 3, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    MatrixPhysicsObjectFactory.makeRedPill(9, 13, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     setupKeys();
     // add ourselves as collision listener
     getPhysicsSpace().addCollisionListener(this);
@@ -59,10 +53,10 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   public void onAction(String name, boolean keyPressed, float tpf) {
 
     if (name.equals("charforward")) {
-    ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(.25f));
+      ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(.25f));
     }
     if (name.equals("charbackward")) {
-    ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(-.25f));
+      ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(-.25f));
     }
     if (name.equals("charstrafeleft")) {
 
