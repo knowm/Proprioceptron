@@ -1,5 +1,6 @@
 package com.xeiam.proprioceptron.game;
 
+import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
@@ -28,12 +29,13 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   @Override
   public void simpleInitApp() {
 
+    stateManager.detach(stateManager.getState(FlyCamAppState.class));
+
     dirfacing = Vector3f.UNIT_X;
     score = 0;
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-
 
     MatrixPhysicsObjectFactory.MakeLevelEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     MatrixPhysicsObjectFactory.MakeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
@@ -55,11 +57,12 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   }
 
   @Override
-  public void onAction(String name, boolean keyPressed, float tpf){
-    ((RigidBodyControl)rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(.25f));
-    ((RigidBodyControl)rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(-.25f));
-    ((RigidBodyControl)rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Y).mult(.25f));
-    ((RigidBodyControl)rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Y).mult(-.25f));
+  public void onAction(String name, boolean keyPressed, float tpf) {
+
+    ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(.25f));
+    ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(-.25f));
+    ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Y).mult(.25f));
+    ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Y).mult(-.25f));
     // dirfacing.
   }
 
@@ -75,6 +78,7 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
     inputManager.addMapping("camzoomout", new KeyTrigger(KeyInput.KEY_DOWN));
     inputManager.addListener(this, "charforward", "charbackward", "charturnleft", "charturnright", "charstrafeleft", "charstraferight");
   }
+
   @Override
   public void simpleRender(RenderManager rm) {
 
