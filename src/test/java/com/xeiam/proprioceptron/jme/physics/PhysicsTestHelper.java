@@ -40,12 +40,13 @@ public class PhysicsTestHelper {
     rootNode.addLight(light);
 
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    material.setTexture("ColorMap", assetManager.loadTexture("Interface/Logo/Monkey.jpg"));
+    material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpg"));
 
-    Box floorBox = new Box(140, 0.25f, 140);
+    Box floorBox = new Box(20, 0.25f, 20);
     Geometry floorGeometry = new Geometry("Floor", floorBox);
     floorGeometry.setMaterial(material);
-    floorGeometry.setLocalTranslation(0, -5, 0);
+    floorGeometry.setLocalTranslation(0, -2, 0);
+
     // Plane plane = new Plane();
     // plane.setOriginNormal(new Vector3f(0, 0.25f, 0), Vector3f.UNIT_Y);
     // floorGeometry.addControl(new RigidBodyControl(new PlaneCollisionShape(plane), 0));
