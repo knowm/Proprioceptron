@@ -65,8 +65,6 @@ public class SimpleBrainApp implements PropertyChangeListener {
 
     List<JointCommand> jointCommands = simpleBrain.update(pce);
 
-    // System.out.println(newEnvState.getDistHead());
-
     roboticArm.moveJoints(jointCommands);
   }
 
