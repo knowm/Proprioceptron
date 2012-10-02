@@ -140,7 +140,7 @@ public class PhysicsTestHelper {
   }
 
   /**
-   * creates a sphere geometry with a RigidBodyControl
+   * creates a sphere geometry with a RigidBodyControl\
    * 
    * @param assetManager
    * @return

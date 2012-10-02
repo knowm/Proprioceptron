@@ -81,7 +81,6 @@ public class TestCollisionListener extends SimpleApplication implements PhysicsC
   @Override
   public void simpleUpdate(float tpf) {
 
-    // TODO: add update code
   }
 
   @Override
