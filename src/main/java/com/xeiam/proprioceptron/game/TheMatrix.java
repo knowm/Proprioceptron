@@ -1,6 +1,5 @@
 package com.xeiam.proprioceptron.game;
 
-import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
@@ -29,7 +28,7 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   @Override
   public void simpleInitApp() {
 
-    stateManager.detach(stateManager.getState(FlyCamAppState.class));
+    // stateManager.detach(stateManager.getState(FlyCamAppState.class));
 
     dirfacing = Vector3f.UNIT_X;
     score = 0;
@@ -41,7 +40,7 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
     MatrixPhysicsObjectFactory.MakeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     MatrixPhysicsObjectFactory.MakeBluePill(4, 3, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     MatrixPhysicsObjectFactory.MakeRedPill(9, 13, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-
+    setupKeys();
     // add ourselves as collision listener
     getPhysicsSpace().addCollisionListener(this);
   }
@@ -59,23 +58,37 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   @Override
   public void onAction(String name, boolean keyPressed, float tpf) {
 
+    if (name.equals("charforward")) {
     ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(.25f));
+    }
+    if (name.equals("charbackward")) {
     ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(-.25f));
-    ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Y).mult(.25f));
-    ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Y).mult(-.25f));
-    // dirfacing.
+    }
+    if (name.equals("charstrafeleft")) {
+
+      ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Z).mult(.25f));
+    }
+    if (name.equals("charstraferight")) {
+      ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Z).mult(-.25f));
+    }
+    if (name.equals("charturnleft")) {
+      dirfacing.add(dirfacing.cross(Vector3f.UNIT_Z).mult(.01f));// lazy but effective.
+      dirfacing.normalize();
+    }
+    if (name.equals("charturnright")) {
+      dirfacing.add(dirfacing.cross(Vector3f.UNIT_Z).mult(-.01f));
+      dirfacing.normalize();
+    }
   }
 
   public void setupKeys() {
 
-    inputManager.addMapping("charforward", new KeyTrigger(KeyInput.KEY_W));
-    inputManager.addMapping("charbackward", new KeyTrigger(KeyInput.KEY_S));
+    inputManager.addMapping("charforward", new KeyTrigger(KeyInput.KEY_F));
+    inputManager.addMapping("charbackward", new KeyTrigger(KeyInput.KEY_G));
     inputManager.addMapping("charturnleft", new KeyTrigger(KeyInput.KEY_A));
     inputManager.addMapping("charturnright", new KeyTrigger(KeyInput.KEY_D));
     inputManager.addMapping("charstrafeleft", new KeyTrigger(KeyInput.KEY_Q));
     inputManager.addMapping("charstraferight", new KeyTrigger(KeyInput.KEY_E));
-    inputManager.addMapping("camzoomin", new KeyTrigger(KeyInput.KEY_UP));
-    inputManager.addMapping("camzoomout", new KeyTrigger(KeyInput.KEY_DOWN));
     inputManager.addListener(this, "charforward", "charbackward", "charturnleft", "charturnright", "charstrafeleft", "charstraferight");
   }
 

@@ -116,7 +116,7 @@ public class MatrixPhysicsObjectFactory {
 
     characterGeometry.setLocalTranslation(0, 0, 0);
     characterGeometry.setMaterial(material);
-    characterGeometry.addControl(new RigidBodyControl(0));
+    characterGeometry.addControl(new RigidBodyControl(1));
     // Add the character to the environment and to the physics.
     rootNode.attachChild(characterGeometry);
     space.add(characterGeometry);
