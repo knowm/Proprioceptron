@@ -2,10 +2,14 @@ package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -116,7 +120,10 @@ public class MatrixPhysicsObjectFactory {
 
     characterGeometry.setLocalTranslation(0, 0, 0);
     characterGeometry.setMaterial(material);
-    characterGeometry.addControl(new RigidBodyControl(1));
+    characterGeometry.rotate(-FastMath.HALF_PI, 0, 0);
+    characterGeometry.rotateUpTo(Vector3f.UNIT_Z);
+    characterGeometry.addControl(new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 2)));
+
     // Add the character to the environment and to the physics.
     rootNode.attachChild(characterGeometry);
     space.add(characterGeometry);
@@ -134,4 +141,5 @@ public class MatrixPhysicsObjectFactory {
   public static void makeAIUpdater() {
 
   }
+
 }

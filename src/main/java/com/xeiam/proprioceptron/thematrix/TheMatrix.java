@@ -5,11 +5,10 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.math.Vector3f;
+import com.jme3.math.Matrix3f;
 import com.jme3.renderer.RenderManager;
 
 public class TheMatrix extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
@@ -17,14 +16,17 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   private BulletAppState bulletAppState;
   int score;
   // hackety hack
-  Vector3f dirfacing;
+  Matrix3f dirfacing;
+  Matrix3f temp;
+  float[] movescalar;// forward,backward,straferight,strafeleft, angularvelright, angularvelleft
 
   @Override
   public void simpleInitApp() {
 
     // stateManager.detach(stateManager.getState(FlyCamAppState.class));
-
-    dirfacing = Vector3f.UNIT_X;
+    movescalar = new float[] { 0, 0, 0, 0, 0, 0 };
+    dirfacing = new Matrix3f(1, 0, 0, 0, 1, 0, 0, 0, 1);
+    temp = new Matrix3f(1, 0, 0, 0, 1, 0, 0, 0, 1);
     score = 0;
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
@@ -47,31 +49,65 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   @Override
   public void simpleUpdate(float tpf) {
 
+    rootNode.getChild("char").move(dirfacing.getColumn(0).x * tpf * movescalar[0], dirfacing.getColumn(0).y * tpf * movescalar[0], 0);
+    rootNode.getChild("char").move(-dirfacing.getColumn(0).x * tpf * movescalar[1], -dirfacing.getColumn(0).y * tpf * movescalar[1], 0);
+    rootNode.getChild("char").move(dirfacing.getColumn(1).x * tpf * movescalar[2], dirfacing.getColumn(1).y * tpf * movescalar[2], 0);
+    rootNode.getChild("char").move(-dirfacing.getColumn(1).x * tpf * movescalar[3], -dirfacing.getColumn(1).y * tpf * movescalar[3], 0);
+    temp.fromAngleAxis(1 * tpf, dirfacing.getColumn(2));
+    dirfacing.mult(temp);
+    rootNode.getChild("char").rotate(0, 0, movescalar[4] * tpf);
+    temp.fromAngleAxis(-movescalar[5] * tpf, temp.getColumn(2));
+    dirfacing.mult(temp);
+    rootNode.getChild("char").rotate(0, 0, -movescalar[5] * tpf);
+
   }
 
   @Override
-  public void onAction(String name, boolean keyPressed, float tpf) {
+  public void onAction(String name, boolean keyPressed, float tpf /* completelyunused */) {
 
+    // if key is pressed, change velocity to .01f if key is unpressed, change back to 0
     if (name.equals("charforward")) {
-      ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(.25f));
+
+      if (keyPressed)
+        movescalar[0] = 1;
+      else
+        movescalar[0] = 0;
     }
     if (name.equals("charbackward")) {
-      ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.mult(-.25f));
+
+      if (keyPressed)
+        movescalar[1] = 1;
+      else
+        movescalar[1] = 0;
+    }
+    if (name.equals("charstraferight")) {
+
+      if (keyPressed)
+        movescalar[2] = 1;
+      else
+        movescalar[2] = 0;
     }
     if (name.equals("charstrafeleft")) {
 
-      ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Z).mult(.25f));
-    }
-    if (name.equals("charstraferight")) {
-      ((RigidBodyControl) rootNode.getChild("char").getControl(0)).setLinearVelocity(dirfacing.cross(Vector3f.UNIT_Z).mult(-.25f));
-    }
-    if (name.equals("charturnleft")) {
-      dirfacing.add(dirfacing.cross(Vector3f.UNIT_Z).mult(.01f));// lazy but effective.
-      dirfacing.normalize();
+      if (keyPressed)
+        movescalar[3] = 1;
+      else
+        movescalar[3] = 0;
+
     }
     if (name.equals("charturnright")) {
-      dirfacing.add(dirfacing.cross(Vector3f.UNIT_Z).mult(-.01f));
-      dirfacing.normalize();
+
+      if (keyPressed)
+        movescalar[4] = 1;
+      else
+        movescalar[4] = 0;
+    }
+    if (name.equals("charturnleft")) {
+
+      if (keyPressed)
+        movescalar[5] = 1;
+      else
+        movescalar[5] = 0;
     }
   }
 
