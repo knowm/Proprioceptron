@@ -120,8 +120,9 @@ public class MatrixPhysicsObjectFactory {
 
     characterGeometry.setLocalTranslation(0, 0, 0);
     characterGeometry.setMaterial(material);
-    characterGeometry.rotate(-FastMath.HALF_PI, 0, 0);
-    characterGeometry.rotateUpTo(Vector3f.UNIT_Z);
+    characterGeometry.rotate(0, 0, FastMath.PI);
+    characterGeometry.rotate(FastMath.HALF_PI, 0, 0);
+    // characterGeometry.rotateUpTo(Vector3f.UNIT_Y);
     characterGeometry.addControl(new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 2)));
 
     // Add the character to the environment and to the physics.
