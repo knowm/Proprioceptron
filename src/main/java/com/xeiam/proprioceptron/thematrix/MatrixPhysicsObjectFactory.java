@@ -3,6 +3,7 @@ package com.xeiam.proprioceptron.thematrix;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
+import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.AmbientLight;
@@ -26,10 +27,14 @@ public class MatrixPhysicsObjectFactory {
     // Make the Character Geometry
     Sphere sphere = new Sphere(20, 20, 1f);
     Geometry pillGeometry = new Geometry("red", sphere);
-
     pillGeometry.setLocalTranslation(x, 0, y);
     pillGeometry.setMaterial(material);
-    pillGeometry.addControl(new RigidBodyControl(0));
+
+    // define physical interactions
+    GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
+    CharacterControl pillcharacter = new CharacterControl((new CylinderCollisionShape(new Vector3f(1, 1, 1), 1)), 0f);
+    pillGeometry.addControl(pillghost);
+    pillGeometry.addControl(pillcharacter);
 
     // Add the character to the environment and to the physics.
     rootNode.attachChild(pillGeometry);
@@ -49,7 +54,12 @@ public class MatrixPhysicsObjectFactory {
 
     pillGeometry.setLocalTranslation(x, 0, y);
     pillGeometry.setMaterial(material);
-    pillGeometry.addControl(new RigidBodyControl(0));
+
+    // define physical interactions
+    GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
+    CharacterControl pillcharacter = new CharacterControl((new CylinderCollisionShape(new Vector3f(1, 1, 1), 1)), 0f);
+    pillGeometry.addControl(pillghost);
+    pillGeometry.addControl(pillcharacter);
 
     // Add the character to the environment and to the physics.
     rootNode.attachChild(pillGeometry);
@@ -65,10 +75,22 @@ public class MatrixPhysicsObjectFactory {
     // load and create materials for the environment.
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
+    // cheap debug hack.
+    Material northwallmaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    northwallmaterial.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked_north.jpg"));
+    Material southwallmaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    southwallmaterial.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked_south.jpg"));
+    Material eastwallmaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    eastwallmaterial.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked_east.jpg"));
+    Material westwallmaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    westwallmaterial.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked_west.jpg"));
+
     // Create the geometry of the environment.
     Box floorBox = new Box(20, 0.25f, 20);
     Geometry floorGeometry = new Geometry("Floor", floorBox);
     floorGeometry.setMaterial(material);
+
+
     floorGeometry.setLocalTranslation(0, -2.5f, 0);
 
     Box northWallBox = new Box(20, 5, .25f);
@@ -79,10 +101,10 @@ public class MatrixPhysicsObjectFactory {
     Geometry southWallGeom = new Geometry("Wall", southWallBox);
     Geometry eastWallGeom = new Geometry("Wall", eastWallBox);
     Geometry westWallGeom = new Geometry("Wall", westWallBox);
-    northWallGeom.setMaterial(material);
-    southWallGeom.setMaterial(material);
-    eastWallGeom.setMaterial(material);
-    westWallGeom.setMaterial(material);
+    northWallGeom.setMaterial(northwallmaterial);
+    southWallGeom.setMaterial(southwallmaterial);
+    eastWallGeom.setMaterial(eastwallmaterial);
+    westWallGeom.setMaterial(westwallmaterial);
     northWallGeom.setLocalTranslation(0, 0, 20);// I have no idea if these are in order, but it will be easy to fix.
     southWallGeom.setLocalTranslation(0, 0, -20);
     eastWallGeom.setLocalTranslation(20, 0, 0);
@@ -120,10 +142,20 @@ public class MatrixPhysicsObjectFactory {
 
     characterGeometry.setLocalTranslation(0, 0, 0);
     characterGeometry.setMaterial(material);
+    // this rotates the geometry so that the camera is looking at the back of neo's head
     characterGeometry.rotate(0, 0, FastMath.PI);
     characterGeometry.rotate(FastMath.HALF_PI, 0, 0);
-    // characterGeometry.rotateUpTo(Vector3f.UNIT_Y);
-    characterGeometry.addControl(new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 2)));
+
+    // define physical interactions
+    // the cylinders are set to be oriented on the y axis, but I think it's using some sort of local Y axis
+    GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
+    CharacterControl pillcharacter = new CharacterControl((new CylinderCollisionShape(new Vector3f(1, 1, 1), 1)), 0f);
+
+
+    characterGeometry.addControl(pillghost);
+    // ***************************************************
+    // when you uncomment the next line, the cylinders appear upright again and the head appears sideways and pointed the wrong direction.
+    // characterGeometry.addControl(pillcharacter);
 
     // Add the character to the environment and to the physics.
     rootNode.attachChild(characterGeometry);
@@ -131,9 +163,12 @@ public class MatrixPhysicsObjectFactory {
 
   }
 
-  public static void setCameraPosition() {
-
-  }
+  // public static void makeLevel(Random rand, int numreds, int numblues, float livingtax, boolean pillsmoving, Node rootNode, PhysicsSpace space, AssetManager assetManager){
+  // for(int i = 0; i<numreds; i++){
+  // makeBluePill(rand.nextFloat()*38-19,rand.nextFloat()38-19)
+  // }
+  //
+  // }
 
   public static void makeHumanUpdater() {
 
