@@ -146,6 +146,7 @@ public class MatrixPhysicsObjectFactory {
     characterGeometry.rotate(0, 0, FastMath.PI);
     characterGeometry.rotate(FastMath.HALF_PI, 0, 0);
 
+
     // define physical interactions
     // the cylinders are set to be oriented on the y axis, but I think it's using some sort of local Y axis
     GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
@@ -156,6 +157,8 @@ public class MatrixPhysicsObjectFactory {
     // ***************************************************
     // when you uncomment the next line, the cylinders appear upright again and the head appears sideways and pointed the wrong direction.
     // characterGeometry.addControl(pillcharacter);
+    // has the same effect as uncommenting this line of code;
+    // characterGeometry.setLocalRotation(Matrix3f.IDENTITY);
 
     // Add the character to the environment and to the physics.
     rootNode.attachChild(characterGeometry);
