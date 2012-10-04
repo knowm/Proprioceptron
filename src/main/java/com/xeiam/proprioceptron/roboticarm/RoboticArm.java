@@ -22,11 +22,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
@@ -54,7 +56,7 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
   private EnvState newEnvState;
 
   BitmapText hudDistanceText;
-  BitmapText hudPositionText;
+  // BitmapText hudPositionText;
 
   private Node[] pivots;
   private Geometry[] sections;
@@ -71,12 +73,7 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
    */
   public RoboticArm(int numJoints) {
 
-    if (numJoints > 3) {
-      throw new IllegalArgumentException("Only 3 or less joints are acceptable at this time");
-    }
-
     this.numJoints = numJoints;
-
   }
 
   @Override
@@ -85,6 +82,28 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
     pivots = new Node[numJoints];
     sections = new Geometry[numJoints];
     joints = new Geometry[numJoints];
+
+    // Change Camera position
+    cam.setLocation(new Vector3f(0f, numJoints * 6f, 0f));
+    cam.setRotation(new Quaternion(0f, .707f, -.707f, 0f));
+
+    // Create World
+    /** Must add a light to make the lit object visible! */
+    DirectionalLight sun = new DirectionalLight();
+    sun.setDirection(new Vector3f(1, -5, -2).normalizeLocal());
+    sun.setColor(ColorRGBA.White);
+    rootNode.addLight(sun);
+
+    Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
+
+    float dimension = Constants.SECTION_LENGTH * numJoints * 2.3f;
+    Box floorBox = new Box(dimension, .5f, dimension);
+    Geometry floorGeometry = new Geometry("Floor", floorBox);
+    floorGeometry.setMaterial(material);
+    floorGeometry.setLocalTranslation(0, -1.0f * Constants.HEAD_RADIUS - .5f, 0);
+    floorGeometry.addControl(new RigidBodyControl(0));
+    rootNode.attachChild(floorGeometry);
 
     // scene background color
     // viewPort.setBackgroundColor(new ColorRGBA(.5f, .8f, .99f, 1.0f));
@@ -148,13 +167,6 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
     target = new Geometry("head", sphereTarget);
     target.setMaterial(matTarget);
 
-    // Change Camera position
-    cam.setLocation(new Vector3f(0f, 20f, 0f));
-    cam.setRotation(new Quaternion(0f, .707f, -.707f, 0f));
-
-    // Create World
-    RoboticArmUtils.createWorld(rootNode, assetManager);
-
     // Place target
     moveTarget();
     rootNode.attachChild(target);
@@ -194,11 +206,11 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
     hudDistanceText.setLocalTranslation(10, settings.getHeight() - 10, 0); // position
     guiNode.attachChild(hudDistanceText);
 
-    hudPositionText = new BitmapText(guiFont, false);
-    hudPositionText.setSize(16); // font size
-    hudPositionText.setColor(ColorRGBA.White); // font color
-    hudPositionText.setLocalTranslation(10, hudPositionText.getLineHeight(), 0); // position
-    guiNode.attachChild(hudPositionText);
+    // hudPositionText = new BitmapText(guiFont, false);
+    // hudPositionText.setSize(16); // font size
+    // hudPositionText.setColor(ColorRGBA.White); // font color
+    // hudPositionText.setLocalTranslation(10, hudPositionText.getLineHeight(), 0); // position
+    // guiNode.attachChild(hudPositionText);
 
     // hide scene graph statistics
     setDisplayStatView(false);
@@ -283,11 +295,11 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
           relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * Constants.SECTION_LENGTH);
         }
       }
-      String positionString = "";
-      for (int i = 0; i < relativePositions.length; i++) {
-        positionString += relativePositions[i].toString() + " ";
-      }
-      hudPositionText.setText(positionString);
+      // String positionString = "";
+      // for (int i = 0; i < relativePositions.length; i++) {
+      // positionString += relativePositions[i].toString() + " ";
+      // }
+      // hudPositionText.setText(positionString);
 
       // hudDistanceText
       Vector3f targetCoords = target.getWorldTranslation();
@@ -299,7 +311,7 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
       Vector3f headCoords = head.getWorldTranslation();
       float headDistance = headCoords.distance(targetCoords) - Constants.TARGET_RADIUS - Constants.HEAD_RADIUS;
       // float distAve = (distL + distR) / 2;
-      hudDistanceText.setText(" DL= " + distL + " DR= " + distR + " D= " + headDistance);
+      hudDistanceText.setText(" D= " + headDistance);
 
       // System.out.println(cam.getLocation());
       // System.out.println(cam.getRotation());

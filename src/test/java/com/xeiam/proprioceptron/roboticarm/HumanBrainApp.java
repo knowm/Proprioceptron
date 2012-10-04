@@ -25,9 +25,9 @@ import com.jme3.system.AppSettings;
  */
 public class HumanBrainApp {
 
-  private static final int NUM_JOINTS = 2;
+  private static final int NUM_JOINTS = 7;
 
-  private RoboticArm roboticArm;
+  private final RoboticArm roboticArm;
 
   /**
    * Constructor
