@@ -83,6 +83,8 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
     sections = new Geometry[numJoints];
     joints = new Geometry[numJoints];
 
+    setPauseOnLostFocus(false);
+
     // Change Camera position
     cam.setLocation(new Vector3f(0f, numJoints * 6f, 0f));
     cam.setRotation(new Quaternion(0f, .707f, -.707f, 0f));
