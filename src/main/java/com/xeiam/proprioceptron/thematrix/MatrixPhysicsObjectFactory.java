@@ -2,15 +2,13 @@ package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -31,11 +29,11 @@ public class MatrixPhysicsObjectFactory {
     pillGeometry.setMaterial(material);
 
     // define physical interactions
-    GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
-    CharacterControl pillcharacter = new CharacterControl((new CylinderCollisionShape(new Vector3f(1, 1, 1), 1)), 0f);
+    GhostControl pillghost = new GhostControl(new SphereCollisionShape(1f));
+    // CharacterControl pillcharacter = new CharacterControl((new CylinderCollisionShape(new Vector3f(1, 1, 1), 1)), 0f);
     pillGeometry.addControl(pillghost);
-    pillGeometry.addControl(pillcharacter);
-
+    // pillGeometry.addControl(pillcharacter);
+    // pillcharacter.setGravity(0f);
     // Add the character to the environment and to the physics.
     rootNode.attachChild(pillGeometry);
     space.add(pillGeometry);
@@ -56,11 +54,11 @@ public class MatrixPhysicsObjectFactory {
     pillGeometry.setMaterial(material);
 
     // define physical interactions
-    GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
-    CharacterControl pillcharacter = new CharacterControl((new CylinderCollisionShape(new Vector3f(1, 1, 1), 1)), 0f);
+    GhostControl pillghost = new GhostControl(new SphereCollisionShape(1f));
+    // CharacterControl pillcharacter = new CharacterControl((new CylinderCollisionShape(new Vector3f(1, 1, 1), 1)), 0f);
     pillGeometry.addControl(pillghost);
-    pillGeometry.addControl(pillcharacter);
-
+    // pillGeometry.addControl(pillcharacter);
+    // pillcharacter.setGravity(0f);
     // Add the character to the environment and to the physics.
     rootNode.attachChild(pillGeometry);
     space.add(pillGeometry);
@@ -128,6 +126,7 @@ public class MatrixPhysicsObjectFactory {
     rootNode.attachChild(westWallGeom);
     space.add(westWallGeom);
 
+
   }
 
   public static void makeCharacter(Node rootNode, PhysicsSpace space, AssetManager assetManager) {
@@ -143,22 +142,25 @@ public class MatrixPhysicsObjectFactory {
     characterGeometry.setLocalTranslation(0, 0, 0);
     characterGeometry.setMaterial(material);
     // this rotates the geometry so that the camera is looking at the back of neo's head
-    characterGeometry.rotate(0, 0, FastMath.PI);
-    characterGeometry.rotate(FastMath.HALF_PI, 0, 0);
 
+    // characterGeometry.rotate(0, 0, FastMath.PI);
+    // characterGeometry.rotate(FastMath.HALF_PI, 0, 0);
+    // characterGeometry.
 
     // define physical interactions
     // the cylinders are set to be oriented on the y axis, but I think it's using some sort of local Y axis
-    GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
-    CharacterControl pillcharacter = new CharacterControl((new CylinderCollisionShape(new Vector3f(1, 1, 1), 1)), 0f);
+    // GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
+    CharacterControl pillcharacter = new CharacterControl(new SphereCollisionShape(1f), 0f);
 
 
-    characterGeometry.addControl(pillghost);
+    // characterGeometry.addControl(pillghost);
     // ***************************************************
     // when you uncomment the next line, the cylinders appear upright again and the head appears sideways and pointed the wrong direction.
-    // characterGeometry.addControl(pillcharacter);
+    characterGeometry.addControl(pillcharacter);
+    pillcharacter.setGravity(0f);
     // has the same effect as uncommenting this line of code;
     // characterGeometry.setLocalRotation(Matrix3f.IDENTITY);
+    // conclusion: make your own sphere meshes with blender or something.
 
     // Add the character to the environment and to the physics.
     rootNode.attachChild(characterGeometry);
