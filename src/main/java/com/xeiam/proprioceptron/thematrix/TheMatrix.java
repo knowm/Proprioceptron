@@ -1,5 +1,7 @@
 package com.xeiam.proprioceptron.thematrix;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.jme3.app.FlyCamAppState;
@@ -8,47 +10,39 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
-import com.jme3.bullet.control.CharacterControl;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 
 public class TheMatrix extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
 
   private BulletAppState bulletAppState;
-  float score;
   private final Random rand;
-  // hackety hack
-  private final Matrix3f rightepsilon;
-  private final Matrix3f leftepsilon;
-
+  float score;
   // there is no native support for angular velocity so we set these flags in triggers and have angular velocity modeled in update.
   private boolean turnleft;
   private boolean turnright;
   private boolean goforward;
   private boolean gobackward;
+  
+  private boolean followcameraon;
+
+  // these are proprioceptive properties
+  float scoresnapshot;
+  List<Float> distancestoblues;
+  List<Float> distancestoreds;
 
   BitmapText hudText;
 
   public TheMatrix() {
 
     super();
-    Matrix3f temp;
-
-    temp = Matrix3f.IDENTITY;
-    temp.fromAngleAxis(-.001f, Vector3f.UNIT_Y);
-    rightepsilon = temp.clone();
-
-    temp = Matrix3f.IDENTITY;
-    temp.fromAngleAxis(.001f, Vector3f.UNIT_Y);
-    leftepsilon = temp.clone();
-
     rand = new Random();
 
   }
@@ -56,6 +50,7 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   @Override
   public void simpleInitApp() {
 
+    followcameraon = false;
     score = 50;
     bulletAppState = new BulletAppState();
     stateManager.detach(stateManager.getState(FlyCamAppState.class));
@@ -64,9 +59,9 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
 
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
-    MatrixPhysicsObjectFactory.makeLevelEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     MatrixPhysicsObjectFactory.makeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
 
+    MatrixPhysicsObjectFactory.makeLevelEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     MatrixPhysicsObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     MatrixPhysicsObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     setupKeys();
@@ -78,6 +73,8 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
     hudText.setText("score: " + score); // the text
     hudText.setLocalTranslation(300, hudText.getLineHeight(), 0); // position
     guiNode.attachChild(hudText);
+    cam.setLocation(Vector3f.UNIT_Y.mult(50));
+    cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z/* because these should not be in the same direction */);
 
   }
 
@@ -86,30 +83,46 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
     return bulletAppState.getPhysicsSpace();
   }
 
+  public void updateproperties() {
+
+    scoresnapshot = score;
+    distancestoblues = new ArrayList<Float>();
+    distancestoreds = new ArrayList<Float>();
+    List<Spatial> distanceobjects = rootNode.getChildren();
+    // character is always first child, next 5 are always walls and floor
+    // should probably use an iterator as well.
+    for (int i = 6; i < distanceobjects.size(); i++) {
+      if (distanceobjects.get(i).getName().equals("red")) {
+        distancestoreds.add(new Float(distanceobjects.get(0).getWorldTranslation().distance(distanceobjects.get(i).getWorldTranslation())));
+      } else if (distanceobjects.get(i).getName().equals("blue")) {
+        distancestoblues.add(new Float(distanceobjects.get(0).getWorldTranslation().distance(distanceobjects.get(i).getWorldTranslation())));
+      }
+    }
+
+  }
   @Override
   public void simpleUpdate(float tpf) {
     score -= tpf;
-    ((CharacterControl) rootNode.getChild("char").getControl(0)).getViewDirection().normalize();
     if (turnright != turnleft) {
       if (turnright) {
-        ((CharacterControl) rootNode.getChild("char").getControl(0)).setViewDirection(rightepsilon.mult(((CharacterControl) rootNode.getChild("char").getControl(0)).getViewDirection()));
-
-      } else {
-        ((CharacterControl) rootNode.getChild("char").getControl(0)).setViewDirection(leftepsilon.mult(((CharacterControl) rootNode.getChild("char").getControl(0)).getViewDirection()));
-
+        rootNode.getChild("char").rotate(0, -tpf, 0);
       }
-      if (goforward != gobackward) {
-        if (goforward)
-          ((CharacterControl) rootNode.getChild("char").getControl(0)).setWalkDirection(((CharacterControl) rootNode.getChild("char").getControl(0)).getViewDirection().mult(.1f));
-        else
-          ((CharacterControl) rootNode.getChild("char").getControl(0)).setWalkDirection(((CharacterControl) rootNode.getChild("char").getControl(0)).getViewDirection().mult(-.1f));
-      } else
-        ((CharacterControl) rootNode.getChild("char").getControl(0)).setWalkDirection(Vector3f.ZERO);
+      else
+ {
+        rootNode.getChild("char").rotate(0, tpf, 0);
+      }
+    }
+    if (goforward != gobackward) {
+      if (goforward)
+        //this is a hack with WAY too much math to be efficient. if you can find a expression for this variable which does not require transforming a quaternion
+        //you should definitely replace it.
+        rootNode.getChild("char").move(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(10 * tpf));
+      else
+        rootNode.getChild("char").move(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(10 * -tpf));
 
     }
-    cam.setLocation(((Geometry) rootNode.getChild("char")).getWorldTranslation().add(((CharacterControl) rootNode.getChild("char").getControl(0)).getViewDirection().negate().mult(10)).add(Vector3f.UNIT_Y.mult(5)));
-    cam.lookAt(((Geometry) rootNode.getChild("char")).getWorldTranslation(), Vector3f.UNIT_Y);
-    hudText.setText("score: " + score);
+
+
 
   }
 
@@ -131,14 +144,14 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
     if (name.equals("charturnleft")) {
       turnleft = keyPressed;
     }
-    if (goforward != gobackward) {
-      if (goforward)
-        ((CharacterControl) rootNode.getChild("char").getControl(0)).setWalkDirection(((CharacterControl) rootNode.getChild("char").getControl(0)).getViewDirection().mult(.1f));
-      else
-        ((CharacterControl) rootNode.getChild("char").getControl(0)).setWalkDirection(((CharacterControl) rootNode.getChild("char").getControl(0)).getViewDirection().mult(-.1f));
-    } else
-      ((CharacterControl) rootNode.getChild("char").getControl(0)).setWalkDirection(Vector3f.ZERO);
-
+    if (name.equals("togglefollow") && keyPressed) {
+      if (followcameraon) {
+        cam.setLocation(Vector3f.UNIT_Y.mult(50));
+        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z/* because these should not be in the same direction */);
+        followcameraon = false;
+      } else
+        followcameraon = true;
+    }
   }
 
   public void setupKeys() {
@@ -147,21 +160,24 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
     inputManager.addMapping("charbackward", new KeyTrigger(KeyInput.KEY_S));
     inputManager.addMapping("charturnleft", new KeyTrigger(KeyInput.KEY_A));
     inputManager.addMapping("charturnright", new KeyTrigger(KeyInput.KEY_D));
-    inputManager.addListener(this, "charforward", "charbackward", "charturnleft", "charturnright");
+    inputManager.addMapping("togglefollow", new KeyTrigger(KeyInput.KEY_SPACE));
+    inputManager.addListener(this, "charforward", "charbackward", "charturnleft", "charturnright", "togglefollow");
   }
 
   @Override
   public void simpleRender(RenderManager rm) {
+  if (followcameraon){
+    cam.setLocation(((Geometry) rootNode.getChild("char")).getWorldTranslation().add(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(-10f).add(Vector3f.UNIT_Y.mult(5f))));
+    cam.lookAt(((Geometry) rootNode.getChild("char")).getWorldTranslation(), Vector3f.UNIT_Y);}
 
+      
+  hudText.setText("score: " + score);
     // the text
-
-    // TODO: add render code
   }
 
   @Override
   public void collision(PhysicsCollisionEvent event) {
 
-    hudText.setText("collision");
     if ("char".equals(event.getNodeA().getName()) && "red".equals(event.getNodeB().getName())) {
       score -= 10;
       if (!("char".equals(event.getNodeA().getName()))) {
@@ -188,6 +204,19 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
         getPhysicsSpace().removeAll(event.getNodeB());
         MatrixPhysicsObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
       }
+    }
+    if ("char".equals(event.getNodeA().getName()) && "northWall".equals(event.getNodeB().getName())) {
+
+      rootNode.getChild("char").move(Vector3f.UNIT_X.mult(event.getDistance1()));
+    }
+    if ("char".equals(event.getNodeA().getName()) && "southWall".equals(event.getNodeB().getName())) {
+      rootNode.getChild("char").move(Vector3f.UNIT_X.mult(-event.getDistance1()));
+    }
+    if ("char".equals(event.getNodeA().getName()) && "eastWall".equals(event.getNodeB().getName())) {
+      rootNode.getChild("char").move(Vector3f.UNIT_Z.mult(event.getDistance1()));
+    }
+    if ("char".equals(event.getNodeA().getName()) && "westWall".equals(event.getNodeB().getName())) {
+      rootNode.getChild("char").move(Vector3f.UNIT_Z.mult(- event.getDistance1()));
     }
   }
 }

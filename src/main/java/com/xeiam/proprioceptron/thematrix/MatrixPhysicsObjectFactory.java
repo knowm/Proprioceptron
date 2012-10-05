@@ -2,13 +2,13 @@ package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
-import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.GhostControl;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -91,38 +91,38 @@ public class MatrixPhysicsObjectFactory {
 
     floorGeometry.setLocalTranslation(0, -2.5f, 0);
 
-    Box northWallBox = new Box(20, 5, .25f);
-    Box southWallBox = new Box(20, 5, .25f);
-    Box eastWallBox = new Box(.25f, 5, 20);
-    Box westWallBox = new Box(.25f, 5, 20);
-    Geometry northWallGeom = new Geometry("Wall", northWallBox);
-    Geometry southWallGeom = new Geometry("Wall", southWallBox);
-    Geometry eastWallGeom = new Geometry("Wall", eastWallBox);
-    Geometry westWallGeom = new Geometry("Wall", westWallBox);
+    Box northWallBox = new Box(.25f, 5, 20f);
+    Box southWallBox = new Box(.25f, 5, 20f);
+    Box eastWallBox = new Box(20, 5, .25f);
+    Box westWallBox = new Box(20, 5, .25f);
+    Geometry northWallGeom = new Geometry("northWall", northWallBox);
+    Geometry southWallGeom = new Geometry("southWall", southWallBox);
+    Geometry eastWallGeom = new Geometry("eastWall", eastWallBox);
+    Geometry westWallGeom = new Geometry("westWall", westWallBox);
     northWallGeom.setMaterial(northwallmaterial);
     southWallGeom.setMaterial(southwallmaterial);
     eastWallGeom.setMaterial(eastwallmaterial);
     westWallGeom.setMaterial(westwallmaterial);
-    northWallGeom.setLocalTranslation(0, 0, 20);// I have no idea if these are in order, but it will be easy to fix.
-    southWallGeom.setLocalTranslation(0, 0, -20);
-    eastWallGeom.setLocalTranslation(20, 0, 0);
-    westWallGeom.setLocalTranslation(-20, 0, 0);
+    northWallGeom.setLocalTranslation(20, 0, 0);// I have no idea if these are in order, but it will be easy to fix.
+    southWallGeom.setLocalTranslation(-20, 0, 0);
+    eastWallGeom.setLocalTranslation(0, 0, 20);
+    westWallGeom.setLocalTranslation(0, 0, -20);
 
     // Add the geometries to the environment, and endow them with physical properties
 
-    floorGeometry.addControl(new RigidBodyControl(0));
+    floorGeometry.addControl(new GhostControl(new BoxCollisionShape(new Vector3f(0, 0f, 0f))));
     rootNode.attachChild(floorGeometry);
     space.add(floorGeometry);
-    northWallGeom.addControl(new RigidBodyControl(0));
+    northWallGeom.addControl(new GhostControl(new BoxCollisionShape(new Vector3f(.25f, 5f, 19.7f))));
     rootNode.attachChild(northWallGeom);
     space.add(northWallGeom);
-    southWallGeom.addControl(new RigidBodyControl(0));
+    southWallGeom.addControl(new GhostControl(new BoxCollisionShape(new Vector3f(.25f, 5f, 19.7f))));
     rootNode.attachChild(southWallGeom);
     space.add(southWallGeom);
-    eastWallGeom.addControl(new RigidBodyControl(0));
+    eastWallGeom.addControl(new GhostControl(new BoxCollisionShape(new Vector3f(19.7f, 5f, .25f))));
     rootNode.attachChild(eastWallGeom);
     space.add(eastWallGeom);
-    westWallGeom.addControl(new RigidBodyControl(0));
+    westWallGeom.addControl(new GhostControl(new BoxCollisionShape(new Vector3f(19.7f, 5f, .25f))));
     rootNode.attachChild(westWallGeom);
     space.add(westWallGeom);
 
@@ -142,22 +142,21 @@ public class MatrixPhysicsObjectFactory {
     characterGeometry.setLocalTranslation(0, 0, 0);
     characterGeometry.setMaterial(material);
     // this rotates the geometry so that the camera is looking at the back of neo's head
-
+    //
     // characterGeometry.rotate(0, 0, FastMath.PI);
     // characterGeometry.rotate(FastMath.HALF_PI, 0, 0);
-    // characterGeometry.
+
 
     // define physical interactions
     // the cylinders are set to be oriented on the y axis, but I think it's using some sort of local Y axis
-    // GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
-    CharacterControl pillcharacter = new CharacterControl(new SphereCollisionShape(1f), 0f);
+    GhostControl pillghost = new GhostControl(new SphereCollisionShape(1f));
 
-
-    // characterGeometry.addControl(pillghost);
+    characterGeometry.addControl(pillghost);
     // ***************************************************
     // when you uncomment the next line, the cylinders appear upright again and the head appears sideways and pointed the wrong direction.
-    characterGeometry.addControl(pillcharacter);
-    pillcharacter.setGravity(0f);
+
+    // characterGeometry.addControl(pillcharacter);
+    // pillcharacter.setGravity(0f);
     // has the same effect as uncommenting this line of code;
     // characterGeometry.setLocalRotation(Matrix3f.IDENTITY);
     // conclusion: make your own sphere meshes with blender or something.
