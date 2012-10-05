@@ -2,7 +2,8 @@ package com.xeiam.proprioceptron.thematrixv1;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.DirectionalLight;
@@ -36,7 +37,7 @@ public class ObjectFactoryV1 {
     }
   }
 
-  public static void makeGameEnvironment(Node rootNode, PhysicsSpace physicsSpace, AssetManager assetManager) {
+  public static void setupGameEnvironment(Node rootNode, PhysicsSpace physicsSpace, AssetManager assetManager) {
 
     // Must add a light to make the lit objects visible
     DirectionalLight sun = new DirectionalLight();
@@ -99,15 +100,16 @@ public class ObjectFactoryV1 {
 
   }
 
-  public static CharacterControl makeCharacter(Node rootNode, PhysicsSpace physicsSpace, AssetManager assetManager) {
+  public static CharacterControl getCharacter(Node rootNode, PhysicsSpace physicsSpace, AssetManager assetManager) {
 
     // make player
-    CapsuleCollisionShape capsule = new CapsuleCollisionShape(PLAYER_RADIUS, PLAYER_RADIUS);
+    CollisionShape capsule = new SphereCollisionShape(PLAYER_RADIUS);
     CharacterControl player = new CharacterControl(capsule, 0f);
-    Node model = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
-    model.addControl(player);
+    Node playerNode = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
+    playerNode.scale(.6f);
+    playerNode.addControl(player);
     physicsSpace.add(player);
-    rootNode.attachChild(model);
+    rootNode.attachChild(playerNode);
 
     return player;
   }

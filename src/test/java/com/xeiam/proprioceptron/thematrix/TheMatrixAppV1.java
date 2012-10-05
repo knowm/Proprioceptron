@@ -16,6 +16,7 @@
 package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.system.AppSettings;
+import com.xeiam.proprioceptron.thematrixv1.ObjectFactoryV1.GameView;
 import com.xeiam.proprioceptron.thematrixv1.TheMatrixV1;
 
 /**
@@ -29,7 +30,7 @@ public class TheMatrixAppV1 {
    */
   public TheMatrixAppV1() {
 
-    TheMatrixV1 theMatrix = new TheMatrixV1();
+    TheMatrixV1 theMatrix = new TheMatrixV1(GameView.GOD_VIEW);
     theMatrix.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(600, 480);

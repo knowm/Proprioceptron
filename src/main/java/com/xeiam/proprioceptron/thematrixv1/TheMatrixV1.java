@@ -46,6 +46,16 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
 
   Random random = new Random();
 
+  /**
+   * Constructor
+   * 
+   * @param gameView
+   */
+  public TheMatrixV1(GameView gameView) {
+
+    this.gameView = gameView;
+  }
+
   @Override
   public void simpleInitApp() {
 
@@ -57,10 +67,10 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
     // 2. make game environment
-    ObjectFactoryV1.makeGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    ObjectFactoryV1.setupGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
 
     // 3. make player
-    player = ObjectFactoryV1.makeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    player = ObjectFactoryV1.getCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
 
     // pills
     bluePill = ObjectFactoryV1.getPill(assetManager, ColorRGBA.Blue);
@@ -114,7 +124,6 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
     }
     if (name.equals("toggleGameView") && !keyPressed) {
       gameView = gameView.getNext();
-      System.out.println(gameView.toString());
     }
 
   }
@@ -147,7 +156,6 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
 
     // handle collisions
     float bluePillDistance = player.getPhysicsLocation().distance(bluePill.getWorldTranslation()) - ObjectFactoryV1.PILL_RADIUS - ObjectFactoryV1.PLAYER_RADIUS;
-    System.out.println(player.getPhysicsLocation().distance(bluePill.getWorldTranslation()));
     boolean wasCollision = bluePillDistance < 0.005f;
     if (wasCollision) {
       movePill(bluePill);

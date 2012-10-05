@@ -1,6 +1,5 @@
 package com.xeiam.proprioceptron.thematrix;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -18,20 +17,19 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Spatial;
 
 public class TheMatrix extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
 
   private BulletAppState bulletAppState;
   private final Random rand;
-  float score;
+  float score = 50;
   // there is no native support for angular velocity so we set these flags in triggers and have angular velocity modeled in update.
   private boolean turnleft;
   private boolean turnright;
   private boolean goforward;
   private boolean gobackward;
-  
-  private boolean followcameraon;
+
+  private boolean followCameraOn = false;
 
   // these are proprioceptive properties
   float scoresnapshot;
@@ -50,8 +48,6 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   @Override
   public void simpleInitApp() {
 
-    followcameraon = false;
-    score = 50;
     bulletAppState = new BulletAppState();
     stateManager.detach(stateManager.getState(FlyCamAppState.class));
 
@@ -83,47 +79,54 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
     return bulletAppState.getPhysicsSpace();
   }
 
-  public void updateproperties() {
+  // public void updateProperties() {
+  //
+  // scoresnapshot = score;
+  // distancestoblues = new ArrayList<Float>();
+  // distancestoreds = new ArrayList<Float>();
+  // List<Spatial> distanceobjects = rootNode.getChildren();
+  // // character is always first child, next 5 are always walls and floor
+  // // should probably use an iterator as well.
+  // for (int i = 6; i < distanceobjects.size(); i++) {
+  // if (distanceobjects.get(i).getName().equals("red")) {
+  // distancestoreds.add(new Float(distanceobjects.get(0).getWorldTranslation().distance(distanceobjects.get(i).getWorldTranslation())));
+  // } else if (distanceobjects.get(i).getName().equals("blue")) {
+  // distancestoblues.add(new Float(distanceobjects.get(0).getWorldTranslation().distance(distanceobjects.get(i).getWorldTranslation())));
+  // }
+  // }
+  // }
 
-    scoresnapshot = score;
-    distancestoblues = new ArrayList<Float>();
-    distancestoreds = new ArrayList<Float>();
-    List<Spatial> distanceobjects = rootNode.getChildren();
-    // character is always first child, next 5 are always walls and floor
-    // should probably use an iterator as well.
-    for (int i = 6; i < distanceobjects.size(); i++) {
-      if (distanceobjects.get(i).getName().equals("red")) {
-        distancestoreds.add(new Float(distanceobjects.get(0).getWorldTranslation().distance(distanceobjects.get(i).getWorldTranslation())));
-      } else if (distanceobjects.get(i).getName().equals("blue")) {
-        distancestoblues.add(new Float(distanceobjects.get(0).getWorldTranslation().distance(distanceobjects.get(i).getWorldTranslation())));
-      }
-    }
-
-  }
   @Override
   public void simpleUpdate(float tpf) {
+
     score -= tpf;
     if (turnright != turnleft) {
       if (turnright) {
         rootNode.getChild("char").rotate(0, -tpf, 0);
-      }
-      else
- {
+      } else {
         rootNode.getChild("char").rotate(0, tpf, 0);
       }
     }
     if (goforward != gobackward) {
       if (goforward)
-        //this is a hack with WAY too much math to be efficient. if you can find a expression for this variable which does not require transforming a quaternion
-        //you should definitely replace it.
+        // this is a hack with WAY too much math to be efficient. if you can find a expression for this variable which does not require transforming a quaternion
+        // you should definitely replace it.
         rootNode.getChild("char").move(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(10 * tpf));
       else
         rootNode.getChild("char").move(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(10 * -tpf));
 
     }
 
+  }
 
+  public void setupKeys() {
 
+    inputManager.addMapping("charforward", new KeyTrigger(KeyInput.KEY_W));
+    inputManager.addMapping("charbackward", new KeyTrigger(KeyInput.KEY_S));
+    inputManager.addMapping("charturnleft", new KeyTrigger(KeyInput.KEY_A));
+    inputManager.addMapping("charturnright", new KeyTrigger(KeyInput.KEY_D));
+    inputManager.addMapping("togglefollow", new KeyTrigger(KeyInput.KEY_SPACE));
+    inputManager.addListener(this, "charforward", "charbackward", "charturnleft", "charturnright", "togglefollow");
   }
 
   @Override
@@ -145,33 +148,24 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
       turnleft = keyPressed;
     }
     if (name.equals("togglefollow") && keyPressed) {
-      if (followcameraon) {
+      if (followCameraOn) { // turn follow camera off
         cam.setLocation(Vector3f.UNIT_Y.mult(50));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z/* because these should not be in the same direction */);
-        followcameraon = false;
+        followCameraOn = false;
       } else
-        followcameraon = true;
+        followCameraOn = true;
     }
-  }
-
-  public void setupKeys() {
-
-    inputManager.addMapping("charforward", new KeyTrigger(KeyInput.KEY_W));
-    inputManager.addMapping("charbackward", new KeyTrigger(KeyInput.KEY_S));
-    inputManager.addMapping("charturnleft", new KeyTrigger(KeyInput.KEY_A));
-    inputManager.addMapping("charturnright", new KeyTrigger(KeyInput.KEY_D));
-    inputManager.addMapping("togglefollow", new KeyTrigger(KeyInput.KEY_SPACE));
-    inputManager.addListener(this, "charforward", "charbackward", "charturnleft", "charturnright", "togglefollow");
   }
 
   @Override
   public void simpleRender(RenderManager rm) {
-  if (followcameraon){
-    cam.setLocation(((Geometry) rootNode.getChild("char")).getWorldTranslation().add(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(-10f).add(Vector3f.UNIT_Y.mult(5f))));
-    cam.lookAt(((Geometry) rootNode.getChild("char")).getWorldTranslation(), Vector3f.UNIT_Y);}
 
-      
-  hudText.setText("score: " + score);
+    if (followCameraOn) {
+      cam.setLocation(((Geometry) rootNode.getChild("char")).getWorldTranslation().add(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(-10f).add(Vector3f.UNIT_Y.mult(5f))));
+      cam.lookAt(((Geometry) rootNode.getChild("char")).getWorldTranslation(), Vector3f.UNIT_Y);
+    }
+
+    // hudText.setText("score: " + score);
     // the text
   }
 
@@ -216,7 +210,7 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
       rootNode.getChild("char").move(Vector3f.UNIT_Z.mult(event.getDistance1()));
     }
     if ("char".equals(event.getNodeA().getName()) && "westWall".equals(event.getNodeB().getName())) {
-      rootNode.getChild("char").move(Vector3f.UNIT_Z.mult(- event.getDistance1()));
+      rootNode.getChild("char").move(Vector3f.UNIT_Z.mult(-event.getDistance1()));
     }
   }
 }
