@@ -30,7 +30,6 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -85,7 +84,7 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
 
     // Change Camera position
     cam.setLocation(new Vector3f(0f, numJoints * 6f, 0f));
-    cam.setRotation(new Quaternion(0f, .707f, -.707f, 0f));
+    cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
 
     // Create World
     /** Must add a light to make the lit object visible! */

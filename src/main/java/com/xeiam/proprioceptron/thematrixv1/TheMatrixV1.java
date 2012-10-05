@@ -1,5 +1,7 @@
 package com.xeiam.proprioceptron.thematrixv1;
 
+import java.util.Random;
+
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -9,10 +11,13 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix3f;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.xeiam.proprioceptron.ProprioceptronApplication;
+import com.xeiam.proprioceptron.thematrixv1.ObjectFactoryV1.GameView;
 
 /**
  * @author timmolter
@@ -21,12 +26,16 @@ import com.xeiam.proprioceptron.ProprioceptronApplication;
 public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCollisionListener, ActionListener {
 
   private BulletAppState bulletAppState;
+  private GameView gameView = GameView.GOD_VIEW;
 
+  // player
   private CharacterControl player;
+  private final Vector3f walkDirection = new Vector3f(0, 0, 0);
+  private Vector3f viewDirection = new Vector3f(0, 0, 0);
 
-  // // hackety hack
-  private final Matrix3f rightepsilon;
-  private final Matrix3f leftepsilon;
+  // pills
+  private Geometry bluePill;
+  // private Geometry redPill;
 
   private boolean turnleft;
   private boolean turnright;
@@ -35,20 +44,7 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
 
   BitmapText hudText;
 
-  public TheMatrixV1() {
-
-    super();
-    Matrix3f temp;
-
-    temp = Matrix3f.IDENTITY;
-    temp.fromAngleAxis(-.001f, Vector3f.UNIT_Y);
-    rightepsilon = temp.clone();
-
-    temp = Matrix3f.IDENTITY;
-    temp.fromAngleAxis(.001f, Vector3f.UNIT_Y);
-    leftepsilon = temp.clone();
-
-  }
+  Random random = new Random();
 
   @Override
   public void simpleInitApp() {
@@ -60,11 +56,19 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
     stateManager.attach(bulletAppState);
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
-    // 2. make game env
-    MatrixPhysicsObjectFactoryV1.makeGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    // 2. make game environment
+    ObjectFactoryV1.makeGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
 
-    // 3. make plyer
-    player = MatrixPhysicsObjectFactoryV1.makeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    // 3. make player
+    player = ObjectFactoryV1.makeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+
+    // pills
+    bluePill = ObjectFactoryV1.getPill(assetManager, ColorRGBA.Blue);
+    movePill(bluePill);
+    rootNode.attachChild(bluePill);
+    // redPill = MatrixPhysicsObjectFactoryV1.getPill(assetManager, ColorRGBA.Red);
+    // movePill(redPill);
+    // rootNode.attachChild(redPill);
 
     // 4. setup keys
     setupKeys();
@@ -79,69 +83,75 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
     hudText.setLocalTranslation(300, hudText.getLineHeight(), 0); // position
     guiNode.attachChild(hudText);
 
+    // setup camera
+    setCam();
   }
 
-  @Override
-  public void simpleUpdate(float tpf) {
+  public void setupKeys() {
 
-    player.getViewDirection().normalize();
-    if (turnright != turnleft) {
-      if (turnright) {
-        player.setViewDirection(rightepsilon.mult(player.getViewDirection()));
-
-      } else {
-        player.setViewDirection(leftepsilon.mult(player.getViewDirection()));
-
-      }
-      if (goforward != gobackward) {
-        if (goforward)
-          player.setWalkDirection(player.getViewDirection().mult(.1f));
-        else
-          player.setWalkDirection(player.getViewDirection().mult(-.1f));
-      } else
-        player.setWalkDirection(Vector3f.ZERO);
-
-    }
-    cam.setLocation(((Geometry) rootNode.getChild("player")).getWorldTranslation().add(player.getViewDirection().negate().mult(10)).add(Vector3f.UNIT_Y.mult(5)));
-    cam.lookAt(((Geometry) rootNode.getChild("player")).getWorldTranslation(), Vector3f.UNIT_Y);
-
+    inputManager.addMapping("forward", new KeyTrigger(KeyInput.KEY_I));
+    inputManager.addMapping("backward", new KeyTrigger(KeyInput.KEY_K));
+    inputManager.addMapping("turnleft", new KeyTrigger(KeyInput.KEY_J));
+    inputManager.addMapping("turnright", new KeyTrigger(KeyInput.KEY_L));
+    inputManager.addMapping("toggleGameView", new KeyTrigger(KeyInput.KEY_SPACE));
+    inputManager.addListener(this, "forward", "backward", "turnleft", "turnright", "toggleGameView");
   }
 
   @Override
   public void onAction(String name, boolean keyPressed, float tpf) {
 
-    // if key is pressed, change velocity to .01f if key is unpressed, change back to 0
-    if (name.equals("charforward")) {
-
+    if (name.equals("forward")) {
       goforward = keyPressed;
     }
-    if (name.equals("charbackward")) {
-
+    if (name.equals("backward")) {
       gobackward = keyPressed;
     }
-    if (name.equals("charturnright")) {
+    if (name.equals("turnright")) {
       turnright = keyPressed;
     }
-    if (name.equals("charturnleft")) {
+    if (name.equals("turnleft")) {
       turnleft = keyPressed;
     }
-    if (goforward != gobackward) {
-      if (goforward)
-        player.setWalkDirection(player.getViewDirection().mult(.1f));
-      else
-        player.setWalkDirection(player.getViewDirection().mult(-.1f));
-    } else
-      player.setWalkDirection(Vector3f.ZERO);
+    if (name.equals("toggleGameView") && !keyPressed) {
+      gameView = gameView.getNext();
+      System.out.println(gameView.toString());
+    }
 
   }
 
-  public void setupKeys() {
+  @Override
+  public void simpleUpdate(float tpf) {
 
-    inputManager.addMapping("charforward", new KeyTrigger(KeyInput.KEY_UP));
-    inputManager.addMapping("charbackward", new KeyTrigger(KeyInput.KEY_DOWN));
-    inputManager.addMapping("charturnleft", new KeyTrigger(KeyInput.KEY_LEFT));
-    inputManager.addMapping("charturnright", new KeyTrigger(KeyInput.KEY_RIGHT));
-    inputManager.addListener(this, "charforward", "charbackward", "charturnleft", "charturnright");
+    if (turnleft || turnright) {
+      // rotation
+      Quaternion quat = new Quaternion();
+      quat.fromAngleAxis(FastMath.PI / 1000 * (turnleft ? 1.0f : -1.0f), Vector3f.UNIT_Y);
+      Vector3f playerLeft = player.getViewDirection().clone();
+      quat.mult(playerLeft, playerLeft);
+      viewDirection = playerLeft;
+      player.setViewDirection(playerLeft);
+    }
+
+    if (goforward || gobackward) {
+      // forward direction
+      Vector3f playerDir = player.getViewDirection().clone().multLocal((goforward ? 1.0f : -1.0f) * 0.25f);
+      walkDirection.set(0, 0, 0);
+      walkDirection.addLocal(playerDir);
+      player.setWalkDirection(walkDirection); // THIS IS WHERE THE WALKING HAPPENS
+    }
+
+    else {
+      walkDirection.set(0, 0, 0);
+      player.setWalkDirection(walkDirection); // Stop walking
+    }
+
+    // handle collisions
+    float bluePillDistance = player.getPhysicsLocation().distance(bluePill.getWorldTranslation()) - ObjectFactoryV1.PILL_RADIUS - ObjectFactoryV1.PLAYER_RADIUS;
+    System.out.println(player.getPhysicsLocation().distance(bluePill.getWorldTranslation()));
+    boolean wasCollision = bluePillDistance < 0.005f;
+    if (wasCollision) {
+      movePill(bluePill);
+    }
   }
 
   @Override
@@ -149,6 +159,49 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
 
     // This is called back for collisions with all RigidBodyControls, even the floor!
     // System.out.println(event.getNodeA().toString());
+
+  }
+
+  @Override
+  public void simpleRender(RenderManager rm) {
+
+    setCam();
+
+    // hudText.setText("score: " + score);
+    // the text
+  }
+
+  private void setCam() {
+
+    if (gameView == GameView.THIRD_PERSON_CENTER) {
+
+      // put the camera in the center of the platform and look at the player
+      cam.setLocation(new Vector3f(0, .5f, 0));
+      cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
+
+    } else if (gameView == GameView.THIRD_PERSON_FOLLOW) {
+
+      // TODO implement this, viewDirection may be helpful here
+
+    } else if (gameView == GameView.FIRST_PERSON) {
+
+      // TODO implement this, viewDirection may be helpful here
+
+    } else {
+
+      // hover above the platform and look down
+      cam.setLocation(Vector3f.UNIT_Y.mult(66));
+      cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
+
+    }
+  }
+
+  private void movePill(Geometry pill) {
+
+    float x = ObjectFactoryV1.PLATFORM_DIMENSION / 2 - random.nextInt(ObjectFactoryV1.PLATFORM_DIMENSION);
+    float z = ObjectFactoryV1.PLATFORM_DIMENSION / 2 - random.nextInt(ObjectFactoryV1.PLATFORM_DIMENSION);
+    pill.center();
+    pill.move(x, ObjectFactoryV1.PILL_RADIUS, z);
 
   }
 }

@@ -2,32 +2,47 @@ package com.xeiam.proprioceptron.thematrixv1;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
+import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * @author timmolter
  * @create Oct 5, 2012
  */
-public class MatrixPhysicsObjectFactoryV1 {
+public class ObjectFactoryV1 {
 
-  private static final int PLATFORM_DIMENSION = 20;
-  private static final int WALL_DIMENSION = 2;
+  public static final int PLATFORM_DIMENSION = 20;
+  public static final int WALL_DIMENSION = 2;
+  public static final float PLAYER_RADIUS = 2.0f;
+  public static final float PILL_RADIUS = 1.0f;
+
+  public enum GameView {
+
+    THIRD_PERSON_CENTER, THIRD_PERSON_FOLLOW, FIRST_PERSON, GOD_VIEW;
+
+    public GameView getNext() {
+
+      return this.ordinal() < GameView.values().length - 1 ? GameView.values()[this.ordinal() + 1] : GameView.values()[0];
+    }
+  }
 
   public static void makeGameEnvironment(Node rootNode, PhysicsSpace physicsSpace, AssetManager assetManager) {
 
-    // set the lighting
-    AmbientLight light = new AmbientLight();
-    light.setColor(ColorRGBA.LightGray);
-    rootNode.addLight(light);
+    // Must add a light to make the lit objects visible
+    DirectionalLight sun = new DirectionalLight();
+    sun.setDirection(new Vector3f(1, -5, -2).normalizeLocal());
+    sun.setColor(ColorRGBA.White);
+    rootNode.addLight(sun);
 
     // Platform
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -86,42 +101,31 @@ public class MatrixPhysicsObjectFactoryV1 {
 
   public static CharacterControl makeCharacter(Node rootNode, PhysicsSpace physicsSpace, AssetManager assetManager) {
 
-    // load and make materials
-    Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    material.setTexture("ColorMap", assetManager.loadTexture("Textures/NeoGlasses.png"));
-
-    // Make the Character Geometry
-    Sphere sphere = new Sphere(20, 20, 1f);
-    Geometry characterGeometry = new Geometry("player", sphere);
-
-    characterGeometry.setLocalTranslation(0, 0, 0);
-    characterGeometry.setMaterial(material);
-    // this rotates the geometry so that the camera is looking at the back of neo's head
-
-    // characterGeometry.rotate(0, 0, FastMath.PI);
-    // characterGeometry.rotate(FastMath.HALF_PI, 0, 0);
-    // characterGeometry.
-
-    // define physical interactions
-    // the cylinders are set to be oriented on the y axis, but I think it's using some sort of local Y axis
-    // GhostControl pillghost = new GhostControl(new CylinderCollisionShape(new Vector3f(1, 1, 1), 1));
-    CharacterControl player = new CharacterControl(new SphereCollisionShape(1f), 0f);
-
-    // characterGeometry.addControl(pillghost);
-    // ***************************************************
-    // when you uncomment the next line, the cylinders appear upright again and the head appears sideways and pointed the wrong direction.
-    characterGeometry.addControl(player);
-    player.setGravity(0f);
-    // has the same effect as uncommenting this line of code;
-    // characterGeometry.setLocalRotation(Matrix3f.IDENTITY);
-    // conclusion: make your own sphere meshes with blender or something.
-
-    // Add the character to the environment and to the physics.
-    rootNode.attachChild(characterGeometry);
-    physicsSpace.add(characterGeometry);
+    // make player
+    CapsuleCollisionShape capsule = new CapsuleCollisionShape(PLAYER_RADIUS, PLAYER_RADIUS);
+    CharacterControl player = new CharacterControl(capsule, 0f);
+    Node model = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
+    model.addControl(player);
+    physicsSpace.add(player);
+    rootNode.attachChild(model);
 
     return player;
-
   }
 
+  public static Geometry getPill(AssetManager assetManager, ColorRGBA color) {
+
+    Material matTarget = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+    matTarget.setBoolean("UseMaterialColors", true);
+    matTarget.setColor("m_Specular", ColorRGBA.White);
+    matTarget.setColor("Diffuse", color);
+    matTarget.setFloat("Shininess", 128f); // [1,128]
+
+    Sphere sphere = new Sphere(10, 10, PILL_RADIUS);
+    sphere.setTextureMode(Sphere.TextureMode.Projected);
+    TangentBinormalGenerator.generate(sphere);
+    Geometry bluePill = new Geometry("pill", sphere);
+    bluePill.setMaterial(matTarget);
+
+    return bluePill;
+  }
 }
