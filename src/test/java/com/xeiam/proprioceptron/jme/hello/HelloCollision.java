@@ -55,9 +55,10 @@ public class HelloCollision extends SimpleApplication implements ActionListener 
   @Override
   public void simpleInitApp() {
 
-    /** Set up Physics */
+    // 1. Activate Physics
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
+
     // bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
     // We re-use the flyby camera for rotation, while positioning is handled by physics

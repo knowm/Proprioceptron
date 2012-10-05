@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
@@ -38,12 +37,13 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.util.TangentBinormalGenerator;
+import com.xeiam.proprioceptron.ProprioceptronApplication;
 
 /**
  * @author timmolter
  * @create Sep 25, 2012
  */
-public class RoboticArm extends SimpleApplication implements AnalogListener, ActionListener {
+public class RoboticArm extends ProprioceptronApplication implements AnalogListener, ActionListener {
 
   private final int numJoints;
   private boolean enableKeys = false;
@@ -82,8 +82,6 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
     pivots = new Node[numJoints];
     sections = new Geometry[numJoints];
     joints = new Geometry[numJoints];
-
-    setPauseOnLostFocus(false);
 
     // Change Camera position
     cam.setLocation(new Vector3f(0f, numJoints * 6f, 0f));
@@ -213,10 +211,6 @@ public class RoboticArm extends SimpleApplication implements AnalogListener, Act
     // hudPositionText.setColor(ColorRGBA.White); // font color
     // hudPositionText.setLocalTranslation(10, hudPositionText.getLineHeight(), 0); // position
     // guiNode.attachChild(hudPositionText);
-
-    // hide scene graph statistics
-    setDisplayStatView(false);
-    setDisplayFps(false);
 
     // init env state
     simpleUpdate(0.0f);
