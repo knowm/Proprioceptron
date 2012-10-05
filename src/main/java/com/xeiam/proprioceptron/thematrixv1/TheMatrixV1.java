@@ -70,7 +70,7 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
     ObjectFactoryV1.setupGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
 
     // 3. make player
-    player = ObjectFactoryV1.getCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    player = ObjectFactoryV1.getPlayer(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
 
     // pills
     bluePill = ObjectFactoryV1.getPill(assetManager, ColorRGBA.Blue);
@@ -198,7 +198,7 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
     } else {
 
       // hover above the platform and look down
-      cam.setLocation(Vector3f.UNIT_Y.mult(66));
+      cam.setLocation(Vector3f.UNIT_Y.mult(62));
       cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
 
     }

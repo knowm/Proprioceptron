@@ -2,8 +2,7 @@ package com.xeiam.proprioceptron.thematrixv1;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
+import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.DirectionalLight;
@@ -100,16 +99,29 @@ public class ObjectFactoryV1 {
 
   }
 
-  public static CharacterControl getCharacter(Node rootNode, PhysicsSpace physicsSpace, AssetManager assetManager) {
+  public static CharacterControl getPlayer(Node rootNode, PhysicsSpace physicsSpace, AssetManager assetManager) {
 
     // make player
-    CollisionShape capsule = new SphereCollisionShape(PLAYER_RADIUS);
-    CharacterControl player = new CharacterControl(capsule, 0f);
+    // CollisionShape capsule = new SphereCollisionShape(PLAYER_RADIUS);
+    // CharacterControl player = new CharacterControl(capsule, 0f);
+    // Node playerNode = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
+    // playerNode.scale(.6f);
+    // playerNode.addControl(player);
+    // physicsSpace.add(player);
+    // rootNode.attachChild(playerNode);
+    //
+    // return player;
+
     Node playerNode = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
-    playerNode.scale(.6f);
+    playerNode.setLocalScale(.6f);
+    rootNode.attachChild(playerNode);
+
+    // Create a appropriate physical shape for it
+    CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(PLAYER_RADIUS, 4f, 1);
+    CharacterControl player = new CharacterControl(capsuleShape, 2f);
+    // Attach physical properties to model and PhysicsSpace
     playerNode.addControl(player);
     physicsSpace.add(player);
-    rootNode.attachChild(playerNode);
 
     return player;
   }
