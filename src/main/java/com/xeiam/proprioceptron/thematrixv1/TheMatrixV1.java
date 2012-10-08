@@ -136,6 +136,10 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
   @Override
   public void simpleUpdate(float tpf) {
 
+    // uncomment and assign to a float of your choosing
+    // copy paste for left eye, right eye. run in loop for a list of pills.
+    // = player.getPhysicsLocation().subtract(bluePill.getWorldTranslation()).length();
+
     if (turnleft != turnright) {
       // rotation
       Quaternion quat = new Quaternion();
