@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 Xeiam LLC.
+ * Copyright 2012 MANC LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,12 @@
  */
 package com.xeiam.proprioceptron;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.jme3.app.SimpleApplication;
 
 /**
@@ -22,6 +28,10 @@ import com.jme3.app.SimpleApplication;
  * @create Oct 5, 2012
  */
 public abstract class ProprioceptronApplication extends SimpleApplication {
+
+  protected final List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
+  protected EnvState oldEnvState;
+  protected EnvState newEnvState;
 
   @Override
   public void simpleInitApp() {
@@ -32,6 +42,23 @@ public abstract class ProprioceptronApplication extends SimpleApplication {
     // hide scene graph statistics
     setDisplayStatView(false);
     setDisplayFps(false);
+  }
 
+  public void addChangeListener(PropertyChangeListener newListener) {
+
+    listeners.add(newListener);
+  }
+
+  /**
+   * Send PropertyChangeEvent to observers (listeners)
+   */
+  protected void notifyListeners() {
+
+    PropertyChangeEvent pce = new PropertyChangeEvent(this, "", oldEnvState, newEnvState);
+
+    for (Iterator<PropertyChangeListener> iterator = listeners.iterator(); iterator.hasNext();) {
+      PropertyChangeListener observer = iterator.next();
+      observer.propertyChange(pce);
+    }
   }
 }

@@ -1,3 +1,18 @@
+/**
+ * Copyright 2012 MANC LLC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.asset.AssetManager;
@@ -14,7 +29,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 
-public class MatrixPhysicsObjectFactory {
+public class TheMatrixObjectFactory {
 
   public static void makeRedPill(float x, float y, Node rootNode, PhysicsSpace space, AssetManager assetManager) {
 
@@ -88,7 +103,6 @@ public class MatrixPhysicsObjectFactory {
     Geometry floorGeometry = new Geometry("Floor", floorBox);
     floorGeometry.setMaterial(material);
 
-
     floorGeometry.setLocalTranslation(0, -2.5f, 0);
 
     Box northWallBox = new Box(.25f, 5, 20f);
@@ -126,7 +140,6 @@ public class MatrixPhysicsObjectFactory {
     rootNode.attachChild(westWallGeom);
     space.add(westWallGeom);
 
-
   }
 
   public static void makeCharacter(Node rootNode, PhysicsSpace space, AssetManager assetManager) {
@@ -145,7 +158,6 @@ public class MatrixPhysicsObjectFactory {
     //
     // characterGeometry.rotate(0, 0, FastMath.PI);
     // characterGeometry.rotate(FastMath.HALF_PI, 0, 0);
-
 
     // define physical interactions
     // the cylinders are set to be oriented on the y axis, but I think it's using some sort of local Y axis

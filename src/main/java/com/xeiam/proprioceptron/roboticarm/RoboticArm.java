@@ -15,10 +15,6 @@
  */
 package com.xeiam.proprioceptron.roboticarm;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.jme3.bullet.control.RigidBodyControl;
@@ -46,13 +42,9 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
 
   private final int numJoints;
   private boolean enableKeys = false;
-  private final List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
 
   /** prevents calculation of state when there are no arm movements */
   private boolean wasMovement = true;
-
-  private EnvState oldEnvState;
-  private EnvState newEnvState;
 
   BitmapText hudDistanceText;
   // BitmapText hudPositionText;
@@ -98,11 +90,11 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
 
-    float dimension = Constants.SECTION_LENGTH * numJoints * 2.3f;
+    float dimension = RoboticArmConstants.SECTION_LENGTH * numJoints * 2.3f;
     Box floorBox = new Box(dimension, .5f, dimension);
     Geometry floorGeometry = new Geometry("Floor", floorBox);
     floorGeometry.setMaterial(material);
-    floorGeometry.setLocalTranslation(0, -1.0f * Constants.HEAD_RADIUS - .5f, 0);
+    floorGeometry.setLocalTranslation(0, -1.0f * RoboticArmConstants.HEAD_RADIUS - .5f, 0);
     floorGeometry.addControl(new RigidBodyControl(0));
     rootNode.attachChild(floorGeometry);
 
@@ -123,8 +115,8 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     matTarget.setFloat("Shininess", 128f); // [1,128]
 
     // elongated box for arm sections
-    Box box = new Box(new Vector3f(0, 0, Constants.SECTION_LENGTH), Constants.SECTION_CROSS_DIM, Constants.SECTION_CROSS_DIM, Constants.SECTION_LENGTH);
-    Sphere sphereJoint = new Sphere(20, 20, Constants.JOINT_RADIUS);
+    Box box = new Box(new Vector3f(0, 0, RoboticArmConstants.SECTION_LENGTH), RoboticArmConstants.SECTION_CROSS_DIM, RoboticArmConstants.SECTION_CROSS_DIM, RoboticArmConstants.SECTION_LENGTH);
+    Sphere sphereJoint = new Sphere(20, 20, RoboticArmConstants.JOINT_RADIUS);
     sphereJoint.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereJoint);
 
@@ -148,21 +140,21 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
 
     // Create Head
     headNode = new Node("headNode");
-    Sphere sphereHead = new Sphere(20, 20, Constants.HEAD_RADIUS);
+    Sphere sphereHead = new Sphere(20, 20, RoboticArmConstants.HEAD_RADIUS);
     sphereHead.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereHead);
     head = new Geometry("head", sphereHead);
     head.setMaterial(matRoboticArm);
 
     // Create eyes
-    Sphere sphereEye = new Sphere(20, 20, Constants.EYE_RADIUS);
+    Sphere sphereEye = new Sphere(20, 20, RoboticArmConstants.EYE_RADIUS);
     leftEye = new Geometry("leftEye", sphereEye);
     leftEye.setMaterial(matRoboticArm);
     rightEye = new Geometry("rightEye", sphereEye);
     rightEye.setMaterial(matRoboticArm);
 
     // Create Target
-    Sphere sphereTarget = new Sphere(30, 30, Constants.TARGET_RADIUS);
+    Sphere sphereTarget = new Sphere(30, 30, RoboticArmConstants.TARGET_RADIUS);
     sphereTarget.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereTarget);
     target = new Geometry("head", sphereTarget);
@@ -178,7 +170,7 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     for (int i = 0; i < numJoints; i++) {
 
       if (i > 0) {
-        pivots[i].move(0, 0, 2 * Constants.SECTION_LENGTH);
+        pivots[i].move(0, 0, 2 * RoboticArmConstants.SECTION_LENGTH);
       }
 
       pivots[i].attachChild(sections[i]);
@@ -189,9 +181,9 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     }
 
     // place Head
-    headNode.move(0, 0, 2 * Constants.SECTION_LENGTH);
+    headNode.move(0, 0, 2 * RoboticArmConstants.SECTION_LENGTH);
     headNode.attachChild(head);
-    float shift = (float) Math.sqrt(Constants.HEAD_RADIUS * Constants.HEAD_RADIUS / 2.0);
+    float shift = (float) Math.sqrt(RoboticArmConstants.HEAD_RADIUS * RoboticArmConstants.HEAD_RADIUS / 2.0);
     leftEye.move(shift, 0, shift);
     headNode.attachChild(leftEye);
     rightEye.move(-1.0f * shift, 0, shift);
@@ -287,9 +279,9 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
       Vector3f[] relativePositions = new Vector3f[numJoints];
       for (int i = 0; i < numJoints; i++) {
         if (i == (numJoints - 1)) { // head relative to last joint
-          relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation()).divide(2 * Constants.SECTION_LENGTH);
+          relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation()).divide(2 * RoboticArmConstants.SECTION_LENGTH);
         } else {
-          relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * Constants.SECTION_LENGTH);
+          relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * RoboticArmConstants.SECTION_LENGTH);
         }
       }
       // String positionString = "";
@@ -301,12 +293,12 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
       // hudDistanceText
       Vector3f targetCoords = target.getWorldTranslation();
       Vector3f leftEyeCoords = leftEye.getWorldTranslation();
-      float distL = leftEyeCoords.distance(targetCoords) - Constants.TARGET_RADIUS;
+      float distL = leftEyeCoords.distance(targetCoords) - RoboticArmConstants.TARGET_RADIUS;
       Vector3f rightEyeCoords = rightEye.getWorldTranslation();
-      float distR = rightEyeCoords.distance(targetCoords) - Constants.TARGET_RADIUS;
+      float distR = rightEyeCoords.distance(targetCoords) - RoboticArmConstants.TARGET_RADIUS;
       // pin distance
       Vector3f headCoords = head.getWorldTranslation();
-      float headDistance = headCoords.distance(targetCoords) - Constants.TARGET_RADIUS - Constants.HEAD_RADIUS;
+      float headDistance = headCoords.distance(targetCoords) - RoboticArmConstants.TARGET_RADIUS - RoboticArmConstants.HEAD_RADIUS;
       // float distAve = (distL + distR) / 2;
       hudDistanceText.setText(" D= " + headDistance);
 
@@ -318,7 +310,7 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
         moveTarget();
       }
 
-      newEnvState = new EnvState(distL, distR, headDistance, relativePositions, wasCollision);
+      newEnvState = new RoboticArmEnvState(distL, distR, headDistance, relativePositions, wasCollision);
       wasMovement = false;
 
       notifyListeners();
@@ -328,7 +320,7 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
 
   private void moveTarget() {
 
-    float arcRadius = (float) (Math.random() * 2 * Constants.SECTION_LENGTH * numJoints + Constants.TARGET_RADIUS + Constants.HEAD_RADIUS);
+    float arcRadius = (float) (Math.random() * 2 * RoboticArmConstants.SECTION_LENGTH * numJoints + RoboticArmConstants.TARGET_RADIUS + RoboticArmConstants.HEAD_RADIUS);
     float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
     float z = (float) (Math.sqrt(arcRadius * arcRadius - x * x)) * (Math.random() > 0.5 ? 1 : -1);
     target.center();
@@ -341,21 +333,6 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
   public void setEnableKeys(boolean enableKeys) {
 
     this.enableKeys = enableKeys;
-  }
-
-  public void addChangeListener(PropertyChangeListener newListener) {
-
-    listeners.add(newListener);
-  }
-
-  private void notifyListeners() {
-
-    PropertyChangeEvent pce = new PropertyChangeEvent(this, "", oldEnvState, newEnvState);
-
-    for (Iterator<PropertyChangeListener> iterator = listeners.iterator(); iterator.hasNext();) {
-      PropertyChangeListener observer = iterator.next();
-      observer.propertyChange(pce);
-    }
   }
 
   public void moveJoints(List<JointCommand> jointCommands) {

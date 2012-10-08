@@ -1,3 +1,18 @@
+/**
+ * Copyright 2012 MANC LLC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.xeiam.proprioceptron.thematrix;
 
 import java.util.List;
@@ -55,11 +70,11 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
 
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
-    MatrixPhysicsObjectFactory.makeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    TheMatrixObjectFactory.makeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
 
-    MatrixPhysicsObjectFactory.makeLevelEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-    MatrixPhysicsObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-    MatrixPhysicsObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    TheMatrixObjectFactory.makeLevelEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    TheMatrixObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    TheMatrixObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     setupKeys();
     // add ourselves as collision listener
     getPhysicsSpace().addCollisionListener(this);
@@ -177,12 +192,12 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
       if (!("char".equals(event.getNodeA().getName()))) {
         event.getNodeA().removeFromParent();
         getPhysicsSpace().removeAll(event.getNodeA());
-        MatrixPhysicsObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
+        TheMatrixObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
 
       } else {
         event.getNodeB().removeFromParent();
         getPhysicsSpace().removeAll(event.getNodeB());
-        MatrixPhysicsObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
+        TheMatrixObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
 
       }
 
@@ -192,11 +207,11 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
       if (!("char".equals(event.getNodeA().getName()))) {
         event.getNodeA().removeFromParent();
         getPhysicsSpace().removeAll(event.getNodeA());
-        MatrixPhysicsObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
+        TheMatrixObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
       } else {
         event.getNodeB().removeFromParent();
         getPhysicsSpace().removeAll(event.getNodeB());
-        MatrixPhysicsObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
+        TheMatrixObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
       }
     }
     if ("char".equals(event.getNodeA().getName()) && "northWall".equals(event.getNodeB().getName())) {

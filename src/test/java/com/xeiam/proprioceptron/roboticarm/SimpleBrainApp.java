@@ -77,8 +77,8 @@ public class SimpleBrainApp implements PropertyChangeListener {
      */
     public List<JointCommand> update(PropertyChangeEvent pce) {
 
-      EnvState oldEnvState = (EnvState) pce.getOldValue();
-      EnvState newEnvState = (EnvState) pce.getNewValue();
+      RoboticArmEnvState oldEnvState = (RoboticArmEnvState) pce.getOldValue();
+      RoboticArmEnvState newEnvState = (RoboticArmEnvState) pce.getNewValue();
 
       List<JointCommand> jointCommands = new ArrayList<JointCommand>();
 

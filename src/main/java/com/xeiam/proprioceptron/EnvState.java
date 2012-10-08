@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron.roboticarm;
+package com.xeiam.proprioceptron;
 
 /**
  * @author timmolter
- * @create Sep 27, 2012
+ * @create Oct 8, 2012
  */
-public class Constants {
-
-  public static final float JOINT_RADIUS = 0.3f;
-  public static final float HEAD_RADIUS = 0.3f;
-  public static final float EYE_RADIUS = 0.1f;
-  public static final float TARGET_RADIUS = 0.3f;
-
-  public static final float SECTION_LENGTH = 1.0f;
-  public static final float SECTION_CROSS_DIM = 0.1f;
+public interface EnvState {
 
 }
