@@ -2,6 +2,7 @@ package com.xeiam.proprioceptron.thematrixv1;
 
 import java.util.Random;
 
+import com.jme3.app.FlyCamAppState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -94,6 +95,7 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
     guiNode.attachChild(hudText);
 
     // setup camera
+    stateManager.detach(stateManager.getState(FlyCamAppState.class));
     setCam();
   }
 
@@ -124,26 +126,29 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
     }
     if (name.equals("toggleGameView") && !keyPressed) {
       gameView = gameView.getNext();
+      if (gameView == ObjectFactoryV1.GameView.GOD_VIEW) {
+        cam.setLocation(Vector3f.UNIT_Y.mult(62));
+        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
+      }
     }
-
   }
 
   @Override
   public void simpleUpdate(float tpf) {
 
-    if (turnleft || turnright) {
+    if (turnleft != turnright) {
       // rotation
       Quaternion quat = new Quaternion();
-      quat.fromAngleAxis(FastMath.PI / 1000 * (turnleft ? 1.0f : -1.0f), Vector3f.UNIT_Y);
-      Vector3f playerLeft = player.getViewDirection().clone();
+      quat.fromAngleAxis(FastMath.PI * tpf / (turnleft ? 1.0f : -1.0f), Vector3f.UNIT_Y);
+      Vector3f playerLeft = player.getViewDirection();
       quat.mult(playerLeft, playerLeft);
       viewDirection = playerLeft;
       player.setViewDirection(playerLeft);
     }
 
-    if (goforward || gobackward) {
+    if (goforward != gobackward) {
       // forward direction
-      Vector3f playerDir = player.getViewDirection().clone().multLocal((goforward ? 1.0f : -1.0f) * 0.25f);
+      Vector3f playerDir = player.getViewDirection().clone().mult((goforward ? 1.0f : -1.0f) * 0.25f);
       walkDirection.set(0, 0, 0);
       walkDirection.addLocal(playerDir);
       player.setWalkDirection(walkDirection); // THIS IS WHERE THE WALKING HAPPENS
@@ -182,26 +187,28 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
   private void setCam() {
 
     if (gameView == GameView.THIRD_PERSON_CENTER) {
-
+      // security camera
       // put the camera in the center of the platform and look at the player
-      cam.setLocation(new Vector3f(0, .5f, 0));
+      cam.setLocation(new Vector3f(0, 5f, 0));
       cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
 
     } else if (gameView == GameView.THIRD_PERSON_FOLLOW) {
-
-      // TODO implement this, viewDirection may be helpful here
-
+      cam.setLocation(viewDirection.clone().multLocal(-20f).add(player.getPhysicsLocation()).add(Vector3f.UNIT_Y.mult(5f)));
+      cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
     } else if (gameView == GameView.FIRST_PERSON) {
+      cam.setLocation(player.getPhysicsLocation().add(Vector3f.UNIT_Y.mult(3f)));
+      cam.setAxes(Vector3f.UNIT_Y.cross(viewDirection), Vector3f.UNIT_Y, viewDirection);
 
       // TODO implement this, viewDirection may be helpful here
-
-    } else {
-
-      // hover above the platform and look down
-      cam.setLocation(Vector3f.UNIT_Y.mult(62));
-      cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
 
     }
+    // else {
+    // this does not need to get changed every time render is called.
+    // // hover above the platform and look down
+    // cam.setLocation(Vector3f.UNIT_Y.mult(62));
+    // cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
+    //
+    // }
   }
 
   private void movePill(Geometry pill) {

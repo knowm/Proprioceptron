@@ -2,7 +2,7 @@ package com.xeiam.proprioceptron.thematrixv1;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.DirectionalLight;
@@ -113,12 +113,15 @@ public class ObjectFactoryV1 {
     // return player;
 
     Node playerNode = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
-    playerNode.setLocalScale(.6f);
+    playerNode.setLocalScale(.3f);
     rootNode.attachChild(playerNode);
 
     // Create a appropriate physical shape for it
-    CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(PLAYER_RADIUS, 4f, 1);
-    CharacterControl player = new CharacterControl(capsuleShape, 2f);
+    // spheres both calculate collision MUCH faster, and also much more intelligently.
+    // The capsule clipping problem is going to be intrinsic to any object model which isn't using forces to adjust it's position smoothly.
+
+    SphereCollisionShape sphereShape = new SphereCollisionShape(PLAYER_RADIUS);
+    CharacterControl player = new CharacterControl(sphereShape, 2f);
     // Attach physical properties to model and PhysicsSpace
     playerNode.addControl(player);
     physicsSpace.add(player);
