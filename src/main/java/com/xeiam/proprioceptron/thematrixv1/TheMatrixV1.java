@@ -195,24 +195,14 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
       // put the camera in the center of the platform and look at the player
       cam.setLocation(new Vector3f(0, 5f, 0));
       cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
-
     } else if (gameView == GameView.THIRD_PERSON_FOLLOW) {
       cam.setLocation(viewDirection.clone().multLocal(-20f).add(player.getPhysicsLocation()).add(Vector3f.UNIT_Y.mult(5f)));
       cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
     } else if (gameView == GameView.FIRST_PERSON) {
       cam.setLocation(player.getPhysicsLocation().add(Vector3f.UNIT_Y.mult(3f)));
       cam.setAxes(Vector3f.UNIT_Y.cross(viewDirection), Vector3f.UNIT_Y, viewDirection);
-
-      // TODO implement this, viewDirection may be helpful here
-
     }
-    // else {
-    // this does not need to get changed every time render is called.
-    // // hover above the platform and look down
-    // cam.setLocation(Vector3f.UNIT_Y.mult(62));
-    // cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
-    //
-    // }
+
   }
 
   private void movePill(Geometry pill) {
