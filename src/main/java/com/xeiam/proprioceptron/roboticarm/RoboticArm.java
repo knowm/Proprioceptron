@@ -78,6 +78,8 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
   @Override
   public void simpleInitApp() {
 
+    super.simpleInitApp();
+
     pivots = new Node[numJoints];
     sections = new Geometry[numJoints];
     joints = new Geometry[numJoints];
