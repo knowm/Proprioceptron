@@ -24,6 +24,7 @@ import com.jme3.system.AppSettings;
 import com.xeiam.proprioceptron.roboticarm.JointCommand;
 import com.xeiam.proprioceptron.thematrixv1.ObjectFactoryV1.GameView;
 import com.xeiam.proprioceptron.thematrixv1.TheMatrixV1;
+import com.xeiam.proprioceptron.thematrixv1.TheMatrixV1EnvState;
 
 /**
  * @author timmolter
@@ -73,10 +74,10 @@ public class TheMatrixAppV1 implements PropertyChangeListener {
      */
     public List<JointCommand> update(PropertyChangeEvent pce) {
 
-      TheMatrixEnvState oldEnvState = (TheMatrixEnvState) pce.getOldValue();
-      TheMatrixEnvState newEnvState = (TheMatrixEnvState) pce.getNewValue();
+      TheMatrixV1EnvState oldEnvState = (TheMatrixV1EnvState) pce.getOldValue();
+      TheMatrixV1EnvState newEnvState = (TheMatrixV1EnvState) pce.getNewValue();
 
-      System.out.println(newEnvState.toString());
+      // System.out.println(newEnvState.toString());
 
       return null;
 

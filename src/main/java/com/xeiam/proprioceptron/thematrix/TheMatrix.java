@@ -35,6 +35,7 @@ import com.jme3.scene.Geometry;
 
 public class TheMatrix extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
 
+  int count = 0;
   private BulletAppState bulletAppState;
   private final Random rand;
   float score = 50;
@@ -62,7 +63,6 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
 
   @Override
   public void simpleInitApp() {
-
     bulletAppState = new BulletAppState();
     stateManager.detach(stateManager.getState(FlyCamAppState.class));
 
@@ -114,6 +114,7 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
   @Override
   public void simpleUpdate(float tpf) {
 
+    count++;
     score -= tpf;
     if (turnright != turnleft) {
       if (turnright) {
@@ -180,8 +181,8 @@ public class TheMatrix extends SimpleApplication implements PhysicsCollisionList
       cam.lookAt(((Geometry) rootNode.getChild("char")).getWorldTranslation(), Vector3f.UNIT_Y);
     }
 
-    // hudText.setText("score: " + score);
-    // the text
+
+    hudText.setText("score: " + count);
   }
 
   @Override

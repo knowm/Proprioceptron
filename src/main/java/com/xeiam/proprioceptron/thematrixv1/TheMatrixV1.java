@@ -25,42 +25,56 @@ import com.jme3.bullet.control.CharacterControl;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.xeiam.proprioceptron.ProprioceptronApplication;
-import com.xeiam.proprioceptron.thematrix.TheMatrixEnvState;
 import com.xeiam.proprioceptron.thematrixv1.ObjectFactoryV1.GameView;
 
 /**
  * @author timmolter
  * @create Oct 5, 2012
  */
-public class TheMatrixV1 extends ProprioceptronApplication implements AnalogListener, PhysicsCollisionListener, ActionListener {
+public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCollisionListener, ActionListener {
 
   private BulletAppState bulletAppState;
   private GameView gameView = GameView.GOD_VIEW;
 
   /** prevents calculation of state during movement transitions */
-  private boolean wasMovement = true;
+  private final boolean movementOver = true;
+  private final boolean nowWaiting = true;
 
   // player
   private CharacterControl player;
-  private final Vector3f walkDirection = new Vector3f(0, 0, 0);
-  private Vector3f viewDirection = new Vector3f(0, 0, 0);
-
+  // private final Vector3f walkDirection = new Vector3f(0, 0, 0);
+  private final Vector3f viewDirection = new Vector3f(0, 0, -1);
+  private boolean isGoingForward = false;
+  private boolean isGoingBackward = false;
+  private boolean isTurningLeft = false;
+  private boolean isTurningRight = false;
   // pills
   private Geometry bluePill;
   // private Geometry redPill;
-
+  
   BitmapText hudDistanceText;
 
   Random random = new Random();
+  private boolean wasCollision;
+  private float score;
+
+  private BitmapText hudText;
+
+  /**
+   * the number of times simpleUpdate has been called.
+   */
+  private int count = 0;
+  /**
+   * the time in Milliseconds when the program was initialized.
+   */
+  private long starttime;
 
   /**
    * Constructor
@@ -81,6 +95,7 @@ public class TheMatrixV1 extends ProprioceptronApplication implements AnalogList
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+    wasCollision = false;
 
     // 2. make game environment
     ObjectFactoryV1.setupGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
@@ -102,16 +117,17 @@ public class TheMatrixV1 extends ProprioceptronApplication implements AnalogList
     // add ourselves as collision listener
     bulletAppState.getPhysicsSpace().addCollisionListener(this);
 
-    hudDistanceText = new BitmapText(guiFont, false);
-    hudDistanceText.setSize(24); // font size
-    hudDistanceText.setColor(ColorRGBA.White); // font color
-    hudDistanceText.setText("D="); // the text
-    hudDistanceText.setLocalTranslation(10, settings.getHeight() - 10, 0); // position
-    guiNode.attachChild(hudDistanceText);
+    hudText = new BitmapText(guiFont, false);
+    hudText.setSize(24); // font size
+    hudText.setColor(ColorRGBA.White); // font color
+    hudText.setText("D="); // the text
+    hudText.setLocalTranslation(10, settings.getHeight() - 10, 0); // position
+    guiNode.attachChild(hudText);
 
     // setup camera
     stateManager.detach(stateManager.getState(FlyCamAppState.class));
     setCam();
+    starttime = System.currentTimeMillis();
   }
 
   public void setupKeys() {
@@ -132,44 +148,18 @@ public class TheMatrixV1 extends ProprioceptronApplication implements AnalogList
       if (name.equals("toggleGameView")) {
         gameView = gameView.getNext();
         setCam();
-      } else {
-        wasMovement = true;
       }
     }
-
-  }
-
-  @Override
-  public void onAnalog(String binding, float value, float tpf) {
-
-    if (binding.equals("forward")) {
+    if (name.equals("forward")) {
       // forward direction
-      Vector3f playerDir = player.getViewDirection().clone().mult(0.25f);
-      walkDirection.set(0, 0, 0);
-      walkDirection.addLocal(playerDir);
-      player.setWalkDirection(walkDirection); // THIS IS WHERE THE WALKING HAPPENS
-    } else if (binding.equals("backward")) {
+      isGoingForward = keyPressed;
+    } else if (name.equals("backward")) {
       // backward direction
-      Vector3f playerDir = player.getViewDirection().clone().mult(-0.25f);
-      walkDirection.set(0, 0, 0);
-      walkDirection.addLocal(playerDir);
-      player.setWalkDirection(walkDirection); // THIS IS WHERE THE WALKING HAPPENS
-    } else if (binding.equals("turnright")) {
-      // rotation
-      Quaternion quat = new Quaternion();
-      quat.fromAngleAxis(FastMath.PI * tpf / -1.0f, Vector3f.UNIT_Y);
-      Vector3f playerLeft = player.getViewDirection();
-      quat.mult(playerLeft, playerLeft);
-      viewDirection = playerLeft;
-      player.setViewDirection(playerLeft);
-    } else if (binding.equals("turnleft")) {
-      // rotation
-      Quaternion quat = new Quaternion();
-      quat.fromAngleAxis(FastMath.PI * tpf / 1.0f, Vector3f.UNIT_Y);
-      Vector3f playerLeft = player.getViewDirection();
-      quat.mult(playerLeft, playerLeft);
-      viewDirection = playerLeft;
-      player.setViewDirection(playerLeft);
+      isGoingBackward = keyPressed;
+    } else if (name.equals("turnright")) {
+      isTurningRight = keyPressed;
+    } else if (name.equals("turnleft")) {
+      isTurningLeft = keyPressed;
     }
 
   }
@@ -177,37 +167,81 @@ public class TheMatrixV1 extends ProprioceptronApplication implements AnalogList
   @Override
   public void simpleUpdate(float tpf) {
 
-    if (wasMovement) {
+    //
+    count++;
+    // movementOver = !(nowWaiting || isGoingForward || isGoingBackward || isTurningLeft || isTurningRight);
+    // nowWaiting = movementOver;
+    // // according to specs, the AI choose to arbitrarily be moved forward or turned in one timestep, but not both.
+    // // this version of Update is for the player. and does not require that.
+    //
+    // if (isGoingForward && !isGoingBackward)
+    // forwardEpsilon(5 * tpf);
+    // else if (!isGoingForward && isGoingBackward)
+    // forwardEpsilon(-5 * tpf);
+    // if (isTurningLeft && !isTurningRight)
+    // rotateEpsilon(tpf);
+    // else if (!isTurningLeft && isTurningRight)
+    // rotateEpsilon(-tpf);
+    //
+    // if (movementOver) {
+    // score-=1;
+    // // 1. Stop walking
+    //
+    // // 2. set old state because we're about to create a new one
+    // oldEnvState = newEnvState;
+    //
+    // // 3. handle collisions
+    // float bluePillDistance = player.getPhysicsLocation().distance(bluePill.getWorldTranslation()) - ObjectFactoryV1.PILL_RADIUS - ObjectFactoryV1.PLAYER_RADIUS;
+    // wasCollision = (bluePillDistance < 0.005f);
+    // if (wasCollision) {
+    // movePill(bluePill);
+    // score+=10;
+    //
+    // }
+    //
+    // // 4. calculate state
+    //
+    // Vector3f relativePosition = player.getPhysicsLocation().subtract(bluePill.getWorldTranslation());
+    //
+    // // more accurately modeling nostrils
+    // // calculate eye positions.
+    // Vector3f righteyelocation = player.getPhysicsLocation().add(viewDirection).add(viewDirection.cross(Vector3f.UNIT_Y));
+    // Vector3f lefteyelocation = player.getPhysicsLocation().add(viewDirection).add(Vector3f.UNIT_Y.cross(viewDirection));
+    // // calculate eye distances.
+    // float righteyedistance = righteyelocation.distance(bluePill.getWorldTranslation());
+    // float lefteyedistance = lefteyelocation.distance(bluePill.getWorldTranslation());
+    //
+    // // 2. notify listeners
+    // // TODO pass in right and left eye distance
+    // newEnvState = new TheMatrixV1EnvState(relativePosition, righteyedistance, lefteyedistance, bluePillDistance, wasCollision);
+    // notifyListeners();
+    // }
 
-      // 1. Stop walking
-      wasMovement = false;
-      walkDirection.set(0, 0, 0);
-      player.setWalkDirection(walkDirection);
+  }
 
-      // 2. set old state because we're about to create a new one
-      oldEnvState = newEnvState;
+  public float AIrotatestep(float rotation, float tpf) {
 
-      // 3. handle collisions
-      float bluePillDistance = player.getPhysicsLocation().distance(bluePill.getWorldTranslation()) - ObjectFactoryV1.PILL_RADIUS - ObjectFactoryV1.PLAYER_RADIUS;
-      hudDistanceText.setText(" D= " + bluePillDistance);
-      boolean wasCollision = bluePillDistance < 0.005f;
-      if (wasCollision) {
-        movePill(bluePill);
-      }
+    rotateEpsilon(tpf * Math.signum(rotation));
+    return rotation - (tpf * Math.signum(rotation));
+  }
 
-      // 4. calculate state
+  public float AIforwardstep(float distance, float tpf) {
 
-      Vector3f relativePosition = player.getPhysicsLocation().subtract(bluePill.getWorldTranslation());
+    // should not use walk direction for this, since cannot determine the number of steps taken.
+    forwardEpsilon(tpf * Math.signum(distance));
+    return distance - tpf * Math.signum(distance);
+  }
+  public void rotateEpsilon(float epsilon){
 
-      // TODO calculate right eye distance
-      // TODO calculate left eye distance
+    Quaternion quat = new Quaternion();
+    // seems silly to make this over and over.
+    quat.fromAngleAxis(epsilon, Vector3f.UNIT_Y);
+    quat.mult(viewDirection, viewDirection);
+    player.setViewDirection(viewDirection);
+  }
+  public void forwardEpsilon(float epsilon){
 
-      // 2. notify listeners
-      // TODO pass in right and left eye distance
-      newEnvState = new TheMatrixEnvState(relativePosition, 0f, 0f, bluePillDistance, wasCollision);
-      notifyListeners();
-    }
-
+    player.setPhysicsLocation(player.getPhysicsLocation().add(viewDirection.mult(epsilon)));
   }
 
   @Override
@@ -223,8 +257,8 @@ public class TheMatrixV1 extends ProprioceptronApplication implements AnalogList
 
     setCam();
 
-    // hudText.setText("score: " + score);
-    // the text
+    hudText.setText("FPmS" + ((System.currentTimeMillis() - starttime) / (double) count));
+    // the way that this number is dropping suggests a memory leak somewhere.
   }
 
   private void setCam() {
@@ -235,8 +269,8 @@ public class TheMatrixV1 extends ProprioceptronApplication implements AnalogList
     } else if (gameView == GameView.THIRD_PERSON_FOLLOW) {
       cam.setLocation(viewDirection.clone().multLocal(-20f).add(player.getPhysicsLocation()).add(Vector3f.UNIT_Y.mult(5f)));
       cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
-    } else if (gameView == GameView.FIRST_PERSON) {
-      cam.setLocation(player.getPhysicsLocation().add(Vector3f.UNIT_Y.mult(3f)));
+    } else if (gameView == GameView.FIRST_PERSON) {// some problems with rotation are visible from this view.
+      cam.setLocation(player.getPhysicsLocation().add(Vector3f.UNIT_Y));
       cam.setAxes(Vector3f.UNIT_Y.cross(viewDirection), Vector3f.UNIT_Y, viewDirection);
     } else { // god view
       cam.setLocation(Vector3f.UNIT_Y.mult(62));
