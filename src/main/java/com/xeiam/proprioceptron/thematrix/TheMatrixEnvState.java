@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron.thematrixv1;
+package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.math.Vector3f;
 import com.xeiam.proprioceptron.EnvState;
@@ -24,7 +24,7 @@ import com.xeiam.proprioceptron.EnvState;
  * @author timmolter
  * @create Oct 8, 2012
  */
-public final class TheMatrixV1EnvState implements EnvState {
+public final class TheMatrixEnvState implements EnvState {
 
   private final Vector3f relativePosition;
   private final float distLeftEye;
@@ -41,7 +41,7 @@ public final class TheMatrixV1EnvState implements EnvState {
    * @param distHead
    * @param wasCollision
    */
-  public TheMatrixV1EnvState(Vector3f relativePosition, float distLeftEye, float distRightEye, float distHead, boolean wasCollision) {
+  public TheMatrixEnvState(Vector3f relativePosition, float distLeftEye, float distRightEye, float distHead, boolean wasCollision) {
 
     this.relativePosition = relativePosition;
     this.distLeftEye = distLeftEye;

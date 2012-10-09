@@ -15,218 +15,328 @@
  */
 package com.xeiam.proprioceptron.thematrix;
 
-import java.util.List;
 import java.util.Random;
 
 import com.jme3.app.FlyCamAppState;
-import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
+import com.jme3.bullet.control.CharacterControl;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
+import com.xeiam.proprioceptron.ProprioceptronApplication;
+import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
 
-public class TheMatrix extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
+/**
+ * @author timmolter
+ * @create Oct 5, 2012
+ */
+public class TheMatrix extends ProprioceptronApplication implements PhysicsCollisionListener, ActionListener {
 
-  int count = 0;
   private BulletAppState bulletAppState;
-  private final Random rand;
-  float score = 50;
-  // there is no native support for angular velocity so we set these flags in triggers and have angular velocity modeled in update.
-  private boolean turnleft;
-  private boolean turnright;
-  private boolean goforward;
-  private boolean gobackward;
+  private GameView gameView = GameView.GOD_VIEW;
 
-  private boolean followCameraOn = false;
+  /** prevents calculation of state during movement transitions */
+  private boolean movementOver = true;
+  private boolean nowWaiting = true;
 
-  // these are proprioceptive properties
-  float scoresnapshot;
-  List<Float> distancestoblues;
-  List<Float> distancestoreds;
+  // player
+  boolean playerIsHuman = false;
+  private CharacterControl player;
+  // AI
+  private float toBeRotated;
+  private float toBeMoved;
+  // private final Vector3f walkDirection = new Vector3f(0, 0, 0);
+  private final Vector3f viewDirection = new Vector3f(0, 0, 1);
+  private boolean isGoingForward = false;
+  private boolean isGoingBackward = false;
+  private boolean isTurningLeft = false;
+  private boolean isTurningRight = false;
+  // pills
+  private Geometry bluePill;
+  // private Geometry redPill;
+  
+  BitmapText hudDistanceText;
 
-  BitmapText hudText;
+  Random random = new Random();
+  private boolean wasCollision;
+  private float score;
 
-  public TheMatrix() {
+  private BitmapText hudText;
 
-    super();
-    rand = new Random();
+  /**
+   * the number of times simpleUpdate has been called.
+   */
+  private int count = 0;
+  /**
+   * the time in Milliseconds when the program was initialized.
+   */
+  private long starttime;
 
+  /**
+   * Constructor
+   * 
+   * @param gameView
+   */
+  public TheMatrix(GameView gameView) {
+
+    this.gameView = gameView;
   }
 
   @Override
   public void simpleInitApp() {
+
+    super.simpleInitApp();
+
+    // 1. Activate Physics
     bulletAppState = new BulletAppState();
-    stateManager.detach(stateManager.getState(FlyCamAppState.class));
-
     stateManager.attach(bulletAppState);
-
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+    wasCollision = false;
 
-    TheMatrixObjectFactory.makeCharacter(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    // 2. make game environment
+    ObjectFactory.setupGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
 
-    TheMatrixObjectFactory.makeLevelEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-    TheMatrixObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-    TheMatrixObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    // 3. make player
+    player = ObjectFactory.getPlayer(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+
+    // pills
+    bluePill = ObjectFactory.getPill(assetManager, ColorRGBA.Blue);
+    movePill(bluePill);
+    rootNode.attachChild(bluePill);
+    // redPill = MatrixPhysicsObjectFactoryV1.getPill(assetManager, ColorRGBA.Red);
+    // movePill(redPill);
+    // rootNode.attachChild(redPill);
+
+    // 4. setup keys
     setupKeys();
+
     // add ourselves as collision listener
-    getPhysicsSpace().addCollisionListener(this);
+    bulletAppState.getPhysicsSpace().addCollisionListener(this);
+
     hudText = new BitmapText(guiFont, false);
-    hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
-    hudText.setColor(ColorRGBA.Blue); // font color
-    hudText.setText("score: " + score); // the text
-    hudText.setLocalTranslation(300, hudText.getLineHeight(), 0); // position
+    hudText.setSize(24); // font size
+    hudText.setColor(ColorRGBA.White); // font color
+    hudText.setText("D="); // the text
+    hudText.setLocalTranslation(10, settings.getHeight() - 10, 0); // position
     guiNode.attachChild(hudText);
-    cam.setLocation(Vector3f.UNIT_Y.mult(50));
-    cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z/* because these should not be in the same direction */);
 
-  }
-
-  private PhysicsSpace getPhysicsSpace() {
-
-    return bulletAppState.getPhysicsSpace();
-  }
-
-  // public void updateProperties() {
-  //
-  // scoresnapshot = score;
-  // distancestoblues = new ArrayList<Float>();
-  // distancestoreds = new ArrayList<Float>();
-  // List<Spatial> distanceobjects = rootNode.getChildren();
-  // // character is always first child, next 5 are always walls and floor
-  // // should probably use an iterator as well.
-  // for (int i = 6; i < distanceobjects.size(); i++) {
-  // if (distanceobjects.get(i).getName().equals("red")) {
-  // distancestoreds.add(new Float(distanceobjects.get(0).getWorldTranslation().distance(distanceobjects.get(i).getWorldTranslation())));
-  // } else if (distanceobjects.get(i).getName().equals("blue")) {
-  // distancestoblues.add(new Float(distanceobjects.get(0).getWorldTranslation().distance(distanceobjects.get(i).getWorldTranslation())));
-  // }
-  // }
-  // }
-
-  @Override
-  public void simpleUpdate(float tpf) {
-
-    count++;
-    score -= tpf;
-    if (turnright != turnleft) {
-      if (turnright) {
-        rootNode.getChild("char").rotate(0, -tpf, 0);
-      } else {
-        rootNode.getChild("char").rotate(0, tpf, 0);
-      }
-    }
-    if (goforward != gobackward) {
-      if (goforward)
-        // this is a hack with WAY too much math to be efficient. if you can find a expression for this variable which does not require transforming a quaternion
-        // you should definitely replace it.
-        rootNode.getChild("char").move(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(10 * tpf));
-      else
-        rootNode.getChild("char").move(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(10 * -tpf));
-
-    }
-
+    // setup camera
+    stateManager.detach(stateManager.getState(FlyCamAppState.class));
+    setCam();
+    starttime = System.currentTimeMillis();
   }
 
   public void setupKeys() {
 
-    inputManager.addMapping("charforward", new KeyTrigger(KeyInput.KEY_W));
-    inputManager.addMapping("charbackward", new KeyTrigger(KeyInput.KEY_S));
-    inputManager.addMapping("charturnleft", new KeyTrigger(KeyInput.KEY_A));
-    inputManager.addMapping("charturnright", new KeyTrigger(KeyInput.KEY_D));
-    inputManager.addMapping("togglefollow", new KeyTrigger(KeyInput.KEY_SPACE));
-    inputManager.addListener(this, "charforward", "charbackward", "charturnleft", "charturnright", "togglefollow");
+    inputManager.addMapping("forward", new KeyTrigger(KeyInput.KEY_I));
+    inputManager.addMapping("backward", new KeyTrigger(KeyInput.KEY_K));
+    inputManager.addMapping("turnleft", new KeyTrigger(KeyInput.KEY_J));
+    inputManager.addMapping("turnright", new KeyTrigger(KeyInput.KEY_L));
+    inputManager.addMapping("toggleGameView", new KeyTrigger(KeyInput.KEY_SPACE));
+    inputManager.addListener(this, "forward", "backward", "turnleft", "turnright", "toggleGameView");
   }
 
   @Override
-  public void onAction(String name, boolean keyPressed, float tpf /* completelyunused */) {
+  public void onAction(String name, boolean keyPressed, float tpf) {
 
-    // if key is pressed, change velocity to .01f if key is unpressed, change back to 0
-    if (name.equals("charforward")) {
+    nowWaiting = false;
+    // detect when buttons were released
+    if (!keyPressed) {
+      if (name.equals("toggleGameView")) {
+        gameView = gameView.getNext();
+        setCam();
+      }
+    }
+    if (name.equals("forward")) {
+      // forward direction
+      isGoingForward = keyPressed;
+    } else if (name.equals("backward")) {
+      // backward direction
+      isGoingBackward = keyPressed;
+    } else if (name.equals("turnright")) {
+      isTurningRight = keyPressed;
+    } else if (name.equals("turnleft")) {
+      isTurningLeft = keyPressed;
+    }
 
-      goforward = keyPressed;
-    }
-    if (name.equals("charbackward")) {
+  }
 
-      gobackward = keyPressed;
+  /**
+ * 
+ */
+  @Override
+  public void simpleUpdate(float tpf) {
+
+    count++;
+    // according to specs, the AI choose to arbitrarily be moved forward or turned in one timestep, but not both.
+    // this version of Update is for the player. and does not require that.
+    if (playerIsHuman) {
+      humanUpdate(tpf);
+    } else {
+
+      AIUpdate(tpf);
     }
-    if (name.equals("charturnright")) {
-      turnright = keyPressed;
+    if (movementOver) {
+      score -= 1;
+      // 1. Stop walking
+
+      // 2. set old state because we're about to create a new one
+      oldEnvState = newEnvState;
+
+      // 3. handle collisions
+      float bluePillDistance = player.getPhysicsLocation().distance(bluePill.getWorldTranslation()) - ObjectFactory.PILL_RADIUS - ObjectFactory.PLAYER_RADIUS;
+      wasCollision = (bluePillDistance < 0.005f);
+      if (wasCollision) {
+        movePill(bluePill);
+        score += 10;
+
+      }
+
+      // 4. calculate state
+
+      Vector3f relativePosition = player.getPhysicsLocation().subtract(bluePill.getWorldTranslation());
+
+      // more accurately modeling nostrils
+      // calculate eye positions.
+      Vector3f righteyelocation = player.getPhysicsLocation().add(viewDirection).add(viewDirection.cross(Vector3f.UNIT_Y));
+      Vector3f lefteyelocation = player.getPhysicsLocation().add(viewDirection).add(Vector3f.UNIT_Y.cross(viewDirection));
+      // calculate eye distances.
+      float righteyedistance = righteyelocation.distance(bluePill.getWorldTranslation());
+      float lefteyedistance = lefteyelocation.distance(bluePill.getWorldTranslation());
+
+      // 2. notify listeners
+      // TODO pass in right and left eye distance
+      newEnvState = new TheMatrixEnvState(relativePosition, righteyedistance, lefteyedistance, bluePillDistance, wasCollision);
+      notifyListeners();
     }
-    if (name.equals("charturnleft")) {
-      turnleft = keyPressed;
-    }
-    if (name.equals("togglefollow") && keyPressed) {
-      if (followCameraOn) { // turn follow camera off
-        cam.setLocation(Vector3f.UNIT_Y.mult(50));
-        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z/* because these should not be in the same direction */);
-        followCameraOn = false;
-      } else
-        followCameraOn = true;
+
+  }
+
+  /**
+   * AIUpdate depends on the values from getAIrotation() and getAImotion(). will execute a rotation, if one is needed. If not it will execute a motion if one is needed. If not, it will poll these methods again.
+   * 
+   * @param tpf
+   */
+  private void AIUpdate(float tpf) {
+
+    if (FastMath.abs(toBeRotated) > tpf) {
+      movementOver = false;
+      nowWaiting = false;
+      toBeRotated -= AIrotatestep(toBeRotated, tpf);
+    } else if (FastMath.abs(toBeMoved) > 5 * tpf) {
+      toBeMoved -= AIforwardstep(5 * toBeMoved, tpf);
+    } else {
+      movementOver = !nowWaiting;
+      nowWaiting = movementOver || nowWaiting;
+      toBeRotated = getAIrotation();
+      toBeMoved = getAImotion();
     }
   }
 
-  @Override
-  public void simpleRender(RenderManager rm) {
+  private float getAIrotation() {
 
-    if (followCameraOn) {
-      cam.setLocation(((Geometry) rootNode.getChild("char")).getWorldTranslation().add(rootNode.getChild("char").getLocalRotation().toRotationMatrix().getColumn(0).mult(-10f).add(Vector3f.UNIT_Y.mult(5f))));
-      cam.lookAt(((Geometry) rootNode.getChild("char")).getWorldTranslation(), Vector3f.UNIT_Y);
-    }
+    return random.nextFloat() * FastMath.PI * (random.nextBoolean() ? 1 : -1);
+  }
 
+  private float getAImotion() {
 
-    hudText.setText("score: " + count);
+    return random.nextFloat() * 10 - 5;
+  }
+
+  /**
+   * humanUpdate depends on the values set in onAction().
+   * 
+   * @param tpf
+   */
+  public void humanUpdate(float tpf) {
+
+    movementOver = !(nowWaiting || isGoingForward || isGoingBackward || isTurningLeft || isTurningRight);
+    nowWaiting = nowWaiting || movementOver;
+    if (isGoingForward && !isGoingBackward)
+      forwardEpsilon(5 * tpf);
+    else if (!isGoingForward && isGoingBackward)
+      forwardEpsilon(-5 * tpf);
+    if (isTurningLeft && !isTurningRight)
+      rotateEpsilon(tpf);
+    else if (!isTurningLeft && isTurningRight)
+      rotateEpsilon(-tpf);
+
+  }
+  public float AIrotatestep(float rotation, float tpf) {
+
+    rotateEpsilon(tpf * Math.signum(rotation));
+    return (tpf * Math.signum(rotation));
+  }
+
+  public float AIforwardstep(float distance, float tpf) {
+
+    // should not use walk direction for this, since cannot determine the number of steps taken.
+    forwardEpsilon(tpf * Math.signum(distance));
+    return tpf * Math.signum(distance);
+  }
+  public void rotateEpsilon(float epsilon){
+
+    Quaternion quat = new Quaternion();
+    // seems silly to make this over and over.
+    quat.fromAngleAxis(epsilon, Vector3f.UNIT_Y);
+    quat.mult(viewDirection, viewDirection);
+    player.setViewDirection(viewDirection);
+  }
+  public void forwardEpsilon(float epsilon){
+
+    player.setPhysicsLocation(player.getPhysicsLocation().add(viewDirection.mult(epsilon)));
   }
 
   @Override
   public void collision(PhysicsCollisionEvent event) {
 
-    if ("char".equals(event.getNodeA().getName()) && "red".equals(event.getNodeB().getName())) {
-      score -= 10;
-      if (!("char".equals(event.getNodeA().getName()))) {
-        event.getNodeA().removeFromParent();
-        getPhysicsSpace().removeAll(event.getNodeA());
-        TheMatrixObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
+    // This is called back for collisions with all RigidBodyControls, even the floor!
+    // System.out.println(event.getNodeA().toString());
 
-      } else {
-        event.getNodeB().removeFromParent();
-        getPhysicsSpace().removeAll(event.getNodeB());
-        TheMatrixObjectFactory.makeRedPill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
+  }
 
-      }
+  @Override
+  public void simpleRender(RenderManager rm) {
 
-    }
-    if ("char".equals(event.getNodeA().getName()) && "blue".equals(event.getNodeB().getName())) {
-      score += 10;
-      if (!("char".equals(event.getNodeA().getName()))) {
-        event.getNodeA().removeFromParent();
-        getPhysicsSpace().removeAll(event.getNodeA());
-        TheMatrixObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
-      } else {
-        event.getNodeB().removeFromParent();
-        getPhysicsSpace().removeAll(event.getNodeB());
-        TheMatrixObjectFactory.makeBluePill(rand.nextFloat() * 38 - 19, rand.nextFloat() * 38 - 19, rootNode, getPhysicsSpace(), assetManager);
-      }
-    }
-    if ("char".equals(event.getNodeA().getName()) && "northWall".equals(event.getNodeB().getName())) {
+    setCam();
 
-      rootNode.getChild("char").move(Vector3f.UNIT_X.mult(event.getDistance1()));
+    hudText.setText("FPmS" + ((System.currentTimeMillis() - starttime) / (double) count) + "\nscore: " + score);
+    // this number drops in exactly the same way when you comment out all of the update loop.
+
+  }
+
+  private void setCam() {
+
+    if (gameView == GameView.THIRD_PERSON_CENTER) {
+      cam.setLocation(new Vector3f(0, 5f, 0));
+      cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
+    } else if (gameView == GameView.THIRD_PERSON_FOLLOW) {
+      cam.setLocation(viewDirection.clone().multLocal(-20f).add(player.getPhysicsLocation()).add(Vector3f.UNIT_Y.mult(5f)));
+      cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
+    } else if (gameView == GameView.FIRST_PERSON) {// some problems with rotation are visible from this view.
+      cam.setLocation(player.getPhysicsLocation().add(Vector3f.UNIT_Y));
+      cam.setAxes(Vector3f.UNIT_Y.cross(viewDirection), Vector3f.UNIT_Y, viewDirection);
+    } else { // god view
+      cam.setLocation(Vector3f.UNIT_Y.mult(62));
+      cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
     }
-    if ("char".equals(event.getNodeA().getName()) && "southWall".equals(event.getNodeB().getName())) {
-      rootNode.getChild("char").move(Vector3f.UNIT_X.mult(-event.getDistance1()));
-    }
-    if ("char".equals(event.getNodeA().getName()) && "eastWall".equals(event.getNodeB().getName())) {
-      rootNode.getChild("char").move(Vector3f.UNIT_Z.mult(event.getDistance1()));
-    }
-    if ("char".equals(event.getNodeA().getName()) && "westWall".equals(event.getNodeB().getName())) {
-      rootNode.getChild("char").move(Vector3f.UNIT_Z.mult(-event.getDistance1()));
-    }
+
+  }
+
+  private void movePill(Geometry pill) {
+
+    float x = ObjectFactory.PLATFORM_DIMENSION / 2 - random.nextInt(ObjectFactory.PLATFORM_DIMENSION);
+    float z = ObjectFactory.PLATFORM_DIMENSION / 2 - random.nextInt(ObjectFactory.PLATFORM_DIMENSION);
+    pill.center();
+    pill.move(x, ObjectFactory.PILL_RADIUS, z);
   }
 }

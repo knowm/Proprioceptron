@@ -16,22 +16,26 @@
 package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.system.AppSettings;
+import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
 
-public class TheMatrixApp {
+/**
+ * @author timmolter
+ * @create Oct 5, 2012
+ */
+public class HumanBrainTheMatrixApp {
 
   /**
    * Constructor
    */
-  public TheMatrixApp() {
+  public HumanBrainTheMatrixApp() {
 
-    TheMatrix theMatrix = new TheMatrix();
+    TheMatrix theMatrix = new TheMatrix(GameView.GOD_VIEW);
     theMatrix.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(600, 480);
     settings.setTitle("The Matrix");
     theMatrix.setSettings(settings);
     theMatrix.start();
-
   }
 
   /**
@@ -39,7 +43,7 @@ public class TheMatrixApp {
    */
   public static void main(String[] args) {
 
-    new TheMatrixApp();
+    new HumanBrainTheMatrixApp();
   }
 
 }

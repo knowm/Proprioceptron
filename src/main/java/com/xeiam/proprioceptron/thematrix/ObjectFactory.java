@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.xeiam.proprioceptron.thematrixv1;
+package com.xeiam.proprioceptron.thematrix;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.PhysicsSpace;
@@ -34,7 +34,7 @@ import com.jme3.util.TangentBinormalGenerator;
  * @author timmolter
  * @create Oct 5, 2012
  */
-public class ObjectFactoryV1 {
+public class ObjectFactory {
 
   public static final int PLATFORM_DIMENSION = 20;
   public static final int WALL_DIMENSION = 2;

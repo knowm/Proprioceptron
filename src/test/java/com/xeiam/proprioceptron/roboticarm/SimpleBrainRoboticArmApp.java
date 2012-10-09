@@ -29,7 +29,7 @@ import com.jme3.system.AppSettings;
  * @author timmolter
  * @create Sep 28, 2012
  */
-public class SimpleBrainApp implements PropertyChangeListener {
+public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
   private static final int NUM_JOINTS = 2;
 
@@ -39,7 +39,7 @@ public class SimpleBrainApp implements PropertyChangeListener {
   /**
    * Constructor
    */
-  public SimpleBrainApp() {
+  public SimpleBrainRoboticArmApp() {
 
     simpleBrain = new SimpleBrain();
 
@@ -57,7 +57,7 @@ public class SimpleBrainApp implements PropertyChangeListener {
 
   public static void main(String[] args) {
 
-    SimpleBrainApp stm = new SimpleBrainApp();
+    SimpleBrainRoboticArmApp stm = new SimpleBrainRoboticArmApp();
   }
 
   @Override

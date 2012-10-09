@@ -23,7 +23,7 @@ import com.jme3.system.AppSettings;
  * @author timmolter
  * @create Sep 28, 2012
  */
-public class HumanBrainApp {
+public class HumanBrainRoboticArmApp {
 
   private static final int NUM_JOINTS = 7;
 
@@ -32,7 +32,7 @@ public class HumanBrainApp {
   /**
    * Constructor
    */
-  public HumanBrainApp() {
+  public HumanBrainRoboticArmApp() {
 
     roboticArm = new RoboticArm(NUM_JOINTS);
     roboticArm.setShowSettings(false);
@@ -47,7 +47,7 @@ public class HumanBrainApp {
 
   public static void main(String[] args) {
 
-    HumanBrainApp hb = new HumanBrainApp();
+    HumanBrainRoboticArmApp hb = new HumanBrainRoboticArmApp();
   }
 
 }
