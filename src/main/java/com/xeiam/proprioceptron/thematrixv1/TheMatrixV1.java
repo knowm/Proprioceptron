@@ -27,6 +27,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -48,7 +49,11 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
   private boolean nowWaiting = true;
 
   // player
+  boolean playerIsHuman = false;
   private CharacterControl player;
+  // AI
+  private float toBeRotated;
+  private float toBeMoved;
   // private final Vector3f walkDirection = new Vector3f(0, 0, 0);
   private final Vector3f viewDirection = new Vector3f(0, 0, 1);
   private boolean isGoingForward = false;
@@ -165,24 +170,21 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
 
   }
 
+  /**
+ * 
+ */
   @Override
   public void simpleUpdate(float tpf) {
 
     count++;
-    movementOver = !(nowWaiting || isGoingForward || isGoingBackward || isTurningLeft || isTurningRight);
-    nowWaiting = nowWaiting || movementOver;
     // according to specs, the AI choose to arbitrarily be moved forward or turned in one timestep, but not both.
     // this version of Update is for the player. and does not require that.
+    if (playerIsHuman) {
+      humanUpdate(tpf);
+    } else {
 
-    if (isGoingForward && !isGoingBackward)
-      forwardEpsilon(5 * tpf);
-    else if (!isGoingForward && isGoingBackward)
-      forwardEpsilon(-5 * tpf);
-    if (isTurningLeft && !isTurningRight)
-      rotateEpsilon(tpf);
-    else if (!isTurningLeft && isTurningRight)
-      rotateEpsilon(-tpf);
-
+      AIUpdate(tpf);
+    }
     if (movementOver) {
       score -= 1;
       // 1. Stop walking
@@ -219,17 +221,67 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
 
   }
 
+  /**
+   * AIUpdate depends on the values from getAIrotation() and getAImotion(). will execute a rotation, if one is needed. If not it will execute a motion if one is needed. If not, it will poll these methods again.
+   * 
+   * @param tpf
+   */
+  private void AIUpdate(float tpf) {
+
+    if (FastMath.abs(toBeRotated) > tpf) {
+      movementOver = false;
+      nowWaiting = false;
+      toBeRotated -= AIrotatestep(toBeRotated, tpf);
+    } else if (FastMath.abs(toBeMoved) > 5 * tpf) {
+      toBeMoved -= AIforwardstep(5 * toBeMoved, tpf);
+    } else {
+      movementOver = !nowWaiting;
+      nowWaiting = movementOver || nowWaiting;
+      toBeRotated = getAIrotation();
+      toBeMoved = getAImotion();
+    }
+  }
+
+  private float getAIrotation() {
+
+    return random.nextFloat() * FastMath.PI * (random.nextBoolean() ? 1 : -1);
+  }
+
+  private float getAImotion() {
+
+    return random.nextFloat() * 10 - 5;
+  }
+
+  /**
+   * humanUpdate depends on the values set in onAction().
+   * 
+   * @param tpf
+   */
+  public void humanUpdate(float tpf) {
+
+    movementOver = !(nowWaiting || isGoingForward || isGoingBackward || isTurningLeft || isTurningRight);
+    nowWaiting = nowWaiting || movementOver;
+    if (isGoingForward && !isGoingBackward)
+      forwardEpsilon(5 * tpf);
+    else if (!isGoingForward && isGoingBackward)
+      forwardEpsilon(-5 * tpf);
+    if (isTurningLeft && !isTurningRight)
+      rotateEpsilon(tpf);
+    else if (!isTurningLeft && isTurningRight)
+      rotateEpsilon(-tpf);
+
+  }
   public float AIrotatestep(float rotation, float tpf) {
 
     rotateEpsilon(tpf * Math.signum(rotation));
-    return rotation - (tpf * Math.signum(rotation));
+    return (tpf * Math.signum(rotation));
   }
 
   public float AIforwardstep(float distance, float tpf) {
 
     // should not use walk direction for this, since cannot determine the number of steps taken.
     forwardEpsilon(tpf * Math.signum(distance));
-    return distance - tpf * Math.signum(distance);
+    return tpf * Math.signum(distance);
   }
   public void rotateEpsilon(float epsilon){
 
