@@ -44,13 +44,13 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
   private GameView gameView = GameView.GOD_VIEW;
 
   /** prevents calculation of state during movement transitions */
-  private final boolean movementOver = true;
-  private final boolean nowWaiting = true;
+  private boolean movementOver = true;
+  private boolean nowWaiting = true;
 
   // player
   private CharacterControl player;
   // private final Vector3f walkDirection = new Vector3f(0, 0, 0);
-  private final Vector3f viewDirection = new Vector3f(0, 0, -1);
+  private final Vector3f viewDirection = new Vector3f(0, 0, 1);
   private boolean isGoingForward = false;
   private boolean isGoingBackward = false;
   private boolean isTurningLeft = false;
@@ -143,6 +143,7 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
   @Override
   public void onAction(String name, boolean keyPressed, float tpf) {
 
+    nowWaiting = false;
     // detect when buttons were released
     if (!keyPressed) {
       if (name.equals("toggleGameView")) {
@@ -167,55 +168,54 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
   @Override
   public void simpleUpdate(float tpf) {
 
-    //
     count++;
-    // movementOver = !(nowWaiting || isGoingForward || isGoingBackward || isTurningLeft || isTurningRight);
-    // nowWaiting = movementOver;
-    // // according to specs, the AI choose to arbitrarily be moved forward or turned in one timestep, but not both.
-    // // this version of Update is for the player. and does not require that.
-    //
-    // if (isGoingForward && !isGoingBackward)
-    // forwardEpsilon(5 * tpf);
-    // else if (!isGoingForward && isGoingBackward)
-    // forwardEpsilon(-5 * tpf);
-    // if (isTurningLeft && !isTurningRight)
-    // rotateEpsilon(tpf);
-    // else if (!isTurningLeft && isTurningRight)
-    // rotateEpsilon(-tpf);
-    //
-    // if (movementOver) {
-    // score-=1;
-    // // 1. Stop walking
-    //
-    // // 2. set old state because we're about to create a new one
-    // oldEnvState = newEnvState;
-    //
-    // // 3. handle collisions
-    // float bluePillDistance = player.getPhysicsLocation().distance(bluePill.getWorldTranslation()) - ObjectFactoryV1.PILL_RADIUS - ObjectFactoryV1.PLAYER_RADIUS;
-    // wasCollision = (bluePillDistance < 0.005f);
-    // if (wasCollision) {
-    // movePill(bluePill);
-    // score+=10;
-    //
-    // }
-    //
-    // // 4. calculate state
-    //
-    // Vector3f relativePosition = player.getPhysicsLocation().subtract(bluePill.getWorldTranslation());
-    //
-    // // more accurately modeling nostrils
-    // // calculate eye positions.
-    // Vector3f righteyelocation = player.getPhysicsLocation().add(viewDirection).add(viewDirection.cross(Vector3f.UNIT_Y));
-    // Vector3f lefteyelocation = player.getPhysicsLocation().add(viewDirection).add(Vector3f.UNIT_Y.cross(viewDirection));
-    // // calculate eye distances.
-    // float righteyedistance = righteyelocation.distance(bluePill.getWorldTranslation());
-    // float lefteyedistance = lefteyelocation.distance(bluePill.getWorldTranslation());
-    //
-    // // 2. notify listeners
-    // // TODO pass in right and left eye distance
-    // newEnvState = new TheMatrixV1EnvState(relativePosition, righteyedistance, lefteyedistance, bluePillDistance, wasCollision);
-    // notifyListeners();
-    // }
+    movementOver = !(nowWaiting || isGoingForward || isGoingBackward || isTurningLeft || isTurningRight);
+    nowWaiting = nowWaiting || movementOver;
+    // according to specs, the AI choose to arbitrarily be moved forward or turned in one timestep, but not both.
+    // this version of Update is for the player. and does not require that.
+
+    if (isGoingForward && !isGoingBackward)
+      forwardEpsilon(5 * tpf);
+    else if (!isGoingForward && isGoingBackward)
+      forwardEpsilon(-5 * tpf);
+    if (isTurningLeft && !isTurningRight)
+      rotateEpsilon(tpf);
+    else if (!isTurningLeft && isTurningRight)
+      rotateEpsilon(-tpf);
+
+    if (movementOver) {
+      score -= 1;
+      // 1. Stop walking
+
+      // 2. set old state because we're about to create a new one
+      oldEnvState = newEnvState;
+
+      // 3. handle collisions
+      float bluePillDistance = player.getPhysicsLocation().distance(bluePill.getWorldTranslation()) - ObjectFactoryV1.PILL_RADIUS - ObjectFactoryV1.PLAYER_RADIUS;
+      wasCollision = (bluePillDistance < 0.005f);
+      if (wasCollision) {
+        movePill(bluePill);
+        score += 10;
+
+      }
+
+      // 4. calculate state
+
+      Vector3f relativePosition = player.getPhysicsLocation().subtract(bluePill.getWorldTranslation());
+
+      // more accurately modeling nostrils
+      // calculate eye positions.
+      Vector3f righteyelocation = player.getPhysicsLocation().add(viewDirection).add(viewDirection.cross(Vector3f.UNIT_Y));
+      Vector3f lefteyelocation = player.getPhysicsLocation().add(viewDirection).add(Vector3f.UNIT_Y.cross(viewDirection));
+      // calculate eye distances.
+      float righteyedistance = righteyelocation.distance(bluePill.getWorldTranslation());
+      float lefteyedistance = lefteyelocation.distance(bluePill.getWorldTranslation());
+
+      // 2. notify listeners
+      // TODO pass in right and left eye distance
+      newEnvState = new TheMatrixV1EnvState(relativePosition, righteyedistance, lefteyedistance, bluePillDistance, wasCollision);
+      notifyListeners();
+    }
 
   }
 
@@ -257,8 +257,9 @@ public class TheMatrixV1 extends ProprioceptronApplication implements PhysicsCol
 
     setCam();
 
-    hudText.setText("FPmS" + ((System.currentTimeMillis() - starttime) / (double) count));
-    // the way that this number is dropping suggests a memory leak somewhere.
+    hudText.setText("FPmS" + ((System.currentTimeMillis() - starttime) / (double) count) + "\nscore: " + score);
+    // this number drops in exactly the same way when you comment out all of the update loop.
+
   }
 
   private void setCam() {
