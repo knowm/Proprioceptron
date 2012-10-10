@@ -30,8 +30,8 @@ import com.jme3.app.SimpleApplication;
 public abstract class ProprioceptronApplication extends SimpleApplication {
 
   protected final List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
-  protected EnvState oldEnvState;
-  protected EnvState newEnvState;
+  public EnvState oldEnvState;
+  public EnvState newEnvState;
 
   @Override
   public void simpleInitApp() {
@@ -52,7 +52,7 @@ public abstract class ProprioceptronApplication extends SimpleApplication {
   /**
    * Send PropertyChangeEvent to observers (listeners)
    */
-  protected void notifyListeners() {
+  public void notifyListeners() {
 
     PropertyChangeEvent pce = new PropertyChangeEvent(this, "", oldEnvState, newEnvState);
 

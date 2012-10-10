@@ -15,7 +15,8 @@
  */
 package com.xeiam.proprioceptron.thematrix;
 
-import com.jme3.math.Vector3f;
+import java.util.List;
+
 import com.xeiam.proprioceptron.EnvState;
 
 /**
@@ -26,59 +27,11 @@ import com.xeiam.proprioceptron.EnvState;
  */
 public final class TheMatrixEnvState implements EnvState {
 
-  private final Vector3f relativePosition;
-  private final float distLeftEye;
-  private final float distRightEye;
-  private final float distHead;
-  private final boolean wasCollision;
+  private final List<PillPerceptionState> perception;
 
-  /**
-   * Constructor
-   * 
-   * @param relativePosition
-   * @param distLeftEye
-   * @param distRightEye
-   * @param distHead
-   * @param wasCollision
-   */
-  public TheMatrixEnvState(Vector3f relativePosition, float distLeftEye, float distRightEye, float distHead, boolean wasCollision) {
+  public TheMatrixEnvState(List<PillPerceptionState> snapshot) {
 
-    this.relativePosition = relativePosition;
-    this.distLeftEye = distLeftEye;
-    this.distRightEye = distRightEye;
-    this.distHead = distHead;
-    this.wasCollision = wasCollision;
-  }
-
-  public Vector3f getRelativePosition() {
-
-    return relativePosition;
-  }
-
-  public float getDistLeftEye() {
-
-    return distLeftEye;
-  }
-
-  public float getDistRightEye() {
-
-    return distRightEye;
-  }
-
-  public float getDistHead() {
-
-    return distHead;
-  }
-
-  public boolean isWasCollision() {
-
-    return wasCollision;
-  }
-
-  @Override
-  public String toString() {
-
-    return "TheMatrixEnvState [relativePosition=" + relativePosition + ", distLeftEye=" + distLeftEye + ", distRightEye=" + distRightEye + ", distHead=" + distHead + ", wasCollision=" + wasCollision + "]";
+    perception = snapshot;
   }
 
 }

@@ -106,13 +106,13 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     matRoboticArm.setBoolean("m_UseMaterialColors", true);
     matRoboticArm.setColor("m_Diffuse", new ColorRGBA(.7f, 1.0f, .7f, 1f));
     matRoboticArm.setColor("m_Specular", new ColorRGBA(.7f, 1.0f, .7f, 1f));
-    matRoboticArm.setFloat("m_Shininess", 50f); // [1,128] lower is shinier
+    matRoboticArm.setFloat("m_Shininess", 50); // [1,128] lower is shinier
 
     Material matTarget = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
     matTarget.setBoolean("UseMaterialColors", true);
     matTarget.setColor("m_Specular", ColorRGBA.White);
     matTarget.setColor("Diffuse", ColorRGBA.Red);
-    matTarget.setFloat("Shininess", 128f); // [1,128]
+    matTarget.setFloat("Shininess", 128); // [1,128]
 
     // elongated box for arm sections
     Box box = new Box(new Vector3f(0, 0, RoboticArmConstants.SECTION_LENGTH), RoboticArmConstants.SECTION_CROSS_DIM, RoboticArmConstants.SECTION_CROSS_DIM, RoboticArmConstants.SECTION_LENGTH);
