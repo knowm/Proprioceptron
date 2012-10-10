@@ -15,6 +15,8 @@
  */
 package com.xeiam.proprioceptron.thematrix;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.jme3.app.FlyCamAppState;
@@ -27,7 +29,6 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -45,41 +46,27 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   private GameView gameView = GameView.GOD_VIEW;
 
   /** prevents calculation of state during movement transitions */
-  private boolean movementOver = true;
-  private boolean nowWaiting = true;
-
-  // player
-  boolean playerIsHuman = false;
-  private CharacterControl player;
-  // AI
-  private float toBeRotated;
-  private float toBeMoved;
+  protected boolean movementOver = true;
+  protected boolean nowWaiting = true;
+  // movement
+  protected CharacterControl player;
+  // AppStates
+  List<LevelAppState> levels;
+  HumanAppState human;
+  AIAppState ai;
+  LevelAppState currentLevel;
+  int currentlevelindex = 0;
+  PlayerAppState currentPlayer;
   // private final Vector3f walkDirection = new Vector3f(0, 0, 0);
-  private final Vector3f viewDirection = new Vector3f(0, 0, 1);
-  private boolean isGoingForward = false;
-  private boolean isGoingBackward = false;
-  private boolean isTurningLeft = false;
-  private boolean isTurningRight = false;
+  final Vector3f viewDirection = new Vector3f(0, 0, 1);
+
   // pills
-  private Geometry bluePill;
-  // private Geometry redPill;
-  
   BitmapText hudDistanceText;
 
   Random random = new Random();
-  private boolean wasCollision;
-  private float score;
+  public float score;
 
   private BitmapText hudText;
-
-  /**
-   * the number of times simpleUpdate has been called.
-   */
-  private int count = 0;
-  /**
-   * the time in Milliseconds when the program was initialized.
-   */
-  private long starttime;
 
   /**
    * Constructor
@@ -100,21 +87,30 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-    wasCollision = false;
-
-    // 2. make game environment
+    // 2. make game environment and levels
     ObjectFactory.setupGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
+    levels = new ArrayList<LevelAppState>();
+    levels.add(new LevelAppState(1, 0, false));
+    levels.add(new LevelAppState(1, 1, false));
+    levels.add(new LevelAppState(3, 0, false));
+    levels.add(new LevelAppState(3, 3, false));
+    levels.add(new LevelAppState(1, 0, true));
+    levels.add(new LevelAppState(1, 1, true));
+    levels.add(new LevelAppState(3, 0, true));
+    levels.add(new LevelAppState(3, 3, true));
+    for (LevelAppState s : levels) {
+      s.initialize(getStateManager(), this);
+    }
+    currentLevel = levels.get(currentlevelindex);
+    currentLevel.setEnabled(true);
 
-    // 3. make player
+    // 3. make player and player controllers
     player = ObjectFactory.getPlayer(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-
-    // pills
-    bluePill = ObjectFactory.getPill(assetManager, ColorRGBA.Blue);
-    movePill(bluePill);
-    rootNode.attachChild(bluePill);
-    // redPill = MatrixPhysicsObjectFactoryV1.getPill(assetManager, ColorRGBA.Red);
-    // movePill(redPill);
-    // rootNode.attachChild(redPill);
+    ai = new AIAppState();
+    ai.initialize(getStateManager(), this);
+    human = new HumanAppState();
+    human.initialize(getStateManager(), this);
+    currentPlayer = human;
 
     // 4. setup keys
     setupKeys();
@@ -132,7 +128,14 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     // setup camera
     stateManager.detach(stateManager.getState(FlyCamAppState.class));
     setCam();
-    starttime = System.currentTimeMillis();
+    System.currentTimeMillis();
+  }
+
+  public void setcurrentlevel(int levelindex) {
+
+    currentLevel.setEnabled(false);
+    currentLevel = levels.get(levelindex);
+    currentLevel.setEnabled(true);
   }
 
   public void setupKeys() {
@@ -148,7 +151,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   @Override
   public void onAction(String name, boolean keyPressed, float tpf) {
 
-    nowWaiting = false;
+
     // detect when buttons were released
     if (!keyPressed) {
       if (name.equals("toggleGameView")) {
@@ -156,17 +159,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
         setCam();
       }
     }
-    if (name.equals("forward")) {
-      // forward direction
-      isGoingForward = keyPressed;
-    } else if (name.equals("backward")) {
-      // backward direction
-      isGoingBackward = keyPressed;
-    } else if (name.equals("turnright")) {
-      isTurningRight = keyPressed;
-    } else if (name.equals("turnleft")) {
-      isTurningLeft = keyPressed;
-    }
+    currentPlayer.onAction(name, keyPressed, tpf);
 
   }
 
@@ -175,49 +168,14 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
  */
   @Override
   public void simpleUpdate(float tpf) {
-
-    count++;
-    // according to specs, the AI choose to arbitrarily be moved forward or turned in one timestep, but not both.
+    // according to specs, the AI chooses to arbitrarily be moved forward or turned in one timestep, but not both.
     // this version of Update is for the player. and does not require that.
-    if (playerIsHuman) {
-      humanUpdate(tpf);
-    } else {
-
-      AIUpdate(tpf);
+    currentPlayer.update(tpf);
+    currentLevel.update(tpf);
+    if (score > 50 * currentlevelindex) {
+      setcurrentlevel(currentlevelindex++);
     }
-    if (movementOver) {
-      score -= 1;
-      // 1. Stop walking
 
-      // 2. set old state because we're about to create a new one
-      oldEnvState = newEnvState;
-
-      // 3. handle collisions
-      float bluePillDistance = player.getPhysicsLocation().distance(bluePill.getWorldTranslation()) - ObjectFactory.PILL_RADIUS - ObjectFactory.PLAYER_RADIUS;
-      wasCollision = (bluePillDistance < 0.005f);
-      if (wasCollision) {
-        movePill(bluePill);
-        score += 10;
-
-      }
-
-      // 4. calculate state
-
-      Vector3f relativePosition = player.getPhysicsLocation().subtract(bluePill.getWorldTranslation());
-
-      // more accurately modeling nostrils
-      // calculate eye positions.
-      Vector3f righteyelocation = player.getPhysicsLocation().add(viewDirection).add(viewDirection.cross(Vector3f.UNIT_Y));
-      Vector3f lefteyelocation = player.getPhysicsLocation().add(viewDirection).add(Vector3f.UNIT_Y.cross(viewDirection));
-      // calculate eye distances.
-      float righteyedistance = righteyelocation.distance(bluePill.getWorldTranslation());
-      float lefteyedistance = lefteyelocation.distance(bluePill.getWorldTranslation());
-
-      // 2. notify listeners
-      // TODO pass in right and left eye distance
-      newEnvState = new TheMatrixEnvState(relativePosition, righteyedistance, lefteyedistance, bluePillDistance, wasCollision);
-      notifyListeners();
-    }
 
   }
 
@@ -226,63 +184,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
    * 
    * @param tpf
    */
-  private void AIUpdate(float tpf) {
 
-    if (FastMath.abs(toBeRotated) > tpf) {
-      movementOver = false;
-      nowWaiting = false;
-      toBeRotated -= AIrotatestep(toBeRotated, tpf);
-    } else if (FastMath.abs(toBeMoved) > 5 * tpf) {
-      toBeMoved -= AIforwardstep(5 * toBeMoved, tpf);
-    } else {
-      movementOver = !nowWaiting;
-      nowWaiting = movementOver || nowWaiting;
-      toBeRotated = getAIrotation();
-      toBeMoved = getAImotion();
-    }
-  }
-
-  private float getAIrotation() {
-
-    return random.nextFloat() * FastMath.PI * (random.nextBoolean() ? 1 : -1);
-  }
-
-  private float getAImotion() {
-
-    return random.nextFloat() * 10 - 5;
-  }
-
-  /**
-   * humanUpdate depends on the values set in onAction().
-   * 
-   * @param tpf
-   */
-  public void humanUpdate(float tpf) {
-
-    movementOver = !(nowWaiting || isGoingForward || isGoingBackward || isTurningLeft || isTurningRight);
-    nowWaiting = nowWaiting || movementOver;
-    if (isGoingForward && !isGoingBackward)
-      forwardEpsilon(5 * tpf);
-    else if (!isGoingForward && isGoingBackward)
-      forwardEpsilon(-5 * tpf);
-    if (isTurningLeft && !isTurningRight)
-      rotateEpsilon(tpf);
-    else if (!isTurningLeft && isTurningRight)
-      rotateEpsilon(-tpf);
-
-  }
-  public float AIrotatestep(float rotation, float tpf) {
-
-    rotateEpsilon(tpf * Math.signum(rotation));
-    return (tpf * Math.signum(rotation));
-  }
-
-  public float AIforwardstep(float distance, float tpf) {
-
-    // should not use walk direction for this, since cannot determine the number of steps taken.
-    forwardEpsilon(tpf * Math.signum(distance));
-    return tpf * Math.signum(distance);
-  }
   public void rotateEpsilon(float epsilon){
 
     Quaternion quat = new Quaternion();
@@ -294,6 +196,17 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   public void forwardEpsilon(float epsilon){
 
     player.setPhysicsLocation(player.getPhysicsLocation().add(viewDirection.mult(epsilon)));
+  }
+
+  // notify AIcontroller of new AI commands from simplebrain
+  public void addAICommands(List<PlayerCommand> commands) {
+
+    ai.pushCommand(commands);
+  }
+
+  public void addAICommands(PlayerCommand command) {
+
+    ai.pushCommand(command);
   }
 
   @Override
@@ -309,12 +222,11 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
     setCam();
 
-    hudText.setText("FPmS" + ((System.currentTimeMillis() - starttime) / (double) count) + "\nscore: " + score);
-    // this number drops in exactly the same way when you comment out all of the update loop.
+    hudText.setText("score: " + score);
 
   }
 
-  private void setCam() {
+  public void setCam() {
 
     if (gameView == GameView.THIRD_PERSON_CENTER) {
       cam.setLocation(new Vector3f(0, 5f, 0));
@@ -332,7 +244,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
   }
 
-  private void movePill(Geometry pill) {
+  public void movePill(Geometry pill) {
 
     float x = ObjectFactory.PLATFORM_DIMENSION / 2 - random.nextInt(ObjectFactory.PLATFORM_DIMENSION);
     float z = ObjectFactory.PLATFORM_DIMENSION / 2 - random.nextInt(ObjectFactory.PLATFORM_DIMENSION);

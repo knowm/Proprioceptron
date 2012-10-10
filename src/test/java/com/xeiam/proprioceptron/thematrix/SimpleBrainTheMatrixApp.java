@@ -17,13 +17,11 @@ package com.xeiam.proprioceptron.thematrix;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import com.jme3.system.AppSettings;
-import com.xeiam.proprioceptron.roboticarm.JointCommand;
-import com.xeiam.proprioceptron.thematrix.TheMatrix;
-import com.xeiam.proprioceptron.thematrix.TheMatrixEnvState;
 import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
 
 /**
@@ -33,7 +31,7 @@ import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
 public class SimpleBrainTheMatrixApp implements PropertyChangeListener {
 
   private final SimpleBrain simpleBrain;
-
+  TheMatrix theMatrix;
   /**
    * Constructor
    */
@@ -41,7 +39,7 @@ public class SimpleBrainTheMatrixApp implements PropertyChangeListener {
 
     simpleBrain = new SimpleBrain();
 
-    TheMatrix theMatrix = new TheMatrix(GameView.GOD_VIEW);
+    theMatrix = new TheMatrix(GameView.GOD_VIEW);
     theMatrix.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(600, 480);
@@ -62,7 +60,7 @@ public class SimpleBrainTheMatrixApp implements PropertyChangeListener {
   @Override
   public void propertyChange(PropertyChangeEvent pce) {
 
-    simpleBrain.update(pce);
+    theMatrix.addAICommands(simpleBrain.update(pce));
   }
 
   private class SimpleBrain {
@@ -72,14 +70,14 @@ public class SimpleBrainTheMatrixApp implements PropertyChangeListener {
     /**
      * @param pce
      */
-    public List<JointCommand> update(PropertyChangeEvent pce) {
+    public List<PlayerCommand> update(PropertyChangeEvent pce) {
 
       TheMatrixEnvState oldEnvState = (TheMatrixEnvState) pce.getOldValue();
       TheMatrixEnvState newEnvState = (TheMatrixEnvState) pce.getNewValue();
 
       // System.out.println(newEnvState.toString());
 
-      return null;
+      return new ArrayList<PlayerCommand>();//
 
     }
   }
