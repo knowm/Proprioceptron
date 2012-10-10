@@ -64,10 +64,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   BitmapText hudDistanceText;
 
   Random random = new Random();
-<<<<<<< HEAD
-=======
-  private boolean wasCollision;
->>>>>>> b7d8ccc10ac3473638d7a29d143a2cbb6ad2ab3b
+
   public float score;
 
   private BitmapText hudText;
@@ -103,11 +100,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-<<<<<<< HEAD
-=======
-    wasCollision = false;
 
->>>>>>> b7d8ccc10ac3473638d7a29d143a2cbb6ad2ab3b
     // 2. make game environment and levels
     ObjectFactory.setupGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
     levels = new ArrayList<LevelAppState>();
@@ -199,13 +192,9 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     currentPlayer.update(tpf);
     currentLevel.update(tpf);
     if (score > 50 * currentlevelindex) {
-<<<<<<< HEAD
+
       setcurrentlevel(currentlevelindex++);
-=======
-      currentLevel.setEnabled(false);
-      currentLevel = levels.get(currentlevelindex++);
-      currentLevel.setEnabled(true);
->>>>>>> b7d8ccc10ac3473638d7a29d143a2cbb6ad2ab3b
+
     }
 
 
