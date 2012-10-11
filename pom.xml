@@ -2,10 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<name>Proprioceptron</name>
 	<groupId>com.xeiam</groupId>
 	<artifactId>proprioceptron</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>Proprioceptron</name>
+	<packaging>war</packaging>
 	<description>A virtual environment for testing and simulating machine learning algorithms</description>
 	<url>http://xeiam.com</url>
 
@@ -35,6 +36,7 @@
 	<ciManagement>
 		<url>http://ci.xeiam.com/</url>
 	</ciManagement>
+
 	<distributionManagement>
 		<snapshotRepository>
 			<id>xeiam_oss.snapshots</id>
@@ -47,25 +49,6 @@
 			<url>http://nexus.xeiam.com/content/repositories/releases/</url>
 		</repository>
 	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>xeiam_oss-snapshot</id>
-			<snapshots />
-			<url>http://nexus.xeiam.com/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
-			<id>xeiam_oss-release</id>
-			<releases />
-			<url>http://nexus.xeiam.com/content/repositories/releases/</url>
-		</repository>
-		<repository>
-			<id>sonatype-public</id>
-			<snapshots />
-			<name>sonatype public</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
