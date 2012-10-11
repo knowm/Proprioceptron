@@ -37,7 +37,7 @@ import com.xeiam.proprioceptron.ProprioceptronApplication;
 import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
 
 /**
- * @author timmolter
+ * @author Zackkenyon
  * @create Oct 5, 2012
  */
 public class TheMatrix extends ProprioceptronApplication implements PhysicsCollisionListener, ActionListener {
@@ -70,18 +70,6 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   private BitmapText hudText;
 
   /**
-<<<<<<< HEAD
-=======
-   * the number of times simpleUpdate has been called.
-   */
-  private final int count = 0;
-  /**
-   * the time in Milliseconds when the program was initialized.
-   */
-  private long starttime;
-
-  /**
->>>>>>> b7d8ccc10ac3473638d7a29d143a2cbb6ad2ab3b
    * Constructor
    * 
    * @param gameView
@@ -163,8 +151,9 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     inputManager.addMapping("backward", new KeyTrigger(KeyInput.KEY_K));
     inputManager.addMapping("turnleft", new KeyTrigger(KeyInput.KEY_J));
     inputManager.addMapping("turnright", new KeyTrigger(KeyInput.KEY_L));
+    inputManager.addMapping("givecontrol", new KeyTrigger(KeyInput.KEY_G));
     inputManager.addMapping("toggleGameView", new KeyTrigger(KeyInput.KEY_SPACE));
-    inputManager.addListener(this, "forward", "backward", "turnleft", "turnright", "toggleGameView");
+    inputManager.addListener(this, "forward", "backward", "turnleft", "turnright", "givecontrol", "toggleGameView");
   }
 
   @Override

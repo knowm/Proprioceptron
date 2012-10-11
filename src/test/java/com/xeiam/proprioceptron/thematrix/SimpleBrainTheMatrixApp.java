@@ -17,10 +17,9 @@ package com.xeiam.proprioceptron.thematrix;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
+import com.jme3.math.FastMath;
 import com.jme3.system.AppSettings;
 import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
 
@@ -40,6 +39,7 @@ public class SimpleBrainTheMatrixApp implements PropertyChangeListener {
     simpleBrain = new SimpleBrain();
 
     theMatrix = new TheMatrix(GameView.GOD_VIEW);
+
     theMatrix.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(600, 480);
@@ -70,14 +70,14 @@ public class SimpleBrainTheMatrixApp implements PropertyChangeListener {
     /**
      * @param pce
      */
-    public List<PlayerCommand> update(PropertyChangeEvent pce) {
+    public PlayerCommand update(PropertyChangeEvent pce) {
 
       TheMatrixEnvState oldEnvState = (TheMatrixEnvState) pce.getOldValue();
       TheMatrixEnvState newEnvState = (TheMatrixEnvState) pce.getNewValue();
 
       // System.out.println(newEnvState.toString());
 
-      return new ArrayList<PlayerCommand>();//
+      return new PlayerCommand(random.nextFloat() * FastMath.PI * (random.nextBoolean() ? 1 : -1), random.nextFloat() * 10);
 
     }
   }

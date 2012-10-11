@@ -34,6 +34,8 @@ public class HumanAppState extends AbstractAppState implements PlayerAppState {
       isTurningRight = keyPressed;
     } else if (name.equals("turnleft")) {
       isTurningLeft = keyPressed;
+    } else if (name.equals("givecontrol") && keyPressed) {
+      app.currentPlayer = app.ai;
     }
   }
 
