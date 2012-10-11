@@ -52,8 +52,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   protected CharacterControl player;
   // AppStates
   List<LevelAppState> levels;
-  HumanAppState human;
-  AIAppState ai;
+
   LevelAppState currentLevel;
   int currentlevelindex = 0;
   PlayerAppState currentPlayer;
@@ -73,9 +72,11 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
    * Constructor
    * 
    * @param gameView
+   * @param controldelegate because the way the computer and the human interact with the game is so fundamentally different, the only design solution that makes sense, is to delegate the update and onAction methods to AIAppState and HumanAppState.
    */
-  public TheMatrix(GameView gameView) {
+  public TheMatrix(GameView gameView, PlayerAppState controldelegate) {
 
+    currentPlayer = controldelegate;
     this.gameView = gameView;
   }
 
@@ -108,12 +109,9 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
     // 3. make player and player controllers
     player = ObjectFactory.getPlayer(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-    ai = new AIAppState();
-    ai.initialize(getStateManager(), this);
-    human = new HumanAppState();
-    human.initialize(getStateManager(), this);
-    currentPlayer = human;
 
+
+    currentPlayer.initialize(getStateManager(), this);
     // 4. setup keys
     setupKeys();
 
@@ -208,15 +206,19 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     player.setPhysicsLocation(player.getPhysicsLocation().add(viewDirection.mult(epsilon)));
   }
 
-  // notify AIcontroller of new AI commands from simplebrain
+  /**
+   * notify the AI of new commands.
+   * 
+   * @param commands
+   */
   public void addAICommands(List<PlayerCommand> commands) {
 
-    ai.pushCommand(commands);
+    ((AIAppState) currentPlayer).pushCommand(commands);
   }
 
   public void addAICommands(PlayerCommand command) {
 
-    ai.pushCommand(command);
+    ((AIAppState) currentPlayer).pushCommand(command);
   }
 
   @Override

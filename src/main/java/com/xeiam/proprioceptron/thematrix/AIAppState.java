@@ -74,9 +74,7 @@ public class AIAppState extends AbstractAppState implements PlayerAppState {
   public void onAction(String name, boolean keyPressed, float tpf) {
 
     if (keyPressed) {
-      if (name.equals("givecontrol"))
       System.out.println("it's the computer's turn right now.");
     }
   }
-
 }

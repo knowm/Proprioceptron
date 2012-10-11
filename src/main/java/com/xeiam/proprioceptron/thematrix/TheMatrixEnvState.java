@@ -34,4 +34,9 @@ public final class TheMatrixEnvState implements EnvState {
     perception = snapshot;
   }
 
+  public List<PillPerceptionState> getPerception() {
+
+    return perception;
+  }
+
 }

@@ -29,7 +29,9 @@ public class HumanBrainTheMatrixApp {
    */
   public HumanBrainTheMatrixApp() {
 
-    TheMatrix theMatrix = new TheMatrix(GameView.GOD_VIEW);
+    // switching game logic between human and AI versions is too complicated to manage without the AIAppState and HumanAppState delegates.
+
+    TheMatrix theMatrix = new TheMatrix(GameView.GOD_VIEW, new HumanAppState());
     theMatrix.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(600, 480);
