@@ -26,6 +26,7 @@ public class AIAppState extends AbstractAppState implements PlayerAppState {
 
     super.initialize(asm, app);
     this.app = (TheMatrix) app;
+    this.app.notifyListeners();
   }
 
   @Override
