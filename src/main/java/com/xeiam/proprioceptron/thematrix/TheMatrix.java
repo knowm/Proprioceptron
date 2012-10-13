@@ -42,36 +42,44 @@ import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
  */
 public class TheMatrix extends ProprioceptronApplication implements PhysicsCollisionListener, ActionListener {
 
+  /** default physics handler */
   private BulletAppState bulletAppState;
+  /** specifies the type of camera */
   private GameView gameView = GameView.GOD_VIEW;
 
   /** prevents calculation of state during movement transitions */
   protected boolean movementOver = true;
+
+  /** prevents calculation of state during resting periods */
   protected boolean nowWaiting = true;
   // movement
+  /** we attach this control to the character geometry, it implements physical interactions with rigid bodies by default, and gives us some minimal controls over movement. */
   protected CharacterControl player;
   // AppStates
+  /** the List of levels to be used in the game. */
   List<LevelAppState> levels;
-
+  /** the current level, grabbed from the list of levels. according to the currentlevelindex */
   LevelAppState currentLevel;
+  /** the index of the current level in the list of levels. */
   int currentlevelindex = 0;
+  /** the character controller, can be told to update(tpf), to initialize(AppStateManager,Application) itself and to do something onAction(name,keyPressed,tpf) */
   PlayerAppState currentPlayer;
-  // private final Vector3f walkDirection = new Vector3f(0, 0, 0);
+  /** the Orientation of the player as a unit vector. */
   final Vector3f viewDirection = new Vector3f(0, 0, 1);
 
   // pills
-  BitmapText hudDistanceText;
+  /** displays diagnostic information on the game window. */
+  private BitmapText hudText;
 
   Random random = new Random();
-
+  /** Specifies how well the computer is doing at the game. +10 for blue pills, -10 for red pills, -1 per movement. */
   public float score;
 
-  private BitmapText hudText;
 
   /**
    * Constructor
    * 
-   * @param gameView
+   * @param gameView the initial state of the camera.
    * @param controldelegate because the way the computer and the human interact with the game is so fundamentally different, the only design solution that makes sense, is to delegate the update and onAction methods to AIAppState and HumanAppState.
    */
   public TheMatrix(GameView gameView, PlayerAppState controldelegate) {
@@ -128,7 +136,6 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     // setup camera
     stateManager.detach(stateManager.getState(FlyCamAppState.class));
     setCam();
-    System.currentTimeMillis();
   }
 
   public void setcurrentlevel(int levelindex) {
@@ -149,7 +156,6 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     inputManager.addMapping("backward", new KeyTrigger(KeyInput.KEY_K));
     inputManager.addMapping("turnleft", new KeyTrigger(KeyInput.KEY_J));
     inputManager.addMapping("turnright", new KeyTrigger(KeyInput.KEY_L));
-    inputManager.addMapping("givecontrol", new KeyTrigger(KeyInput.KEY_G));
     inputManager.addMapping("toggleGameView", new KeyTrigger(KeyInput.KEY_SPACE));
     inputManager.addListener(this, "forward", "backward", "turnleft", "turnright", "givecontrol", "toggleGameView");
   }
@@ -159,14 +165,16 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
 
     // detect when buttons were released
-    if (!keyPressed) {
-      if (name.equals("toggleGameView")) {
+
+    if (name.equals("toggleGameView")) {
+      if (!keyPressed) {
         gameView = gameView.getNext();
         setCam();
       }
     }
-    currentPlayer.onAction(name, keyPressed, tpf);
-
+ else {
+      currentPlayer.onAction(name, keyPressed, tpf);
+    }
   }
 
   /**
@@ -187,12 +195,6 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
   }
 
-  /**
-   * AIUpdate depends on the values from getAIrotation() and getAImotion(). will execute a rotation, if one is needed. If not it will execute a motion if one is needed. If not, it will poll these methods again.
-   * 
-   * @param tpf
-   */
-
   public void rotateEpsilon(float epsilon){
 
     Quaternion quat = new Quaternion();
@@ -201,6 +203,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     quat.mult(viewDirection, viewDirection);
     player.setViewDirection(viewDirection);
   }
+
   public void forwardEpsilon(float epsilon){
 
     player.setPhysicsLocation(player.getPhysicsLocation().add(viewDirection.mult(epsilon)));
@@ -216,6 +219,11 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     ((AIAppState) currentPlayer).pushCommand(commands);
   }
 
+  /**
+   * notify the AI of a single new command.
+   * 
+   * @param command
+   */
   public void addAICommands(PlayerCommand command) {
 
     ((AIAppState) currentPlayer).pushCommand(command);
@@ -229,6 +237,9 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
   }
 
+  /**
+   * any code which only needs to be called once every time the scene is drawn should go here.
+   */
   @Override
   public void simpleRender(RenderManager rm) {
 
@@ -238,15 +249,19 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
   }
 
+  /**
+   * controls camera logic which needs to be updated when render is called.
+   */
   public void setCam() {
 
+    // probably better practice to make camera objects with their own update methods and call them in render,
     if (gameView == GameView.THIRD_PERSON_CENTER) {
       cam.setLocation(new Vector3f(0, 5f, 0));
       cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
     } else if (gameView == GameView.THIRD_PERSON_FOLLOW) {
-      cam.setLocation(viewDirection.clone().multLocal(-20f).add(player.getPhysicsLocation()).add(Vector3f.UNIT_Y.mult(5f)));
+      cam.setLocation(viewDirection.mult(-20f).add(player.getPhysicsLocation()).add(Vector3f.UNIT_Y.mult(5f)));
       cam.lookAt(player.getPhysicsLocation(), Vector3f.UNIT_Y);
-    } else if (gameView == GameView.FIRST_PERSON) {// some problems with rotation are visible from this view.
+    } else if (gameView == GameView.FIRST_PERSON) {
       cam.setLocation(player.getPhysicsLocation().add(Vector3f.UNIT_Y));
       cam.setAxes(Vector3f.UNIT_Y.cross(viewDirection), Vector3f.UNIT_Y, viewDirection);
     } else { // god view
@@ -256,6 +271,11 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
   }
 
+  /**
+   * moves the pill to a random location within the bounds of the level.
+   * 
+   * @param pill
+   */
   public void movePill(Geometry pill) {
 
     float x = ObjectFactory.PLATFORM_DIMENSION / 2 - random.nextInt(ObjectFactory.PLATFORM_DIMENSION);

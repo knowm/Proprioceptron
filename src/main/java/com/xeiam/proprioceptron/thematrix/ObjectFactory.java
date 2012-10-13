@@ -31,6 +31,8 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.util.TangentBinormalGenerator;
 
 /**
+ * This class is responsible for constructing the graphical objects encountered in the game.
+ * 
  * @author timmolter
  * @create Oct 5, 2012
  */

@@ -1,3 +1,18 @@
+/**
+ * Copyright 2012 MANC LLC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.xeiam.proprioceptron.thematrix;
 
 import java.util.ArrayList;
@@ -10,6 +25,12 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
+/**
+ * primarily loads and removes the level specific objects into the game environment, level specific update logic is also delegated to this class.
+ * 
+ * @author ZackKenyon
+ * @create Oct 12, 2012
+ */
 public class LevelAppState extends AbstractAppState {
 
   int numbluepills;
@@ -19,6 +40,13 @@ public class LevelAppState extends AbstractAppState {
   List<Geometry> bluePills;
   List<Geometry> redPills;
 
+  /**
+   * Constructor
+   * 
+   * @param numbluepills number of blue pills in this level, blue pills add 10 to score
+   * @param numredpills number of red pills in this level, red pills subtract 10 from score
+   * @param pillsmoving **Not Implemented** extra level of difficulty, the pills are moving
+   */
   public LevelAppState(int numbluepills, int numredpills, boolean pillsmoving) {
 
     this.numbluepills = numbluepills;
@@ -26,6 +54,9 @@ public class LevelAppState extends AbstractAppState {
     this.pillsmoving = pillsmoving;
   }
 
+  /**
+   * Makes the pill objects. Adds self to statemanager, casts the Application as a TheMatrix object.
+   */
   @Override
   public void initialize(AppStateManager asm, Application app) {
 
@@ -46,6 +77,9 @@ public class LevelAppState extends AbstractAppState {
 
   }
 
+  /**
+   * Adds or removes the pills from the scenegraph and the physics space. does not create or destroy pill geometries.
+   */
   @Override
   public void setEnabled(boolean enabled) {
 
@@ -68,6 +102,10 @@ public class LevelAppState extends AbstractAppState {
     }
   }
 
+  /**
+   * Responsible for implementing all the non-physical rules of the game. If the Character's movement is over we decrement the score and take a snapshot of the state of the game according to the AI. We also check for collisions and move the pills
+   * that were collided with.
+   */
   @Override
   public void update(float tpf) {
 
@@ -81,7 +119,6 @@ public class LevelAppState extends AbstractAppState {
       Vector3f righteyelocation = app.player.getPhysicsLocation().add(app.viewDirection).add(app.viewDirection.cross(Vector3f.UNIT_Y));
       Vector3f lefteyelocation = app.player.getPhysicsLocation().add(app.viewDirection).add(Vector3f.UNIT_Y.cross(app.viewDirection));
 
-      // 4. calculate state
       for (Geometry g : bluePills) {
         Vector3f relativePosition = app.player.getPhysicsLocation().subtract(g.getWorldTranslation());
         // calculate eye positions.
@@ -119,16 +156,4 @@ public class LevelAppState extends AbstractAppState {
       app.notifyListeners();
     }
   }
-
-  public float[] getBlueDistances() {
-
-    return null;
-
-  }
-
-  public float[] getRedDistances() {
-
-    return null;
-  }
-
 }
