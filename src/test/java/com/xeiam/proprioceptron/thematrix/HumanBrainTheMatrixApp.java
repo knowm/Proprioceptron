@@ -34,7 +34,7 @@ public class HumanBrainTheMatrixApp {
     TheMatrix theMatrix = new TheMatrix(GameView.GOD_VIEW, new HumanAppState());
     theMatrix.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
-    settings.setResolution(600, 480);
+    settings.setResolution(1300, 700);
     settings.setTitle("The Matrix");
     theMatrix.setSettings(settings);
     theMatrix.start();

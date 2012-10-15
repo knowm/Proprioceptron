@@ -136,6 +136,8 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     // setup camera
     stateManager.detach(stateManager.getState(FlyCamAppState.class));
     setCam();
+    newEnvState = new TheMatrixEnvState(new ArrayList<PillPerceptionState>());
+    oldEnvState = new TheMatrixEnvState(new ArrayList<PillPerceptionState>());
   }
 
   public void setcurrentlevel(int levelindex) {
@@ -245,10 +247,14 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
     setCam();
 
-    hudText.setText("score: " + score);
+    hudText.setText("score: " + score + newEnvState.toString());
 
   }
 
+  public void setHUD(String s) {
+
+    hudText.setText(s);
+  }
   /**
    * controls camera logic which needs to be updated when render is called.
    */

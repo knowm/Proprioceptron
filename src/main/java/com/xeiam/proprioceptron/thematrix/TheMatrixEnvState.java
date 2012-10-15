@@ -39,4 +39,15 @@ public final class TheMatrixEnvState implements EnvState {
     return perception;
   }
 
+  /**
+   * returns a formatted concatenated string from each of the PillPerceptionState toString() methods.
+   */
+  @Override
+  public String toString() {
+
+    String result = "";
+    for (PillPerceptionState pps : perception)
+      result += pps.toString();
+    return result;
+  }
 }

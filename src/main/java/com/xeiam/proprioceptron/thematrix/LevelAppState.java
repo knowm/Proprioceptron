@@ -131,7 +131,7 @@ public class LevelAppState extends AbstractAppState {
           app.score += 10;
           app.movePill(g);
         }
-        perceptions.add(new PillPerceptionState(relativePosition, lefteyedistance, righteyedistance, middleeyedistance, wasCollision));
+        perceptions.add(new PillPerceptionState(relativePosition, lefteyedistance, righteyedistance, middleeyedistance, true, wasCollision));
 
         // 2. notify listeners
 
@@ -149,7 +149,7 @@ public class LevelAppState extends AbstractAppState {
           app.score -= 10;
           app.movePill(g);
         }
-        perceptions.add(new PillPerceptionState(relativePosition, lefteyedistance, righteyedistance, middleeyedistance, wasCollision));
+        perceptions.add(new PillPerceptionState(relativePosition, lefteyedistance, righteyedistance, middleeyedistance, false, wasCollision));
 
       }
       app.newEnvState = new TheMatrixEnvState(perceptions);

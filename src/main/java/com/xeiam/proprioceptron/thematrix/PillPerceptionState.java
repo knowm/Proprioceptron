@@ -30,14 +30,16 @@ public class PillPerceptionState {
   private final float distRightEye;
   private final float distHead;
   private final boolean wasCollision;
+  private final boolean isBlue;
 
-  public PillPerceptionState(Vector3f relativePosition, float distLeftEye, float distRightEye, float distHead, boolean wasCollision) {
+  public PillPerceptionState(Vector3f relativePosition, float distLeftEye, float distRightEye, float distHead, boolean isBlue, boolean wasCollision) {
 
     this.relativePosition = relativePosition;
     this.distLeftEye = distLeftEye;
     this.distRightEye = distRightEye;
     this.distHead = distHead;
     this.wasCollision = wasCollision;
+    this.isBlue = isBlue;
   }
 
   public Vector3f getRelativePosition() {
@@ -63,5 +65,11 @@ public class PillPerceptionState {
   public boolean isWasCollision() {
 
     return wasCollision;
+  }
+
+  @Override
+  public String toString() {
+
+    return (isBlue ? "\nBluePill" : "\nRedPill") + "\nLeft eye distance: " + distLeftEye + "\nRight eye distance: " + distRightEye + "\ndistance to forehead: " + distHead + "\nCollision? " + wasCollision;
   }
 }
