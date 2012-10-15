@@ -130,6 +130,7 @@ public class LevelAppState extends AbstractAppState {
         if (wasCollision) {
           app.score += 10;
           app.movePill(g);
+          app.numBluePills++;
         }
         perceptions.add(new PillPerceptionState(relativePosition, lefteyedistance, righteyedistance, middleeyedistance, true, wasCollision));
 

@@ -74,6 +74,8 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   Random random = new Random();
   /** Specifies how well the computer is doing at the game. +10 for blue pills, -10 for red pills, -1 per movement. */
   public float score;
+  /** the number of blue pills that have been collected so far. */
+  public int numBluePills;
 
 
   /**
@@ -97,6 +99,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+    numBluePills = 0;
 
     // 2. make game environment and levels
     ObjectFactory.setupGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
@@ -247,14 +250,10 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
     setCam();
 
-    hudText.setText("score: " + score + newEnvState.toString());
+    hudText.setText("number of blue pills collected: " + numBluePills + "\nscore: " + score + newEnvState.toString());
 
   }
 
-  public void setHUD(String s) {
-
-    hudText.setText(s);
-  }
   /**
    * controls camera logic which needs to be updated when render is called.
    */
