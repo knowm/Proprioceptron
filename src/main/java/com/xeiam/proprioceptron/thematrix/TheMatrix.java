@@ -191,7 +191,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     // this version of Update is for the player. and does not require that.
     currentPlayer.update(tpf);
     currentLevel.update(tpf);
-    if (score > 50 * currentlevelindex) {
+    if (numBluePills > 10 * currentlevelindex) {
 
       setcurrentlevel(currentlevelindex++);
 
