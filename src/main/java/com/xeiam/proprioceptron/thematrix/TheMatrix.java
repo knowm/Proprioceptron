@@ -42,6 +42,7 @@ import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
  */
 public class TheMatrix extends ProprioceptronApplication implements PhysicsCollisionListener, ActionListener {
 
+  private static final int numBluePillsPerLevel = 10;
   /** default physics handler */
   private BulletAppState bulletAppState;
   /** specifies the type of camera */
@@ -191,7 +192,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     // this version of Update is for the player. and does not require that.
     currentPlayer.update(tpf);
     currentLevel.update(tpf);
-    if (numBluePills > 10 * currentlevelindex) {
+    if (numBluePills > numBluePillsPerLevel * currentlevelindex) {
 
       setcurrentlevel(currentlevelindex++);
 
