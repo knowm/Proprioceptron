@@ -127,4 +127,8 @@ public class ArmLevelState extends AbstractAppState {
       app.notifyListeners();
     }
   }
+
+  public void movepills(float tpf) {
+
+  }
 }
