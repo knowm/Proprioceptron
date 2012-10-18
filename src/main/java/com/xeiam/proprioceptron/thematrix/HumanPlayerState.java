@@ -25,7 +25,7 @@ import com.jme3.app.state.AppStateManager;
  * @author Zackkenyon
  * @create Oct 12, 2012
  */
-public class HumanAppState extends AbstractAppState implements PlayerAppState {
+public class HumanPlayerState extends AbstractAppState implements PlayerAppState {
 
   /**
    * internal state variable. records information from onAction.

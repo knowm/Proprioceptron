@@ -13,45 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.xeiam.proprioceptron.roboticarm;
 
+import com.jme3.math.Vector3f;
+
 /**
- * @author timmolter
- * @create Sep 28, 2012
+ * A snapshot of the static information about the arm.
+ * 
+ * @author Zackkenyon
+ * @create Oct 17, 2012
  */
-public final class JointCommand {
+public class ProprioceptionState {
 
-  private final int jointNumber;
-  private final int direction;
-  public float distance;
+  private final Vector3f[] relativePositions;
 
-  /**
-   * Constructor
-   * 
-   * @param jointNumber
-   * @param direction
-   * @param steps
-   */
-  public JointCommand(int jointNumber, int direction, float distance) {
+  public ProprioceptionState(Vector3f[] relativePositions) {
 
-    this.jointNumber = jointNumber;
-    this.direction = direction;
-    this.distance = distance;
+    this.relativePositions = relativePositions;
   }
 
-  /**
-   * @return the jointNumber
-   */
-  public int getJointNumber() {
+  public Vector3f[] getRelativePositions() {
 
-    return jointNumber;
+    return relativePositions;
   }
 
-  /**
-   * @return the direction
-   */
-  public int getDirection() {
+  @Override
+  public String toString() {
 
-    return direction;
+    String s = "";
+    for (Vector3f v : relativePositions) {
+      s += "\n" + v.toString();
+    }
+    return s;
   }
 }

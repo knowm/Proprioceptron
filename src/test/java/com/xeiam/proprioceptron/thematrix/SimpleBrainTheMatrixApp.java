@@ -38,7 +38,7 @@ public class SimpleBrainTheMatrixApp implements PropertyChangeListener {
 
     simpleBrain = new SimpleBrain();
     // switching game logic between human and AI versions is too complicated to manage without the AIAppState and HumanAppState delegates.
-    theMatrix = new TheMatrix(GameView.GOD_VIEW, new AIAppState());
+    theMatrix = new TheMatrix(GameView.GOD_VIEW, new AIPlayerState());
 
     theMatrix.setShowSettings(false);
     AppSettings settings = new AppSettings(true);

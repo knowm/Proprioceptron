@@ -30,7 +30,7 @@ import com.jme3.math.FastMath;
  * @author Zackkenyon
  * @create Oct 12, 2012
  */
-public class AIAppState extends AbstractAppState implements PlayerAppState {
+public class AIPlayerState extends AbstractAppState implements PlayerAppState {
 
   /**
    * The list of yet to be completed commands. As of current version, expects to only have one command in it at a time.
@@ -49,7 +49,7 @@ public class AIAppState extends AbstractAppState implements PlayerAppState {
   /**
    * Constructor
    */
-  public AIAppState() {
+  public AIPlayerState() {
 
     super();
     commands = new LinkedList<PlayerCommand>();

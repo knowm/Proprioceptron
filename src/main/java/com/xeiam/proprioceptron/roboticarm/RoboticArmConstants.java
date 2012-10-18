@@ -19,6 +19,40 @@ package com.xeiam.proprioceptron.roboticarm;
  * @author timmolter
  * @create Sep 27, 2012
  */
+enum Command {
+  LEFT {
+
+    @Override
+    Command add(Command c) {
+
+      if (c.equals(Command.RIGHT)) {
+        return Command.ZERO;
+      }
+      return this;
+    }
+  },
+  RIGHT {
+
+    @Override
+    Command add(Command c) {
+
+      if (c.equals(Command.LEFT)) {
+        return Command.ZERO;
+      }
+      return this;
+    }
+  },
+  ZERO {
+
+    @Override
+    Command add(Command c) {
+
+      return c;
+    }
+  };
+
+  abstract Command add(Command c);
+}
 public class RoboticArmConstants {
 
   public static final float JOINT_RADIUS = 0.3f;
@@ -28,5 +62,9 @@ public class RoboticArmConstants {
 
   public static final float SECTION_LENGTH = 1.0f;
   public static final float SECTION_CROSS_DIM = 0.1f;
+
+  public static final float SPEED = 1.0f;
+
+  public static final int PILLS_PER_LEVEL = 10;
 
 }

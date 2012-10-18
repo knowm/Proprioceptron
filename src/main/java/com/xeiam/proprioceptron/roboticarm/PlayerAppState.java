@@ -15,43 +15,16 @@
  */
 package com.xeiam.proprioceptron.roboticarm;
 
+import com.jme3.app.state.AppState;
+
 /**
- * @author timmolter
- * @create Sep 28, 2012
+ * Adds definition of onAction to AppState
+ * 
+ * @author Moobear
+ * @create Oct 12, 2012
  */
-public final class JointCommand {
+public interface PlayerAppState extends AppState {
 
-  private final int jointNumber;
-  private final int direction;
-  public float distance;
+  public void onAction(String name, boolean keyPressed, float tpf);
 
-  /**
-   * Constructor
-   * 
-   * @param jointNumber
-   * @param direction
-   * @param steps
-   */
-  public JointCommand(int jointNumber, int direction, float distance) {
-
-    this.jointNumber = jointNumber;
-    this.direction = direction;
-    this.distance = distance;
-  }
-
-  /**
-   * @return the jointNumber
-   */
-  public int getJointNumber() {
-
-    return jointNumber;
-  }
-
-  /**
-   * @return the direction
-   */
-  public int getDirection() {
-
-    return direction;
-  }
 }

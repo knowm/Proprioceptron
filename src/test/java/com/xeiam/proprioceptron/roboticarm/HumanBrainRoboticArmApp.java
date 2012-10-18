@@ -25,7 +25,7 @@ import com.jme3.system.AppSettings;
  */
 public class HumanBrainRoboticArmApp {
 
-  private static final int NUM_JOINTS = 7;
+  private static final int NUM_JOINTS = 3;// max supported is 8.
 
   private final RoboticArm roboticArm;
 
@@ -34,19 +34,19 @@ public class HumanBrainRoboticArmApp {
    */
   public HumanBrainRoboticArmApp() {
 
-    roboticArm = new RoboticArm(NUM_JOINTS);
+    roboticArm = new RoboticArm(NUM_JOINTS, new HumanPlayerState(NUM_JOINTS));
     roboticArm.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
-    settings.setResolution(480, 480);
+    settings.setResolution(1300, 700);
     settings.setTitle("Proprioceptron - Human Input");
     roboticArm.setSettings(settings);
-    roboticArm.setEnableKeys(true);
     roboticArm.start();
 
   }
 
   public static void main(String[] args) {
 
+    @SuppressWarnings("unused")
     HumanBrainRoboticArmApp hb = new HumanBrainRoboticArmApp();
   }
 

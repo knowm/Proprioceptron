@@ -15,9 +15,8 @@
  */
 package com.xeiam.proprioceptron.roboticarm;
 
-import java.util.Arrays;
+import java.util.List;
 
-import com.jme3.math.Vector3f;
 import com.xeiam.proprioceptron.EnvState;
 
 /**
@@ -26,64 +25,28 @@ import com.xeiam.proprioceptron.EnvState;
  */
 public final class RoboticArmEnvState implements EnvState {
 
-  private final float distLeftEye;
-  private final float distRightEye;
-  private final float distHead;
-
-  private final Vector3f[] relativePositions;
-
-  private final boolean wasCollision;
+  private final List<PillPerceptionState> pills;
+  private final ProprioceptionState proprioception;
 
   /**
    * Constructor
    * 
-   * @param distLeftEye
-   * @param distRightEye
-   * @param distHead
-   * @param relativePositions
-   * @param wasCollision
    */
-  public RoboticArmEnvState(float distLeftEye, float distRightEye, float distHead, Vector3f[] relativePositions, boolean wasCollision) {
+  public RoboticArmEnvState(List<PillPerceptionState> pills, ProprioceptionState proprioception) {
 
-    this.distLeftEye = distLeftEye;
-    this.distRightEye = distRightEye;
-    this.distHead = distHead;
-    this.relativePositions = relativePositions;
-    this.wasCollision = wasCollision;
-  }
-
-  public float getDistLeftEye() {
-
-    return distLeftEye;
-  }
-
-  public float getDistRightEye() {
-
-    return distRightEye;
-  }
-
-  public float getDistHead() {
-
-    return distHead;
-  }
-
-  public Vector3f[] getRelativePositions() {
-
-    return relativePositions;
-  }
-
-  /**
-   * @return the wasCollision
-   */
-  public boolean wasCollision() {
-
-    return wasCollision;
+    this.pills = pills;
+    this.proprioception = proprioception;
   }
 
   @Override
   public String toString() {
 
-    return "EnvState [distLeftEye=" + distLeftEye + ", distRightEye=" + distRightEye + ", distHead=" + distHead + ", relativePositions=" + Arrays.toString(relativePositions) + ", wasCollision=" + wasCollision + "]";
+    String s = "";
+    for (PillPerceptionState pps : pills) {
+      s += pps.toString();
+    }
+    s += proprioception.toString();
+    return s;
   }
 
 }
