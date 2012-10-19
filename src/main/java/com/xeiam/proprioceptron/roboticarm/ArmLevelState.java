@@ -22,11 +22,19 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 
 enum PillSpeed {
-  STOPPED, SLOW, FAST
+  STOPPED(0), SLOW(1), FAST(2);
+
+  public int factor;
+
+  private PillSpeed(int x) {
+
+    factor = x;
+  }
 }
 
 public class ArmLevelState extends AbstractAppState {
@@ -36,6 +44,8 @@ public class ArmLevelState extends AbstractAppState {
   PillSpeed speed;
   boolean hasRedPill;
   RoboticArm app;
+  Vector3f blueDirection;
+  Vector3f redDirection;
 
   public ArmLevelState(PillSpeed speed, boolean hasRedPill) {
 
@@ -57,10 +67,18 @@ public class ArmLevelState extends AbstractAppState {
     if (enabled) {
       bluePill = ObjectFactory.getPill(app.getAssetManager(), ColorRGBA.Blue);
       app.moveTarget(bluePill);
+      // this code generates a random (uniform in direction) inward pointed vector. I have no idea why I wanted to do this, but I'm keeping the code here for reference
+      // blueDirection = bluePill.getWorldTranslation().negate().normalize();
+      // blueDirection.addLocal(Vector3f.UNIT_Z.cross(blueDirection).mult(FastMath.tan(FastMath.rand.nextFloat()*FastMath.HALF_PI)));
+      // blueDirection.normalizeLocal();
+      blueDirection = Vector3f.UNIT_X.mult(FastMath.tan((FastMath.rand.nextFloat() - .5f) * FastMath.HALF_PI)).add(Vector3f.UNIT_Z);
+      blueDirection.normalizeLocal();
       app.getRootNode().attachChild(bluePill);
       if (hasRedPill) {
         redPill = ObjectFactory.getPill(app.getAssetManager(), ColorRGBA.Red);
         app.moveTarget(redPill);
+        redDirection = Vector3f.UNIT_X.mult(FastMath.tan((FastMath.rand.nextFloat() - .5f) * FastMath.HALF_PI)).add(Vector3f.UNIT_Z);
+        redDirection.normalizeLocal();
         app.getRootNode().attachChild(redPill);
       }
 
@@ -76,8 +94,9 @@ public class ArmLevelState extends AbstractAppState {
   @Override
   public void update(float tpf) {
 
+    movepills(tpf);
     if (app.movementOver) {
-
+      app.score--;
       // update old state
       app.oldEnvState = app.newEnvState;
 
@@ -105,12 +124,14 @@ public class ArmLevelState extends AbstractAppState {
       boolean wasCollision = headDistance < .05f;
       if (wasCollision) {
         app.moveTarget(bluePill);
+        blueDirection = Vector3f.UNIT_Z.mult(FastMath.tan((FastMath.rand.nextFloat() - .5f) * FastMath.HALF_PI)).add(Vector3f.UNIT_X);
+        blueDirection.normalizeLocal();
         app.numBluePills++;
         app.score += 10;
       }
       pills.add(new PillPerceptionState(distR, distL, headDistance, true, wasCollision));
       if (hasRedPill) {
-        Vector3f redtargetCoords = bluePill.getWorldTranslation();
+        Vector3f redtargetCoords = redPill.getWorldTranslation();
         float reddistL = leftEyeCoords.distance(redtargetCoords) - RoboticArmConstants.TARGET_RADIUS;
         float reddistR = rightEyeCoords.distance(redtargetCoords) - RoboticArmConstants.TARGET_RADIUS;
         float redheadDistance = headCoords.distance(redtargetCoords) - RoboticArmConstants.TARGET_RADIUS - RoboticArmConstants.HEAD_RADIUS;
@@ -118,6 +139,8 @@ public class ArmLevelState extends AbstractAppState {
         boolean redwasCollision = headDistance < .05f;
         if (redwasCollision) {
           app.moveTarget(redPill);
+          redDirection = Vector3f.UNIT_Z.mult(FastMath.tan((FastMath.rand.nextFloat() - .5f) * FastMath.HALF_PI)).add(Vector3f.UNIT_X);
+          redDirection.normalizeLocal();
           app.score -= 10;
         }
         pills.add(new PillPerceptionState(reddistR, reddistL, redheadDistance, false, redwasCollision));
@@ -130,5 +153,15 @@ public class ArmLevelState extends AbstractAppState {
 
   public void movepills(float tpf) {
 
+    if (speed != PillSpeed.STOPPED) {
+      bluePill.move(blueDirection.mult(tpf * speed.factor));
+      if (bluePill.getWorldTranslation().length() > 2 * RoboticArmConstants.SECTION_LENGTH * app.numJoints + RoboticArmConstants.TARGET_RADIUS + RoboticArmConstants.HEAD_RADIUS)
+        blueDirection.negateLocal();
+      if (hasRedPill) {
+        redPill.move(redDirection.mult(tpf * speed.factor));
+        if (redPill.getWorldTranslation().length() > 2 * RoboticArmConstants.SECTION_LENGTH * app.numJoints + RoboticArmConstants.TARGET_RADIUS + RoboticArmConstants.HEAD_RADIUS)
+          redDirection.negateLocal();
+      }
+    }
   }
 }
