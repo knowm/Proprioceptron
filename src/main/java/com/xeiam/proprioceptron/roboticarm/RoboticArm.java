@@ -210,6 +210,8 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
 
     if (wasMovement) {
 
+      wasMovement = false;
+
       // update old state
       oldEnvState = newEnvState;
 
@@ -236,12 +238,16 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
       if (wasCollision) {
         score.incNumCollisions();
         if (score.getNumCollisions() % numTargetsPerLevel == 0) {
-          System.out.println(score.getNumCollisions());
-          System.out.println(numTargetsPerLevel);
           currentLevelAppState.setEnabled(false);
           currentLevelIndex++;
-          currentLevelAppState = levels.get(currentLevelIndex);
-          currentLevelAppState.setEnabled(true);
+          if (currentLevelIndex >= levels.size()) { // game over
+            hudText.setText("GAME OVER");
+            System.out.println("GAME OVER");
+            // TODO disable game
+          } else {
+            currentLevelAppState = levels.get(currentLevelIndex);
+            currentLevelAppState.setEnabled(true);
+          }
         } else {
           currentLevelAppState.moveTarget();
         }
@@ -249,8 +255,6 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
       }
       EnvState roboticArmEnvState = new EnvState(distL, distR, headDistance, relativePositions, wasCollision);
       newEnvState = new RoboticArmGameState(roboticArmEnvState, score);
-
-      wasMovement = false;
 
       notifyListeners();
     }
