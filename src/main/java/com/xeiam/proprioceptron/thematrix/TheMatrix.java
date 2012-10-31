@@ -43,8 +43,10 @@ import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
 public class TheMatrix extends ProprioceptronApplication implements PhysicsCollisionListener, ActionListener {
 
   private static final int numBluePillsPerLevel = 10;
+
   /** default physics handler */
   private BulletAppState bulletAppState;
+
   /** specifies the type of camera */
   private GameView gameView = GameView.GOD_VIEW;
 
@@ -53,28 +55,33 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
   /** prevents calculation of state during resting periods */
   protected boolean nowWaiting = true;
-  // movement
+
   /** we attach this control to the character geometry, it implements physical interactions with rigid bodies by default, and gives us some minimal controls over movement. */
   protected CharacterControl player;
-  // AppStates
+
   /** the List of levels to be used in the game. */
   List<LevelAppState> levels;
+
   /** the current level, grabbed from the list of levels. according to the currentlevelindex */
   LevelAppState currentLevel;
+
   /** the index of the current level in the list of levels. */
   int currentlevelindex = 0;
+
   /** the character controller, can be told to update(tpf), to initialize(AppStateManager,Application) itself and to do something onAction(name,keyPressed,tpf) */
   PlayerAppState currentPlayer;
+
   /** the Orientation of the player as a unit vector. */
   final Vector3f viewDirection = new Vector3f(0, 0, 1);
 
-  // pills
   /** displays diagnostic information on the game window. */
   private BitmapText hudText;
 
   Random random = new Random();
+
   /** Specifies how well the computer is doing at the game. +10 for blue pills, -10 for red pills, -1 per movement. */
   public float score;
+
   /** the number of blue pills that have been collected so far. */
   public int numBluePills;
 

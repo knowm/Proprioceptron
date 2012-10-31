@@ -32,6 +32,7 @@ import com.jme3.system.AppSettings;
 public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
   private static final int NUM_JOINTS = 2;
+  private static final int NUM_TARGETS_PER_LEVEL = 2;
 
   private final SimpleBrain simpleBrain;
   private final RoboticArm roboticArm;
@@ -43,7 +44,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
     simpleBrain = new SimpleBrain();
 
-    roboticArm = new RoboticArm(NUM_JOINTS);
+    roboticArm = new RoboticArm(NUM_JOINTS, NUM_TARGETS_PER_LEVEL);
     roboticArm.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(480, 480);

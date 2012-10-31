@@ -48,4 +48,14 @@ public class Score {
     }
   }
 
+  public int getNumCollisions() {
+
+    return numCollisions;
+  }
+
+  public void setNumCollisions(int numCollisions) {
+
+    this.numCollisions = numCollisions;
+  }
+
 }

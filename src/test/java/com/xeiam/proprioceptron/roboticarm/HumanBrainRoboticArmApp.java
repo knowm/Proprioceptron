@@ -26,6 +26,7 @@ import com.jme3.system.AppSettings;
 public class HumanBrainRoboticArmApp {
 
   private static final int NUM_JOINTS = 2;
+  private static final int NUM_TARGETS_PER_LEVEL = 2;
 
   private final RoboticArm roboticArm;
 
@@ -34,7 +35,7 @@ public class HumanBrainRoboticArmApp {
    */
   public HumanBrainRoboticArmApp() {
 
-    roboticArm = new RoboticArm(NUM_JOINTS);
+    roboticArm = new RoboticArm(NUM_JOINTS, NUM_TARGETS_PER_LEVEL);
     roboticArm.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(480, 480);

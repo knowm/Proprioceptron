@@ -15,6 +15,7 @@
  */
 package com.xeiam.proprioceptron.roboticarm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.jme3.font.BitmapText;
@@ -37,6 +38,7 @@ import com.xeiam.proprioceptron.ProprioceptronApplication;
 public class RoboticArm extends ProprioceptronApplication implements AnalogListener, ActionListener {
 
   private final int numJoints;
+  private final int numTargetsPerLevel;
 
   /** prevents calculation of state when there are no arm movements */
   private boolean wasMovement = false;
@@ -53,18 +55,21 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
   private Geometry leftEye;
   private Geometry rightEye;
 
-  /** target */
-  private Geometry target;
-
   /** Score */
   private final Score score = new Score();
+
+  /** Levels */
+  private List<RoboticArmLevelAppState> levels;
+  private RoboticArmLevelAppState currentLevelAppState;
+  private int currentLevelIndex = 0;
 
   /**
    * Constructor
    */
-  public RoboticArm(int numJoints) {
+  public RoboticArm(int numJoints, int numTargetsPerLevel) {
 
     this.numJoints = numJoints;
+    this.numTargetsPerLevel = numTargetsPerLevel;
   }
 
   @Override
@@ -91,12 +96,6 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     matRoboticArm.setColor("m_Diffuse", new ColorRGBA(.7f, 1.0f, .7f, 1f));
     matRoboticArm.setColor("m_Specular", new ColorRGBA(.7f, 1.0f, .7f, 1f));
     matRoboticArm.setFloat("m_Shininess", 50); // [1,128] lower is shinier
-
-    Material matTarget = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-    matTarget.setBoolean("UseMaterialColors", true);
-    matTarget.setColor("m_Specular", ColorRGBA.White);
-    matTarget.setColor("Diffuse", ColorRGBA.Red);
-    matTarget.setFloat("Shininess", 128); // [1,128]
 
     // elongated box for arm sections
     Box box = new Box(new Vector3f(0, 0, ObjectFactory.SECTION_LENGTH), ObjectFactory.SECTION_CROSS_DIM, ObjectFactory.SECTION_CROSS_DIM, ObjectFactory.SECTION_LENGTH);
@@ -137,17 +136,6 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     rightEye = new Geometry("rightEye", sphereEye);
     rightEye.setMaterial(matRoboticArm);
 
-    // Create Target
-    Sphere sphereTarget = new Sphere(30, 30, ObjectFactory.TARGET_RADIUS);
-    sphereTarget.setTextureMode(Sphere.TextureMode.Projected);
-    TangentBinormalGenerator.generate(sphereTarget);
-    target = new Geometry("head", sphereTarget);
-    target.setMaterial(matTarget);
-
-    // Place target
-    moveTarget();
-    rootNode.attachChild(target);
-
     // Create robotic Arm
     rootNode.attachChild(pivots[0]);
 
@@ -182,9 +170,17 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     hudText.setLocalTranslation(10, settings.getHeight() - 10, 0); // position
     guiNode.attachChild(hudText);
 
+    levels = new ArrayList<RoboticArmLevelAppState>();
+    levels.add(new RoboticArmLevelAppState(numJoints, 1, 0, false));
+    levels.add(new RoboticArmLevelAppState(numJoints, 1, 0, false));
+    for (RoboticArmLevelAppState level : levels) {
+      level.initialize(getStateManager(), this);
+    }
+    currentLevelAppState = levels.get(currentLevelIndex);
+    currentLevelAppState.setEnabled(true);
+
     // init env state
     simpleUpdate(0.0f);
-
   }
 
   @Override
@@ -227,42 +223,38 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
         }
       }
 
-      // hudDistanceText
-      Vector3f targetCoords = target.getWorldTranslation();
+      // envstate
+      Vector3f targetCoords = currentLevelAppState.getTargetWorldTranslation();
       Vector3f leftEyeCoords = leftEye.getWorldTranslation();
       float distL = leftEyeCoords.distance(targetCoords) - ObjectFactory.TARGET_RADIUS;
       Vector3f rightEyeCoords = rightEye.getWorldTranslation();
       float distR = rightEyeCoords.distance(targetCoords) - ObjectFactory.TARGET_RADIUS;
-      // pin distance
       Vector3f headCoords = head.getWorldTranslation();
       float headDistance = headCoords.distance(targetCoords) - ObjectFactory.TARGET_RADIUS - ObjectFactory.HEAD_RADIUS;
-
       boolean wasCollision = headDistance < 0.005f;
+      System.out.println(headDistance);
       if (wasCollision) {
-        moveTarget();
         score.incNumCollisions();
-        hudText.setText("Score = " + score.getScore());
+        if (score.getNumCollisions() % numTargetsPerLevel == 0) {
+          System.out.println(score.getNumCollisions());
+          System.out.println(numTargetsPerLevel);
+          currentLevelAppState.setEnabled(false);
+          currentLevelIndex++;
+          currentLevelAppState = levels.get(currentLevelIndex);
+          currentLevelAppState.setEnabled(true);
+        } else {
+          currentLevelAppState.moveTarget();
+        }
+        hudText.setText("Level = " + currentLevelIndex + ", Score = " + score.getScore());
       }
-
       EnvState roboticArmEnvState = new EnvState(distL, distR, headDistance, relativePositions, wasCollision);
       newEnvState = new RoboticArmGameState(roboticArmEnvState, score);
+
       wasMovement = false;
 
       notifyListeners();
     }
 
-  }
-
-  /**
-   * Move the target somewhere within the radius of reach
-   */
-  private void moveTarget() {
-
-    float arcRadius = (float) (Math.random() * 2 * ObjectFactory.SECTION_LENGTH * numJoints + ObjectFactory.TARGET_RADIUS + ObjectFactory.HEAD_RADIUS);
-    float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
-    float z = (float) (Math.sqrt(arcRadius * arcRadius - x * x)) * (Math.random() > 0.5 ? 1 : -1);
-    target.center();
-    target.move(x, 0, z);
   }
 
   /**
