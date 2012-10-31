@@ -68,8 +68,8 @@ public class AIAppState extends AbstractAppState implements PlayerAppState {
 
   /**
    * rotate the character if it still needs rotating, if not, move the character forward if it still needs translating, otherwise, end the movement and get a new command from the AI.
-   * @param tpf
-   * time per frame- normalizes the motion in the viewgraph so that the velocity appears constant.
+   * 
+   * @param tpf time per frame- normalizes the motion in the viewgraph so that the velocity appears constant.
    */
   @Override
   public void update(float tpf) {
@@ -124,14 +124,13 @@ public class AIAppState extends AbstractAppState implements PlayerAppState {
 
     commands.add(command);
   }
+
   /**
-   * Currently does nothing, may be used with customized triggers in the future to handle AI inputs. 
-   * @param name
-   * the name of the trigger which called this
-   * @param keyPressed
-   * whether the trigger was called by pushing or releasing the button
-   * @param tpf
-   * time per frame (update) in seconds, expressed as a float
+   * Currently does nothing, may be used with customized triggers in the future to handle AI inputs.
+   * 
+   * @param name the name of the trigger which called this
+   * @param keyPressed whether the trigger was called by pushing or releasing the button
+   * @param tpf time per frame (update) in seconds, expressed as a float
    */
   @Override
   public void onAction(String name, boolean keyPressed, float tpf) {

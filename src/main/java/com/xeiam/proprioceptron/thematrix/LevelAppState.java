@@ -109,7 +109,6 @@ public class LevelAppState extends AbstractAppState {
   @Override
   public void update(float tpf) {
 
-
     // TODO: if pillsmoving code goes here.
 
     if (app.movementOver) {

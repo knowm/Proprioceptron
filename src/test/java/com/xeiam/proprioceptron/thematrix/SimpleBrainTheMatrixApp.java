@@ -31,6 +31,7 @@ public class SimpleBrainTheMatrixApp implements PropertyChangeListener {
 
   private final SimpleBrain simpleBrain;
   TheMatrix theMatrix;
+
   /**
    * Constructor
    */

@@ -46,7 +46,6 @@ public class HumanAppState extends AbstractAppState implements PlayerAppState {
 
   private TheMatrix app;
 
-
   /**
    * adds the state to the StateManager, casts the Application to a TheMatrix
    */

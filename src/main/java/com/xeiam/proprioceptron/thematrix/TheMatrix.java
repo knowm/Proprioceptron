@@ -78,7 +78,6 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   /** the number of blue pills that have been collected so far. */
   public int numBluePills;
 
-
   /**
    * Constructor
    * 
@@ -121,7 +120,6 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
     // 3. make player and player controllers
     player = ObjectFactory.getPlayer(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-
 
     currentPlayer.initialize(getStateManager(), this);
     // 4. setup keys
@@ -169,7 +167,6 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   @Override
   public void onAction(String name, boolean keyPressed, float tpf) {
 
-
     // detect when buttons were released
 
     if (name.equals("toggleGameView")) {
@@ -177,8 +174,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
         gameView = gameView.getNext();
         setCam();
       }
-    }
- else {
+    } else {
       currentPlayer.onAction(name, keyPressed, tpf);
     }
   }
@@ -188,6 +184,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
  */
   @Override
   public void simpleUpdate(float tpf) {
+
     // according to specs, the AI chooses to arbitrarily be moved forward or turned in one timestep, but not both.
     // this version of Update is for the player. and does not require that.
     currentPlayer.update(tpf);
@@ -198,10 +195,9 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
     }
 
-
   }
 
-  public void rotateEpsilon(float epsilon){
+  public void rotateEpsilon(float epsilon) {
 
     Quaternion quat = new Quaternion();
     // seems silly to make this over and over.
@@ -210,7 +206,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     player.setViewDirection(viewDirection);
   }
 
-  public void forwardEpsilon(float epsilon){
+  public void forwardEpsilon(float epsilon) {
 
     player.setPhysicsLocation(player.getPhysicsLocation().add(viewDirection.mult(epsilon)));
   }
