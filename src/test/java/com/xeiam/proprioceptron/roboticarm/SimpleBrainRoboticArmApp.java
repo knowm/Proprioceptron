@@ -49,7 +49,6 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
     settings.setResolution(480, 480);
     settings.setTitle("Proprioceptron - Simple Test Brain");
     roboticArm.setSettings(settings);
-    roboticArm.setEnableKeys(true);
     roboticArm.addChangeListener(this);
     roboticArm.start();
 
@@ -57,7 +56,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
   public static void main(String[] args) {
 
-    SimpleBrainRoboticArmApp stm = new SimpleBrainRoboticArmApp();
+    new SimpleBrainRoboticArmApp();
   }
 
   @Override

@@ -18,14 +18,14 @@ package com.xeiam.proprioceptron.roboticarm;
 import com.jme3.system.AppSettings;
 
 /**
- * Run the Robotic Arm game with human input via keyboard keys PLOKIJ.
+ * Run the Robotic Arm game with human input via keyboard keys PLOKIJUHYGTFRDESWA.
  * 
  * @author timmolter
  * @create Sep 28, 2012
  */
 public class HumanBrainRoboticArmApp {
 
-  private static final int NUM_JOINTS = 7;
+  private static final int NUM_JOINTS = 3;
 
   private final RoboticArm roboticArm;
 
@@ -40,14 +40,13 @@ public class HumanBrainRoboticArmApp {
     settings.setResolution(480, 480);
     settings.setTitle("Proprioceptron - Human Input");
     roboticArm.setSettings(settings);
-    roboticArm.setEnableKeys(true);
     roboticArm.start();
 
   }
 
   public static void main(String[] args) {
 
-    HumanBrainRoboticArmApp hb = new HumanBrainRoboticArmApp();
+    new HumanBrainRoboticArmApp();
   }
 
 }

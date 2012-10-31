@@ -17,13 +17,9 @@ package com.xeiam.proprioceptron.roboticarm;
 
 import java.util.List;
 
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.font.BitmapText;
-import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
-import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -41,13 +37,11 @@ import com.xeiam.proprioceptron.ProprioceptronApplication;
 public class RoboticArm extends ProprioceptronApplication implements AnalogListener, ActionListener {
 
   private final int numJoints;
-  private boolean enableKeys = false;
 
   /** prevents calculation of state when there are no arm movements */
-  private boolean wasMovement = true;
+  private boolean wasMovement = false;
 
   BitmapText hudDistanceText;
-  // BitmapText hudPositionText;
 
   private Node[] pivots;
   private Geometry[] sections;
@@ -76,30 +70,13 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     sections = new Geometry[numJoints];
     joints = new Geometry[numJoints];
 
+    ObjectFactory.setupGameEnvironment(rootNode, assetManager, numJoints);
+
     // Change Camera position
     cam.setLocation(new Vector3f(0f, numJoints * 6f, 0f));
     cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
 
     // Create World
-    /** Must add a light to make the lit object visible! */
-    DirectionalLight sun = new DirectionalLight();
-    sun.setDirection(new Vector3f(1, -5, -2).normalizeLocal());
-    sun.setColor(ColorRGBA.White);
-    rootNode.addLight(sun);
-
-    Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
-
-    float dimension = RoboticArmConstants.SECTION_LENGTH * numJoints * 2.3f;
-    Box floorBox = new Box(dimension, .5f, dimension);
-    Geometry floorGeometry = new Geometry("Floor", floorBox);
-    floorGeometry.setMaterial(material);
-    floorGeometry.setLocalTranslation(0, -1.0f * RoboticArmConstants.HEAD_RADIUS - .5f, 0);
-    floorGeometry.addControl(new RigidBodyControl(0));
-    rootNode.attachChild(floorGeometry);
-
-    // scene background color
-    // viewPort.setBackgroundColor(new ColorRGBA(.5f, .8f, .99f, 1.0f));
 
     // Material for Robotic Arm
     Material matRoboticArm = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
@@ -190,7 +167,7 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     headNode.attachChild(rightEye);
     pivots[numJoints - 1].attachChild(headNode);
 
-    setupKeys();
+    ObjectFactory.setupKeys(inputManager, this, numJoints);
 
     hudDistanceText = new BitmapText(guiFont, false);
     hudDistanceText.setSize(24); // font size
@@ -199,26 +176,9 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
     hudDistanceText.setLocalTranslation(10, settings.getHeight() - 10, 0); // position
     guiNode.attachChild(hudDistanceText);
 
-    // hudPositionText = new BitmapText(guiFont, false);
-    // hudPositionText.setSize(16); // font size
-    // hudPositionText.setColor(ColorRGBA.White); // font color
-    // hudPositionText.setLocalTranslation(10, hudPositionText.getLineHeight(), 0); // position
-    // guiNode.attachChild(hudPositionText);
-
     // init env state
     simpleUpdate(0.0f);
 
-  }
-
-  private void setupKeys() {
-
-    inputManager.addMapping("Left0", new KeyTrigger(KeyInput.KEY_L));
-    inputManager.addMapping("Right0", new KeyTrigger(KeyInput.KEY_P));
-    inputManager.addMapping("Left1", new KeyTrigger(KeyInput.KEY_K));
-    inputManager.addMapping("Right1", new KeyTrigger(KeyInput.KEY_O));
-    inputManager.addMapping("Left2", new KeyTrigger(KeyInput.KEY_J));
-    inputManager.addMapping("Right2", new KeyTrigger(KeyInput.KEY_I));
-    inputManager.addListener(this, "Left0", "Right0", "Left1", "Right1", "Left2", "Right2");
   }
 
   @Override
@@ -233,38 +193,13 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
   @Override
   public void onAnalog(String binding, float value, float tpf) {
 
-    // System.out.println(value * speed);
+    String[] keyCommands = binding.split("_");
 
-    if (enableKeys) {
+    int jointNum = Integer.parseInt(keyCommands[1]);
+    float direction = keyCommands[0].equals("Left") ? 1.0f : -1.0f;
 
-      if (binding.equals("Left0")) {
-        pivots[0].rotate(0, value * speed, 0);
-      }
-      if (binding.equals("Right0")) {
-        pivots[0].rotate(0, -1 * value * speed, 0);
-      }
-      if (binding.equals("Left1")) {
-        if (pivots.length > 1) {
-          pivots[1].rotate(0, value * speed, 0);
-        }
-      }
-      if (binding.equals("Right1")) {
-        if (pivots.length > 1) {
-          pivots[1].rotate(0, -1 * value * speed, 0);
-        }
-      }
-      if (binding.equals("Left2")) {
-        if (pivots.length > 2) {
-          pivots[2].rotate(0, value * speed, 0);
-        }
-      }
-      if (binding.equals("Right2")) {
-        if (pivots.length > 2) {
-          pivots[2].rotate(0, -1 * value * speed, 0);
-        }
-      }
+    pivots[jointNum].rotate(0, direction * value * speed, 0);
 
-    }
   }
 
   @Override
@@ -284,11 +219,6 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
           relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * RoboticArmConstants.SECTION_LENGTH);
         }
       }
-      // String positionString = "";
-      // for (int i = 0; i < relativePositions.length; i++) {
-      // positionString += relativePositions[i].toString() + " ";
-      // }
-      // hudPositionText.setText(positionString);
 
       // hudDistanceText
       Vector3f targetCoords = target.getWorldTranslation();
@@ -318,6 +248,9 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
 
   }
 
+  /**
+   * Move the target somewhere within the radius of reach
+   */
   private void moveTarget() {
 
     float arcRadius = (float) (Math.random() * 2 * RoboticArmConstants.SECTION_LENGTH * numJoints + RoboticArmConstants.TARGET_RADIUS + RoboticArmConstants.HEAD_RADIUS);
@@ -328,13 +261,10 @@ public class RoboticArm extends ProprioceptronApplication implements AnalogListe
   }
 
   /**
-   * @param enableKeys the enableKeys to set
+   * This is where JointCommands come in from an AI algorithm
+   * 
+   * @param jointCommands
    */
-  public void setEnableKeys(boolean enableKeys) {
-
-    this.enableKeys = enableKeys;
-  }
-
   public void moveJoints(List<JointCommand> jointCommands) {
 
     for (JointCommand jointCommand : jointCommands) {
