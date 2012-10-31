@@ -58,9 +58,9 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   protected CharacterControl player;
   // AppStates
   /** the List of levels to be used in the game. */
-  List<MatrixLevelState> levels;
+  List<LevelAppState> levels;
   /** the current level, grabbed from the list of levels. according to the currentlevelindex */
-  MatrixLevelState currentLevel;
+  LevelAppState currentLevel;
   /** the index of the current level in the list of levels. */
   int currentlevelindex = 0;
   /** the character controller, can be told to update(tpf), to initialize(AppStateManager,Application) itself and to do something onAction(name,keyPressed,tpf) */
@@ -104,16 +104,16 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
     // 2. make game environment and levels
     ObjectFactory.setupGameEnvironment(rootNode, bulletAppState.getPhysicsSpace(), assetManager);
-    levels = new ArrayList<MatrixLevelState>();
-    levels.add(new MatrixLevelState(1, 0, false));
-    levels.add(new MatrixLevelState(1, 1, false));
-    levels.add(new MatrixLevelState(3, 0, false));
-    levels.add(new MatrixLevelState(3, 3, false));
-    levels.add(new MatrixLevelState(1, 0, true));
-    levels.add(new MatrixLevelState(1, 1, true));
-    levels.add(new MatrixLevelState(3, 0, true));
-    levels.add(new MatrixLevelState(3, 3, true));
-    for (MatrixLevelState s : levels) {
+    levels = new ArrayList<LevelAppState>();
+    levels.add(new LevelAppState(1, 0, false));
+    levels.add(new LevelAppState(1, 1, false));
+    levels.add(new LevelAppState(3, 0, false));
+    levels.add(new LevelAppState(3, 3, false));
+    levels.add(new LevelAppState(1, 0, true));
+    levels.add(new LevelAppState(1, 1, true));
+    levels.add(new LevelAppState(3, 0, true));
+    levels.add(new LevelAppState(3, 3, true));
+    for (LevelAppState s : levels) {
       s.initialize(getStateManager(), this);
     }
     currentLevel = levels.get(currentlevelindex);
@@ -151,7 +151,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     currentLevel.setEnabled(true);
   }
 
-  public void setcurrentlevel(MatrixLevelState level) {
+  public void setcurrentlevel(LevelAppState level) {
 
     currentLevel = level;
   }
@@ -222,7 +222,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
    */
   public void addAICommands(List<PlayerCommand> commands) {
 
-    ((AIPlayerState) currentPlayer).pushCommand(commands);
+    ((AIAppState) currentPlayer).pushCommand(commands);
   }
 
   /**
@@ -232,7 +232,7 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
    */
   public void addAICommands(PlayerCommand command) {
 
-    ((AIPlayerState) currentPlayer).pushCommand(command);
+    ((AIAppState) currentPlayer).pushCommand(command);
   }
 
   @Override

@@ -31,7 +31,7 @@ import com.jme3.scene.Geometry;
  * @author ZackKenyon
  * @create Oct 12, 2012
  */
-public class MatrixLevelState extends AbstractAppState {
+public class LevelAppState extends AbstractAppState {
 
   int numbluepills;
   int numredpills;
@@ -47,7 +47,7 @@ public class MatrixLevelState extends AbstractAppState {
    * @param numredpills number of red pills in this level, red pills subtract 10 from score
    * @param pillsmoving **Not Implemented** extra level of difficulty, the pills are moving
    */
-  public MatrixLevelState(int numbluepills, int numredpills, boolean pillsmoving) {
+  public LevelAppState(int numbluepills, int numredpills, boolean pillsmoving) {
 
     this.numbluepills = numbluepills;
     this.numredpills = numredpills;

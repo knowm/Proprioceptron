@@ -23,7 +23,7 @@ public final class JointCommand {
 
   private final int jointNumber;
   private final int direction;
-  public float distance;
+  private final int steps;
 
   /**
    * Constructor
@@ -32,11 +32,11 @@ public final class JointCommand {
    * @param direction
    * @param steps
    */
-  public JointCommand(int jointNumber, int direction, float distance) {
+  public JointCommand(int jointNumber, int direction, int steps) {
 
     this.jointNumber = jointNumber;
     this.direction = direction;
-    this.distance = distance;
+    this.steps = steps;
   }
 
   /**
@@ -54,4 +54,13 @@ public final class JointCommand {
 
     return direction;
   }
+
+  /**
+   * @return the steps
+   */
+  public int getSteps() {
+
+    return steps;
+  }
+
 }

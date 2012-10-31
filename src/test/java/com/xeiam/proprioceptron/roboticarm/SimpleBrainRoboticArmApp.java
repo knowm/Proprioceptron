@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.jme3.math.FastMath;
 import com.jme3.system.AppSettings;
 
 /**
@@ -44,12 +43,13 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
     simpleBrain = new SimpleBrain();
 
-    roboticArm = new RoboticArm(NUM_JOINTS, new AIPlayerState(NUM_JOINTS));
+    roboticArm = new RoboticArm(NUM_JOINTS);
     roboticArm.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(480, 480);
     settings.setTitle("Proprioceptron - Simple Test Brain");
     roboticArm.setSettings(settings);
+    roboticArm.setEnableKeys(true);
     roboticArm.addChangeListener(this);
     roboticArm.start();
 
@@ -65,7 +65,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
     List<JointCommand> jointCommands = simpleBrain.update(pce);
 
-    roboticArm.pushCommandsToAI(jointCommands);
+    roboticArm.moveJoints(jointCommands);
   }
 
   private class SimpleBrain {
@@ -89,8 +89,9 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
         e.printStackTrace();
       }
 
-      for (int i = 0; i < NUM_JOINTS; i++) {
-        jointCommands.add(new JointCommand(i, random.nextDouble() > 0.5 ? 1 : -1, random.nextFloat() * FastMath.PI));
+      int numJoints = newEnvState.getRelativePositions().length;
+      for (int i = 0; i < numJoints; i++) {
+        jointCommands.add(new JointCommand(i, random.nextDouble() > 0.5 ? 1 : -1, random.nextInt(50)));
       }
 
       return jointCommands;
