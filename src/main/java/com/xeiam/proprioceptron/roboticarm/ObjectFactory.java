@@ -50,10 +50,12 @@ public class ObjectFactory {
         KeyInput.KEY_F, KeyInput.KEY_R, KeyInput.KEY_D, KeyInput.KEY_E, KeyInput.KEY_S, KeyInput.KEY_W, KeyInput.KEY_A, };
 
     for (int i = 0; i < numJoints; i++) {
-      inputManager.addMapping("Right_" + i, new KeyTrigger(keyArray[2 * i]));
-      inputManager.addListener(inputListener, ("Right_" + i));
-      inputManager.addMapping("Left_" + i, new KeyTrigger(keyArray[2 * i + 1]));
-      inputManager.addListener(inputListener, ("Left_" + i));
+      if (i < 18) { // only up to 18 keys bounded
+        inputManager.addMapping("Right_" + i, new KeyTrigger(keyArray[2 * i]));
+        inputManager.addListener(inputListener, ("Right_" + i));
+        inputManager.addMapping("Left_" + i, new KeyTrigger(keyArray[2 * i + 1]));
+        inputManager.addListener(inputListener, ("Left_" + i));
+      }
     }
 
   }
