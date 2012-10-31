@@ -120,7 +120,7 @@ public class RoboticArm extends ProprioceptronApplication implements ActionListe
   public void simpleRender(RenderManager rm) {
 
     if (newEnvState != null)
-      setHudText(newEnvState.toString() + "\nBlue pills collected: " + numBluePills + "\nscore: " + score);
+      setHudText(newEnvState.toString() + "\nscore: " + score);
 
   }
   @Override
