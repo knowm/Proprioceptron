@@ -30,8 +30,8 @@ import com.jme3.app.SimpleApplication;
 public abstract class ProprioceptronApplication extends SimpleApplication {
 
   protected final List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
-  public EnvState oldEnvState;
-  public EnvState newEnvState;
+  public GameState oldEnvState;
+  public GameState newEnvState;
 
   @Override
   public void simpleInitApp() {

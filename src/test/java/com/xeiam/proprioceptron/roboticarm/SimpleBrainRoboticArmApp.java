@@ -76,8 +76,8 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
      */
     public List<JointCommand> update(PropertyChangeEvent pce) {
 
-      RoboticArmEnvState oldEnvState = (RoboticArmEnvState) pce.getOldValue();
-      RoboticArmEnvState newEnvState = (RoboticArmEnvState) pce.getNewValue();
+      RoboticArmGameState oldEnvState = (RoboticArmGameState) pce.getOldValue();
+      RoboticArmGameState newEnvState = (RoboticArmGameState) pce.getNewValue();
 
       List<JointCommand> jointCommands = new ArrayList<JointCommand>();
 
@@ -88,7 +88,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
         e.printStackTrace();
       }
 
-      int numJoints = newEnvState.getRelativePositions().length;
+      int numJoints = newEnvState.getEnvState().getRelativePositions().length;
       for (int i = 0; i < numJoints; i++) {
         jointCommands.add(new JointCommand(i, random.nextDouble() > 0.5 ? 1 : -1, random.nextInt(50)));
       }

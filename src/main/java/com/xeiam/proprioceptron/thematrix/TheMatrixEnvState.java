@@ -17,7 +17,7 @@ package com.xeiam.proprioceptron.thematrix;
 
 import java.util.List;
 
-import com.xeiam.proprioceptron.EnvState;
+import com.xeiam.proprioceptron.GameState;
 
 /**
  * Hold the environment state of TheMatrix game
@@ -25,7 +25,7 @@ import com.xeiam.proprioceptron.EnvState;
  * @author timmolter
  * @create Oct 8, 2012
  */
-public final class TheMatrixEnvState implements EnvState {
+public final class TheMatrixEnvState implements GameState {
 
   private final List<PillPerceptionState> perception;
 

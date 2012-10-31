@@ -18,13 +18,12 @@ package com.xeiam.proprioceptron.roboticarm;
 import java.util.Arrays;
 
 import com.jme3.math.Vector3f;
-import com.xeiam.proprioceptron.EnvState;
 
 /**
  * @author timmolter
  * @create Sep 28, 2012
  */
-public final class RoboticArmEnvState implements EnvState {
+public final class EnvState {
 
   private final float distLeftEye;
   private final float distRightEye;
@@ -43,7 +42,7 @@ public final class RoboticArmEnvState implements EnvState {
    * @param relativePositions
    * @param wasCollision
    */
-  public RoboticArmEnvState(float distLeftEye, float distRightEye, float distHead, Vector3f[] relativePositions, boolean wasCollision) {
+  public EnvState(float distLeftEye, float distRightEye, float distHead, Vector3f[] relativePositions, boolean wasCollision) {
 
     this.distLeftEye = distLeftEye;
     this.distRightEye = distRightEye;

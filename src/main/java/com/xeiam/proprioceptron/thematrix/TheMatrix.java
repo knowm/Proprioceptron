@@ -256,6 +256,8 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
    */
   public void setCam() {
 
+    flyCam.setEnabled(false);
+
     // probably better practice to make camera objects with their own update methods and call them in render,
     if (gameView == GameView.THIRD_PERSON_CENTER) {
       cam.setLocation(new Vector3f(0, 5f, 0));

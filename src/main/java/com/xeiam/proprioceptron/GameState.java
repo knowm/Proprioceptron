@@ -19,6 +19,6 @@ package com.xeiam.proprioceptron;
  * @author timmolter
  * @create Oct 8, 2012
  */
-public interface EnvState {
+public interface GameState {
 
 }

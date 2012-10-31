@@ -20,6 +20,14 @@ import com.jme3.scene.shape.Box;
  */
 public class ObjectFactory {
 
+  public static final float JOINT_RADIUS = 0.3f;
+  public static final float HEAD_RADIUS = 0.3f;
+  public static final float EYE_RADIUS = 0.1f;
+  public static final float TARGET_RADIUS = 0.3f;
+
+  public static final float SECTION_LENGTH = 1.0f;
+  public static final float SECTION_CROSS_DIM = 0.1f;
+
   public static void setupGameEnvironment(Node rootNode, AssetManager assetManager, int numJoints) {
 
     // Must add a light to make the lit object visible!
@@ -31,11 +39,11 @@ public class ObjectFactory {
     // create floor
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
-    float dimension = RoboticArmConstants.SECTION_LENGTH * numJoints * 2.3f;
+    float dimension = SECTION_LENGTH * numJoints * 2.3f;
     Box floorBox = new Box(dimension, .5f, dimension);
     Geometry floorGeometry = new Geometry("Floor", floorBox);
     floorGeometry.setMaterial(material);
-    floorGeometry.setLocalTranslation(0, -1.0f * RoboticArmConstants.HEAD_RADIUS - .5f, 0);
+    floorGeometry.setLocalTranslation(0, -1.0f * HEAD_RADIUS - .5f, 0);
     floorGeometry.addControl(new RigidBodyControl(0));
     rootNode.attachChild(floorGeometry);
 

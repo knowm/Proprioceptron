@@ -15,18 +15,37 @@
  */
 package com.xeiam.proprioceptron.roboticarm;
 
+import com.xeiam.proprioceptron.GameState;
+
 /**
  * @author timmolter
- * @create Sep 27, 2012
+ * @create Sep 28, 2012
  */
-public class RoboticArmConstants {
+public final class RoboticArmGameState implements GameState {
 
-  public static final float JOINT_RADIUS = 0.3f;
-  public static final float HEAD_RADIUS = 0.3f;
-  public static final float EYE_RADIUS = 0.1f;
-  public static final float TARGET_RADIUS = 0.3f;
+  private final EnvState envState;
+  private final Score score;
 
-  public static final float SECTION_LENGTH = 1.0f;
-  public static final float SECTION_CROSS_DIM = 0.1f;
+  /**
+   * Constructor
+   * 
+   * @param roboticArmEnvState
+   */
+  public RoboticArmGameState(EnvState envState, Score score) {
+
+    this.envState = envState;
+    this.score = score;
+
+  }
+
+  public EnvState getEnvState() {
+
+    return envState;
+  }
+
+  public Score getScore() {
+
+    return score;
+  }
 
 }
