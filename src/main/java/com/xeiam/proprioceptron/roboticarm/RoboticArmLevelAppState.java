@@ -16,7 +16,7 @@
 package com.xeiam.proprioceptron.roboticarm;
 
 import com.jme3.app.Application;
-import com.jme3.app.state.AbstractAppState;
+import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -29,14 +29,12 @@ import com.jme3.util.TangentBinormalGenerator;
  * @author timmolter
  * @create Oct 31, 2012
  */
-public class RoboticArmLevelAppState extends AbstractAppState {
+public class RoboticArmLevelAppState extends MainAppState {
 
-  int numJoints;
   int numbluepills;
   int numredpills;
   boolean pillsmoving;
 
-  private RoboticArm app;
   private Geometry target;
 
   /**
@@ -46,9 +44,9 @@ public class RoboticArmLevelAppState extends AbstractAppState {
    * @param numredpills
    * @param pillsmoving
    */
-  public RoboticArmLevelAppState(int numJoints, int numbluepills, int numredpills, boolean pillsmoving) {
+  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, int numbluepills, int numredpills, boolean pillsmoving) {
 
-    this.numJoints = numJoints;
+    super(app, numJoints);
     this.numbluepills = numbluepills;
     this.numredpills = numredpills;
     this.pillsmoving = pillsmoving;
@@ -58,16 +56,15 @@ public class RoboticArmLevelAppState extends AbstractAppState {
   public void initialize(AppStateManager stateManager, Application app) {
 
     super.initialize(stateManager, app);
-    this.app = (RoboticArm) app;
 
     // Create Target
     Material matTarget = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
     matTarget.setBoolean("UseMaterialColors", true);
     matTarget.setColor("m_Specular", ColorRGBA.White);
-    matTarget.setColor("Diffuse", ColorRGBA.Red);
+    matTarget.setColor("Diffuse", ColorRGBA.Blue);
     matTarget.setFloat("Shininess", 128); // [1,128]
 
-    Sphere sphereTarget = new Sphere(30, 30, ObjectFactory.TARGET_RADIUS);
+    Sphere sphereTarget = new Sphere(30, 30, TARGET_RADIUS);
     sphereTarget.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereTarget);
     target = new Geometry("head", sphereTarget);
@@ -75,6 +72,9 @@ public class RoboticArmLevelAppState extends AbstractAppState {
 
     // Place target
     moveTarget();
+
+    localRootNode.attachChild(target);
+
   }
 
   /**
@@ -82,13 +82,14 @@ public class RoboticArmLevelAppState extends AbstractAppState {
    */
   public void moveTarget() {
 
-    float arcRadius = (float) (Math.random() * 2 * ObjectFactory.SECTION_LENGTH * numJoints + ObjectFactory.TARGET_RADIUS + ObjectFactory.HEAD_RADIUS);
+    float arcRadius = (float) (Math.random() * 2 * SECTION_LENGTH * numJoints + TARGET_RADIUS + HEAD_RADIUS);
     float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
     float z = (float) (Math.sqrt(arcRadius * arcRadius - x * x)) * (Math.random() > 0.5 ? 1 : -1);
     target.center();
     target.move(x, 0, z);
   }
 
+  @Override
   public Vector3f getTargetWorldTranslation() {
 
     return target.getWorldTranslation();
@@ -98,10 +99,28 @@ public class RoboticArmLevelAppState extends AbstractAppState {
   public void setEnabled(boolean enabled) {
 
     if (enabled) {
-      app.getRootNode().attachChild(target);
+      roboticArmApp.getRootNode().attachChild(target);
     } else {
-      app.getRootNode().detachChild(target);
+      roboticArmApp.getRootNode().detachChild(target);
     }
+  }
+
+  @Override
+  public void stateAttached(AppStateManager stateManager) {
+
+    rootNode.attachChild(localRootNode);
+    guiNode.attachChild(localGuiNode);
+    viewPort.setBackgroundColor(backgroundColor);
+    setupKeys();
+  }
+
+  @Override
+  public void stateDetached(AppStateManager stateManager) {
+
+    rootNode.detachChild(localRootNode);
+    guiNode.detachChild(localGuiNode);
+    clearKeyMappings();
+
   }
 
 }

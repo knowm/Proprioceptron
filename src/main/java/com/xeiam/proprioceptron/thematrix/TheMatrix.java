@@ -15,11 +15,15 @@
  */
 package com.xeiam.proprioceptron.thematrix;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 import com.jme3.app.FlyCamAppState;
+import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -33,14 +37,14 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
-import com.xeiam.proprioceptron.ProprioceptronApplication;
+import com.xeiam.proprioceptron.GameState;
 import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
 
 /**
  * @author Zackkenyon
  * @create Oct 5, 2012
  */
-public class TheMatrix extends ProprioceptronApplication implements PhysicsCollisionListener, ActionListener {
+public class TheMatrix extends SimpleApplication implements PhysicsCollisionListener, ActionListener {
 
   private static final int numBluePillsPerLevel = 10;
 
@@ -85,6 +89,13 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
   /** the number of blue pills that have been collected so far. */
   public int numBluePills;
 
+  /** GameState */
+  public GameState oldEnvState;
+  public GameState newEnvState;
+
+  /** Listeners **/
+  protected final List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
+
   /**
    * Constructor
    * 
@@ -99,8 +110,6 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
 
   @Override
   public void simpleInitApp() {
-
-    super.simpleInitApp();
 
     // 1. Activate Physics
     bulletAppState = new BulletAppState();
@@ -294,4 +303,23 @@ public class TheMatrix extends ProprioceptronApplication implements PhysicsColli
     pill.center();
     pill.move(x, ObjectFactory.PILL_RADIUS, z);
   }
+
+  public void addChangeListener(PropertyChangeListener newListener) {
+
+    listeners.add(newListener);
+  }
+
+  /**
+   * Send PropertyChangeEvent to observers (listeners)
+   */
+  public void notifyListeners() {
+
+    PropertyChangeEvent pce = new PropertyChangeEvent(this, "", oldEnvState, newEnvState);
+
+    for (Iterator<PropertyChangeListener> iterator = listeners.iterator(); iterator.hasNext();) {
+      PropertyChangeListener observer = iterator.next();
+      observer.propertyChange(pce);
+    }
+  }
+
 }

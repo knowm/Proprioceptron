@@ -26,7 +26,7 @@ import com.jme3.system.AppSettings;
 public class HumanBrainRoboticArmApp {
 
   private static final int NUM_JOINTS = 2;
-  private static final int NUM_TARGETS_PER_LEVEL = 1;
+  private static final int NUM_TARGETS_PER_LEVEL = 2;
 
   private final RoboticArm roboticArm;
 
