@@ -26,29 +26,35 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.util.TangentBinormalGenerator;
 
 /**
+ * A level
+ * 
  * @author timmolter
  * @create Oct 31, 2012
  */
 public class RoboticArmLevelAppState extends MainAppState {
 
-  int numbluepills;
-  int numredpills;
+  boolean hasRedPill;
   boolean pillsmoving;
 
-  private Geometry target;
+  private int direction = 1;
+
+  private Geometry bluePill;
+  private Geometry redPill;
+
+  // private Geometry target;
 
   /**
    * Constructor
    * 
-   * @param numbluepills
-   * @param numredpills
+   * @param app
+   * @param numJoints
+   * @param hasRedPill
    * @param pillsmoving
    */
-  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, int numbluepills, int numredpills, boolean pillsmoving) {
+  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, boolean hasRedPill, boolean pillsmoving) {
 
     super(app, numJoints);
-    this.numbluepills = numbluepills;
-    this.numredpills = numredpills;
+    this.hasRedPill = hasRedPill;
     this.pillsmoving = pillsmoving;
     this.score = new Score();
 
@@ -59,7 +65,7 @@ public class RoboticArmLevelAppState extends MainAppState {
 
     super.initialize(stateManager, app);
 
-    // Create Target
+    // Create BluePill
     Material matTarget = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
     matTarget.setBoolean("UseMaterialColors", true);
     matTarget.setColor("m_Specular", ColorRGBA.White);
@@ -69,39 +75,92 @@ public class RoboticArmLevelAppState extends MainAppState {
     Sphere sphereTarget = new Sphere(30, 30, TARGET_RADIUS);
     sphereTarget.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereTarget);
-    target = new Geometry("head", sphereTarget);
-    target.setMaterial(matTarget);
+    bluePill = new Geometry("head", sphereTarget);
+    bluePill.setMaterial(matTarget);
 
-    // Place target
-    moveTarget();
+    // Create RedPill
+    matTarget = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+    matTarget.setBoolean("UseMaterialColors", true);
+    matTarget.setColor("m_Specular", ColorRGBA.White);
+    matTarget.setColor("Diffuse", ColorRGBA.Red);
+    matTarget.setFloat("Shininess", 128); // [1,128]
 
-    localRootNode.attachChild(target);
+    sphereTarget = new Sphere(30, 30, TARGET_RADIUS);
+    sphereTarget.setTextureMode(Sphere.TextureMode.Projected);
+    TangentBinormalGenerator.generate(sphereTarget);
+    redPill = new Geometry("head", sphereTarget);
+    redPill.setMaterial(matTarget);
+
+    // Place pills
+    placePills();
+
+  }
+
+  public void placePills() {
+
+    placePill(bluePill);
+    if (hasRedPill) {
+      placePill(redPill);
+    }
 
   }
 
   /**
    * Move the target somewhere within the radius of reach
    */
-  public void moveTarget() {
+  public void placePill(Geometry pill) {
 
     float arcRadius = (float) (Math.random() * 2 * SECTION_LENGTH * numJoints + TARGET_RADIUS + HEAD_RADIUS);
     float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
     float z = (float) (Math.sqrt(arcRadius * arcRadius - x * x)) * (Math.random() > 0.5 ? 1 : -1);
-    target.center();
-    target.move(x, 0, z);
+    pill.center();
+    pill.move(x, 0, z);
+  }
+
+  public void movePills(float tpf) {
+
+    System.out.println("tpf=" + tpf);
+    if (pillsmoving) {
+      float z = bluePill.getWorldTranslation().z;
+      float arcRadius = SECTION_LENGTH * numJoints;
+      float x = bluePill.getWorldTranslation().x + direction * tpf;
+
+      if (Math.abs(x) > 2 * arcRadius) {
+        direction *= -1;
+      }
+      System.out.println(x);
+      bluePill.center();
+      bluePill.move(x, 0, z);
+    }
   }
 
   @Override
-  public Vector3f getTargetWorldTranslation() {
+  public Vector3f getBluePillWorldTranslation() {
 
-    return target.getWorldTranslation();
+    return bluePill.getWorldTranslation();
   }
-  //
-  // @Override
-  // public void setEnabled(boolean enabled) {
-  //
-  // super.setEnabled(enabled);
-  //
-  // }
+
+  @Override
+  public Vector3f getRedPillWorldTranslation() {
+
+    return redPill.getWorldTranslation();
+  }
+
+  @Override
+  public void setEnabled(boolean enabled) {
+
+    if (enabled) {
+      localRootNode.attachChild(bluePill);
+      if (hasRedPill) {
+        localRootNode.attachChild(redPill);
+      }
+    } else {
+      localRootNode.detachChild(bluePill);
+      if (hasRedPill) {
+        localRootNode.detachChild(redPill);
+      }
+    }
+    super.setEnabled(enabled);
+  }
 
 }

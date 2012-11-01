@@ -42,6 +42,8 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.util.TangentBinormalGenerator;
 
 /**
+ * Defines the platform and the robotic arm.
+ * 
  * @author timmolter
  * @create Nov 1, 2012
  */
@@ -102,7 +104,9 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     this.numJoints = numJoints;
   }
 
-  public abstract Vector3f getTargetWorldTranslation();
+  public abstract Vector3f getBluePillWorldTranslation();
+
+  public abstract Vector3f getRedPillWorldTranslation();
 
   @Override
   public void initialize(AppStateManager stateManager, Application app) {
@@ -229,7 +233,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     sb.append(roboticArmApp.levels.size());
 
     sb.append(", Blue Pills = ");
-    sb.append(score.getNumCollisions());
+    sb.append(score.getNumBluePills());
     sb.append("/");
     sb.append(roboticArmApp.numTargetsPerLevel);
 
@@ -297,7 +301,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     }
 
     // env state - target
-    Vector3f targetCoords = getTargetWorldTranslation();
+    Vector3f targetCoords = getBluePillWorldTranslation();
     Vector3f leftEyeCoords = leftEye.getWorldTranslation();
     float distL = leftEyeCoords.distance(targetCoords) - TARGET_RADIUS;
     Vector3f rightEyeCoords = rightEye.getWorldTranslation();
@@ -305,7 +309,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     Vector3f headCoords = head.getWorldTranslation();
     float headDistance = headCoords.distance(targetCoords) - TARGET_RADIUS - HEAD_RADIUS;
     boolean wasCollision = headDistance < 0.005f;
-    System.out.println(headDistance);
 
     EnvState roboticArmEnvState = new EnvState(distL, distR, headDistance, relativePositions, wasCollision);
     return roboticArmEnvState;

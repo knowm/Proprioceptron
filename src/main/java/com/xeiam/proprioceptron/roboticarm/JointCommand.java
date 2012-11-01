@@ -16,6 +16,8 @@
 package com.xeiam.proprioceptron.roboticarm;
 
 /**
+ * Defines a Joint's movement
+ * 
  * @author timmolter
  * @create Sep 28, 2012
  */

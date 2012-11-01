@@ -18,6 +18,8 @@ package com.xeiam.proprioceptron.roboticarm;
 import com.xeiam.proprioceptron.GameState;
 
 /**
+ * Encapsulates the EnvState and the score
+ * 
  * @author timmolter
  * @create Sep 28, 2012
  */

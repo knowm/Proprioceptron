@@ -30,6 +30,8 @@ import com.jme3.math.Vector3f;
 import com.xeiam.proprioceptron.GameState;
 
 /**
+ * The Main entry point class
+ * 
  * @author timmolter
  * @create Sep 25, 2012
  */
@@ -87,8 +89,8 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
 
     // Levels
     levels = new ArrayList<RoboticArmLevelAppState>();
-    levels.add(new RoboticArmLevelAppState(this, numJoints, 1, 0, false));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, 1, 0, true));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, false, true));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, false, true));
     currentLevelAppState = levels.get(currentLevelIndex);
     for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
       roboticArmLevelAppState.initialize(getStateManager(), this);
@@ -124,8 +126,8 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
       EnvState roboticArmEnvState = currentLevelAppState.getEnvState();
 
       if (roboticArmEnvState.wasCollision()) {
-        currentLevelAppState.score.incNumCollisions();
-        if (currentLevelAppState.score.getNumCollisions() % numTargetsPerLevel == 0) {
+        currentLevelAppState.score.incNumBluePills();
+        if (currentLevelAppState.score.getNumBluePills() % numTargetsPerLevel == 0) {
           currentLevelIndex++;
           currentLevelAppState.setHudText();
 
@@ -139,10 +141,12 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
             currentLevelAppState.setEnabled(true);
           }
         } else {
-          currentLevelAppState.moveTarget();
+          currentLevelAppState.placePills();
           currentLevelAppState.setHudText();
         }
       }
+
+      currentLevelAppState.movePills(tpf);
 
       newEnvState = new RoboticArmGameState(roboticArmEnvState, currentLevelAppState.score);
 

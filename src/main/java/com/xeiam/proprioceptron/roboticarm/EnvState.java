@@ -20,6 +20,8 @@ import java.util.Arrays;
 import com.jme3.math.Vector3f;
 
 /**
+ * Stores environment state
+ * 
  * @author timmolter
  * @create Sep 28, 2012
  */

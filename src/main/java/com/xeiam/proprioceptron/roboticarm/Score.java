@@ -23,15 +23,24 @@ package com.xeiam.proprioceptron.roboticarm;
  */
 public class Score {
 
-  private int numCollisions = 0;
+  private int numBluePills = 0;
+  private int numRedPills = 0;
   private int actuationEnergy = 0;
 
   /**
-   * Increment the number of collisions by one
+   * Increment the number of collisions with blue pills by one
    */
-  public void incNumCollisions() {
+  public void incNumBluePills() {
 
-    numCollisions++;
+    numBluePills++;
+  }
+
+  /**
+   * Increment the number of collisions with red pills by one
+   */
+  public void incNumRedPills() {
+
+    numRedPills++;
   }
 
   /**
@@ -47,16 +56,21 @@ public class Score {
    */
   public double getScore() {
 
-    if (numCollisions > 0) {
-      return (double) actuationEnergy / numCollisions;
+    if (numBluePills > 0) {
+      return (double) actuationEnergy / numBluePills;
     } else {
       return 0.0;
     }
   }
 
-  public int getNumCollisions() {
+  public int getNumBluePills() {
 
-    return numCollisions;
+    return numBluePills;
+  }
+
+  public int getNumRedPills() {
+
+    return numRedPills;
   }
 
 }
