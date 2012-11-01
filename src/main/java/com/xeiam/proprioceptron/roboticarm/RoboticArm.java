@@ -22,9 +22,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.font.BitmapFont;
-import com.jme3.font.BitmapText;
-import com.jme3.math.ColorRGBA;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.Trigger;
 import com.jme3.math.Vector3f;
 import com.xeiam.proprioceptron.GameState;
 
@@ -32,20 +33,24 @@ import com.xeiam.proprioceptron.GameState;
  * @author timmolter
  * @create Sep 25, 2012
  */
-public class RoboticArm extends SimpleApplication {
+public class RoboticArm extends SimpleApplication implements ActionListener {
 
   protected final int numJoints;
-  private final int numTargetsPerLevel;
+  protected final int numTargetsPerLevel;
+
+  private boolean isRunning = false; // starts paused
+  protected boolean gameOver = false;
 
   /** prevents calculation of state when there are no arm movements */
   protected boolean wasMovement = false;
 
-  BitmapText hudText;
-
   /** Levels */
-  private List<RoboticArmLevelAppState> levels;
-  private RoboticArmLevelAppState currentLevelAppState;
-  private int currentLevelIndex = 0;
+  protected List<RoboticArmLevelAppState> levels;
+  protected RoboticArmLevelAppState currentLevelAppState;
+  protected int currentLevelIndex = 0;
+
+  /** ScoreAppState */
+  private ScoreAppState scoreAppState;
 
   /** Listeners **/
   protected final List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
@@ -53,6 +58,8 @@ public class RoboticArm extends SimpleApplication {
   /** GameState */
   public GameState oldEnvState;
   public GameState newEnvState;
+
+  private Trigger pauseTrigger = new KeyTrigger(KeyInput.KEY_SPACE);
 
   /**
    * Constructor
@@ -83,25 +90,30 @@ public class RoboticArm extends SimpleApplication {
     levels.add(new RoboticArmLevelAppState(this, numJoints, 1, 0, false));
     levels.add(new RoboticArmLevelAppState(this, numJoints, 1, 0, true));
     currentLevelAppState = levels.get(currentLevelIndex);
-    stateManager.attach(currentLevelAppState);
+    for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
+      roboticArmLevelAppState.initialize(getStateManager(), this);
+    }
+    // currentLevelAppState.setEnabled(false);
+    // stateManager.attach(currentLevelAppState);
 
-    /** Load the HUD */
-    BitmapFont guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-    hudText = new BitmapText(guiFont, false);
-    hudText.setSize(24);
-    hudText.setColor(ColorRGBA.White); // font color
-    hudText.setLocalTranslation(10, hudText.getLineHeight(), 0);
-    hudText.setText(getHUDText());
-    getGuiNode().attachChild(hudText);
+    // ScoreAppState
+    scoreAppState = new ScoreAppState(this);
+    scoreAppState.initialize(getStateManager(), this);
+    scoreAppState.setEnabled(true);
+    // stateManager.attach(scoreAppState);
+
+    // pause unpause
+    inputManager.addMapping("Game Pause Unpause", pauseTrigger);
+    inputManager.addListener(this, new String[] { "Game Pause Unpause" });
 
     // init env state
-    simpleUpdate(0.0f);
+    currentLevelAppState.onAction("go!", false, 1f);
   }
 
   @Override
   public void simpleUpdate(float tpf) {
 
-    if (wasMovement) {
+    if (wasMovement && isRunning && !gameOver) {
 
       wasMovement = false;
 
@@ -114,21 +126,21 @@ public class RoboticArm extends SimpleApplication {
       if (roboticArmEnvState.wasCollision()) {
         currentLevelAppState.score.incNumCollisions();
         if (currentLevelAppState.score.getNumCollisions() % numTargetsPerLevel == 0) {
-          currentLevelAppState.score = new Score();
           currentLevelIndex++;
-          hudText.setText(getHUDText());
+          currentLevelAppState.setHudText();
 
           if (currentLevelIndex >= levels.size()) { // game over
-            hudText.setText("GAME OVER");
-            stateManager.detach(currentLevelAppState);
+            currentLevelAppState.setEnabled(false);
+            gameOver = true;
+            scoreAppState.setEnabled(true);
           } else {
-            stateManager.detach(currentLevelAppState);
+            currentLevelAppState.setEnabled(false);
             currentLevelAppState = levels.get(currentLevelIndex);
-            stateManager.attach(currentLevelAppState);
+            currentLevelAppState.setEnabled(true);
           }
         } else {
           currentLevelAppState.moveTarget();
-          hudText.setText(getHUDText());
+          currentLevelAppState.setHudText();
         }
       }
 
@@ -136,25 +148,6 @@ public class RoboticArm extends SimpleApplication {
 
       notifyListeners();
     }
-  }
-
-  private String getHUDText() {
-
-    StringBuilder sb = new StringBuilder();
-    sb.append("Level = ");
-    sb.append(currentLevelIndex);
-    sb.append("/");
-    sb.append(levels.size());
-
-    sb.append(", Blue Pills = ");
-    sb.append(currentLevelAppState.score.getNumCollisions());
-    sb.append("/");
-    sb.append(numTargetsPerLevel);
-
-    sb.append(", Score = ");
-    sb.append(currentLevelAppState.score.getScore());
-
-    return sb.toString();
   }
 
   public void addChangeListener(PropertyChangeListener newListener) {
@@ -183,7 +176,24 @@ public class RoboticArm extends SimpleApplication {
   public void moveJoints(List<JointCommand> jointCommands) {
 
     currentLevelAppState.moveJoints(jointCommands, speed);
+  }
 
+  @Override
+  public void onAction(String name, boolean isPressed, float tpf) {
+
+    if (name.equals("Game Pause Unpause") && !isPressed) {
+
+      if (!gameOver) {
+        if (isRunning) {
+          currentLevelAppState.setEnabled(false);
+          scoreAppState.setEnabled(true);
+        } else {
+          scoreAppState.setEnabled(false);
+          currentLevelAppState.setEnabled(true);
+        }
+        isRunning = !isRunning;
+      }
+    }
   }
 
 }

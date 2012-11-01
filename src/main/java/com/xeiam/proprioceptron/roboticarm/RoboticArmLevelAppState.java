@@ -50,6 +50,8 @@ public class RoboticArmLevelAppState extends MainAppState {
     this.numbluepills = numbluepills;
     this.numredpills = numredpills;
     this.pillsmoving = pillsmoving;
+    this.score = new Score();
+
   }
 
   @Override
@@ -94,33 +96,12 @@ public class RoboticArmLevelAppState extends MainAppState {
 
     return target.getWorldTranslation();
   }
-
-  @Override
-  public void setEnabled(boolean enabled) {
-
-    if (enabled) {
-      roboticArmApp.getRootNode().attachChild(target);
-    } else {
-      roboticArmApp.getRootNode().detachChild(target);
-    }
-  }
-
-  @Override
-  public void stateAttached(AppStateManager stateManager) {
-
-    rootNode.attachChild(localRootNode);
-    guiNode.attachChild(localGuiNode);
-    viewPort.setBackgroundColor(backgroundColor);
-    setupKeys();
-  }
-
-  @Override
-  public void stateDetached(AppStateManager stateManager) {
-
-    rootNode.detachChild(localRootNode);
-    guiNode.detachChild(localGuiNode);
-    clearKeyMappings();
-
-  }
+  //
+  // @Override
+  // public void setEnabled(boolean enabled) {
+  //
+  // super.setEnabled(enabled);
+  //
+  // }
 
 }

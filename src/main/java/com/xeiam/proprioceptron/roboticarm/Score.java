@@ -15,13 +15,19 @@
  */
 package com.xeiam.proprioceptron.roboticarm;
 
+/**
+ * The Score for a level
+ * 
+ * @author timmolter
+ * @create Nov 1, 2012
+ */
 public class Score {
 
   private int numCollisions = 0;
   private int actuationEnergy = 0;
 
   /**
-   * 
+   * Increment the number of collisions by one
    */
   public void incNumCollisions() {
 
@@ -51,11 +57,6 @@ public class Score {
   public int getNumCollisions() {
 
     return numCollisions;
-  }
-
-  public void setNumCollisions(int numCollisions) {
-
-    this.numCollisions = numCollisions;
   }
 
 }

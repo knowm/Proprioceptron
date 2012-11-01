@@ -23,6 +23,8 @@ import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -69,6 +71,8 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
   /** Score */
   protected Score score;
 
+  BitmapText hudText;
+
   /** JME */
   protected ViewPort viewPort;
   protected Node rootNode;
@@ -94,9 +98,8 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     this.stateManager = app.getStateManager();
     this.assetManager = app.getAssetManager();
 
+    this.roboticArmApp = (RoboticArm) app;
     this.numJoints = numJoints;
-
-    score = new Score();
   }
 
   public abstract Vector3f getTargetWorldTranslation();
@@ -106,9 +109,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
     super.initialize(stateManager, app);
 
-    roboticArmApp = (RoboticArm) app;
-
-    /** Load this scene */
     viewPort.setBackgroundColor(backgroundColor);
 
     // Must add a light to make the lit object visible!
@@ -204,8 +204,39 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     headNode.attachChild(rightEye);
     pivots[numJoints - 1].attachChild(headNode);
 
-    // setupKeys();
+    // Load the HUD
+    BitmapFont guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    hudText = new BitmapText(guiFont, false);
+    hudText.setSize(24);
+    hudText.setColor(ColorRGBA.White); // font color
+    hudText.setLocalTranslation(10, hudText.getLineHeight(), 0);
+    hudText.setText(getHUDText());
+    localGuiNode.attachChild(hudText);
 
+  }
+
+  protected void setHudText() {
+
+    hudText.setText(getHUDText());
+  }
+
+  private String getHUDText() {
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("Level = ");
+    sb.append(roboticArmApp.currentLevelIndex + 1);
+    sb.append("/");
+    sb.append(roboticArmApp.levels.size());
+
+    sb.append(", Blue Pills = ");
+    sb.append(score.getNumCollisions());
+    sb.append("/");
+    sb.append(roboticArmApp.numTargetsPerLevel);
+
+    sb.append(", Score = ");
+    sb.append(score.getScore());
+
+    return sb.toString();
   }
 
   protected void setupKeys() {
@@ -234,11 +265,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
   }
 
   @Override
-  public void update(float tpf) {
-
-  }
-
-  @Override
   public void onAction(String binding, boolean keyPressed, float tpf) {
 
     // detect when buttons were released
@@ -256,8 +282,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     float direction = keyCommands[0].equals("Left") ? 1.0f : -1.0f;
 
     score.incActuationEnergy(1);
-    pivots[jointNum].rotate(0, direction * value * 1/* speed */, 0);
-
+    pivots[jointNum].rotate(0f, direction * 3f * tpf, 0f);
   }
 
   protected EnvState getEnvState() {
@@ -301,6 +326,32 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     }
 
     onAction("", false, 0); // tell it movement is done
+  }
+
+  @Override
+  public void setEnabled(boolean enabled) {
+
+    // Pause and unpause
+    super.setEnabled(enabled);
+    if (enabled) {
+      rootNode.attachChild(localRootNode);
+      guiNode.attachChild(localGuiNode);
+      viewPort.setBackgroundColor(backgroundColor);
+      setupKeys();
+    } else {
+      rootNode.detachChild(localRootNode);
+      guiNode.detachChild(localGuiNode);
+      clearKeyMappings();
+    }
+  }
+
+  @Override
+  public void cleanup() {
+
+    super.cleanup();
+    rootNode.detachChild(localRootNode);
+    guiNode.detachChild(localGuiNode);
+    clearKeyMappings();
   }
 
 }
