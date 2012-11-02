@@ -50,6 +50,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
     AppSettings settings = new AppSettings(true);
     settings.setResolution(480, 480);
     settings.setTitle("Proprioceptron - Simple Test Brain");
+    settings.setFrameRate(60);
     roboticArm.setSettings(settings);
     roboticArm.addChangeListener(this);
     roboticArm.start();

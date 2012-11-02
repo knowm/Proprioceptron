@@ -117,19 +117,21 @@ public class RoboticArmLevelAppState extends MainAppState {
   public void movePills(float tpf) {
 
     if (speed > 0) {
+
+      // blue pill
       float z = bluePill.getWorldTranslation().z;
       float arcRadius = SECTION_LENGTH * numJoints;
-      float x = bluePill.getWorldTranslation().x + direction * tpf * speed;
-
+      float x = bluePill.getWorldTranslation().x;
       if (Math.abs(x) > 2 * arcRadius) {
         direction *= -1;
       }
       bluePill.center();
-      bluePill.move(x, 0, z);
+      bluePill.move(x + direction * tpf * speed, 0, z);
+
+      // red pill
       if (hasRedPill) {
         z = redPill.getWorldTranslation().z;
         x = redPill.getWorldTranslation().x + direction * tpf * speed;
-
         if (Math.abs(x) > 2 * arcRadius) {
           direction *= -1;
         }

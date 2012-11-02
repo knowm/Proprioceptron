@@ -136,6 +136,23 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     sections = new Geometry[numJoints];
     joints = new Geometry[numJoints];
 
+    // Create robotic Arm
+
+    constructArm();
+
+    // Load the HUD
+    BitmapFont guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    hudText = new BitmapText(guiFont, false);
+    hudText.setSize(24);
+    hudText.setColor(ColorRGBA.White); // font color
+    hudText.setLocalTranslation(10, hudText.getLineHeight(), 0);
+    hudText.setText(getHUDText());
+    localGuiNode.attachChild(hudText);
+
+  }
+
+  private void constructArm() {
+
     // Material for Robotic Arm
     Material matRoboticArm = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
     matRoboticArm.setBoolean("m_UseMaterialColors", true);
@@ -148,7 +165,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     Sphere sphereJoint = new Sphere(20, 20, JOINT_RADIUS);
     sphereJoint.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereJoint);
-
     for (int i = 0; i < numJoints; i++) {
 
       // Create pivots
@@ -182,9 +198,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     rightEye = new Geometry("rightEye", sphereEye);
     rightEye.setMaterial(matRoboticArm);
 
-    // Create robotic Arm
     localRootNode.attachChild(pivots[0]);
-
     for (int i = 0; i < numJoints; i++) {
 
       if (i > 0) {
@@ -207,16 +221,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     rightEye.move(-1.0f * shift, 0, shift);
     headNode.attachChild(rightEye);
     pivots[numJoints - 1].attachChild(headNode);
-
-    // Load the HUD
-    BitmapFont guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-    hudText = new BitmapText(guiFont, false);
-    hudText.setSize(24);
-    hudText.setColor(ColorRGBA.White); // font color
-    hudText.setLocalTranslation(10, hudText.getLineHeight(), 0);
-    hudText.setText(getHUDText());
-    localGuiNode.attachChild(hudText);
-
   }
 
   protected void setHudText() {
@@ -320,6 +324,11 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
    * @param jointCommands
    */
   public void moveJoints(List<JointCommand> jointCommands, float speed) {
+
+    if (score.getNumBluePills() > 0 && score.getNumBluePills() % 10 == 0) { // every 100 pills, reconstruct arm to prevent the joints drifting apart too far.
+      localRootNode.detachChild(pivots[0]);
+      constructArm();
+    }
 
     for (JointCommand jointCommand : jointCommands) {
       score.incActuationEnergy(jointCommand.getSteps());

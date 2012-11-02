@@ -41,6 +41,7 @@ public class HumanBrainRoboticArmApp {
     AppSettings settings = new AppSettings(true);
     settings.setResolution(480, 480);
     settings.setTitle("Proprioceptron - Human Input");
+    settings.setFrameRate(60);
     roboticArm.setSettings(settings);
     roboticArm.start();
 
