@@ -34,12 +34,15 @@ import com.jme3.util.TangentBinormalGenerator;
 public class RoboticArmLevelAppState extends MainAppState {
 
   private final boolean hasRedPill;
-  private final float speed;
+  private final float pillSpeed;
 
-  private int direction = 1;
+  private boolean movingLeft = true;
 
   private Geometry bluePill;
   private Geometry redPill;
+
+  private final float leftBounds = SECTION_LENGTH * numJoints * 2.3f;
+  private final float rightBounds = -1 * SECTION_LENGTH * numJoints * 2.3f;
 
   /**
    * Constructor
@@ -49,11 +52,11 @@ public class RoboticArmLevelAppState extends MainAppState {
    * @param hasRedPill
    * @param speed
    */
-  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, boolean hasRedPill, float speed) {
+  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, boolean hasRedPill, float pillSpeed) {
 
     super(app, numJoints);
     this.hasRedPill = hasRedPill;
-    this.speed = speed;
+    this.pillSpeed = pillSpeed;
     this.score = new Score();
   }
 
@@ -116,27 +119,30 @@ public class RoboticArmLevelAppState extends MainAppState {
 
   public void movePills(float tpf) {
 
-    if (speed > 0) {
+    if (pillSpeed > 0) { // Speed set to 0, if it should be stationary.
 
       // blue pill
       float z = bluePill.getWorldTranslation().z;
-      float arcRadius = SECTION_LENGTH * numJoints;
       float x = bluePill.getWorldTranslation().x;
-      if (Math.abs(x) > 2 * arcRadius) {
-        direction *= -1;
+      if (movingLeft && x > leftBounds) {
+        movingLeft = false;
+      } else if (!movingLeft && x < rightBounds) {
+        movingLeft = true;
       }
       bluePill.center();
-      bluePill.move(x + direction * tpf * speed, 0, z);
+      bluePill.move(x + (movingLeft ? 1 : -1) * tpf * pillSpeed, 0, z);
 
       // red pill
       if (hasRedPill) {
         z = redPill.getWorldTranslation().z;
         x = redPill.getWorldTranslation().x;
-        if (Math.abs(x) > 2 * arcRadius) {
-          direction *= -1;
+        if (movingLeft && x > leftBounds) {
+          movingLeft = false;
+        } else if (!movingLeft && x < rightBounds) {
+          movingLeft = true;
         }
         redPill.center();
-        redPill.move(x + direction * tpf * speed, 0, z);
+        redPill.move(x + (movingLeft ? 1 : -1) * tpf * pillSpeed, 0, z);
       }
 
     }
