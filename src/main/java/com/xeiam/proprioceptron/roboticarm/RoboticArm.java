@@ -135,6 +135,9 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
 
       if (roboticArmEnvState.wasCollision()) {
         currentLevelAppState.score.incNumBluePills();
+        if (currentLevelAppState.score.getNumBluePills() % 100 == 0) { // every 100 pills, reconstruct arm to prevent the joints drifting apart too far.
+          currentLevelAppState.reconstructArm();
+        }
         if (currentLevelAppState.score.getNumBluePills() % numTargetsPerLevel == 0) {
           currentLevelIndex++;
           currentLevelAppState.setHudText();

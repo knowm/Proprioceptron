@@ -137,7 +137,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     joints = new Geometry[numJoints];
 
     // Create robotic Arm
-
     constructArm();
 
     // Load the HUD
@@ -151,7 +150,13 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
   }
 
-  private void constructArm() {
+  public void reconstructArm() {
+
+    localRootNode.detachChild(pivots[0]);
+    constructArm();
+  }
+
+  public void constructArm() {
 
     // Material for Robotic Arm
     Material matRoboticArm = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
@@ -324,11 +329,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
    * @param jointCommands
    */
   public void moveJoints(List<JointCommand> jointCommands, float speed) {
-
-    if (score.getNumBluePills() > 0 && score.getNumBluePills() % 10 == 0) { // every 100 pills, reconstruct arm to prevent the joints drifting apart too far.
-      localRootNode.detachChild(pivots[0]);
-      constructArm();
-    }
 
     for (JointCommand jointCommand : jointCommands) {
       score.incActuationEnergy(jointCommand.getSteps());

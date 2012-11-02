@@ -131,12 +131,12 @@ public class RoboticArmLevelAppState extends MainAppState {
       // red pill
       if (hasRedPill) {
         z = redPill.getWorldTranslation().z;
-        x = redPill.getWorldTranslation().x + direction * tpf * speed;
+        x = redPill.getWorldTranslation().x;
         if (Math.abs(x) > 2 * arcRadius) {
           direction *= -1;
         }
         redPill.center();
-        redPill.move(x, 0, z);
+        redPill.move(x + direction * tpf * speed, 0, z);
       }
 
     }

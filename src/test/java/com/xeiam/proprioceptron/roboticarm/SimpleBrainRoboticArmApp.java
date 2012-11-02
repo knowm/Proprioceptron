@@ -33,7 +33,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
   private static final int NUM_JOINTS = 2;
   private static final int START_LEVEL_ID = 1;
-  private static final int NUM_TARGETS_PER_LEVEL = 2;
+  private static final int NUM_TARGETS_PER_LEVEL = 10;
 
   private final SimpleBrain simpleBrain;
   private final RoboticArm roboticArm;
