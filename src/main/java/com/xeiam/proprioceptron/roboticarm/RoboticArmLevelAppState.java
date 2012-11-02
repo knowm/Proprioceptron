@@ -33,15 +33,13 @@ import com.jme3.util.TangentBinormalGenerator;
  */
 public class RoboticArmLevelAppState extends MainAppState {
 
-  boolean hasRedPill;
-  boolean pillsmoving;
+  private final boolean hasRedPill;
+  private final float speed;
 
   private int direction = 1;
 
   private Geometry bluePill;
   private Geometry redPill;
-
-  // private Geometry target;
 
   /**
    * Constructor
@@ -49,15 +47,14 @@ public class RoboticArmLevelAppState extends MainAppState {
    * @param app
    * @param numJoints
    * @param hasRedPill
-   * @param pillsmoving
+   * @param speed
    */
-  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, boolean hasRedPill, boolean pillsmoving) {
+  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, boolean hasRedPill, float speed) {
 
     super(app, numJoints);
     this.hasRedPill = hasRedPill;
-    this.pillsmoving = pillsmoving;
+    this.speed = speed;
     this.score = new Score();
-
   }
 
   @Override
@@ -119,18 +116,27 @@ public class RoboticArmLevelAppState extends MainAppState {
 
   public void movePills(float tpf) {
 
-    System.out.println("tpf=" + tpf);
-    if (pillsmoving) {
+    if (speed > 0) {
       float z = bluePill.getWorldTranslation().z;
       float arcRadius = SECTION_LENGTH * numJoints;
-      float x = bluePill.getWorldTranslation().x + direction * tpf;
+      float x = bluePill.getWorldTranslation().x + direction * tpf * speed;
 
       if (Math.abs(x) > 2 * arcRadius) {
         direction *= -1;
       }
-      System.out.println(x);
       bluePill.center();
       bluePill.move(x, 0, z);
+      if (hasRedPill) {
+        z = redPill.getWorldTranslation().z;
+        x = redPill.getWorldTranslation().x + direction * tpf * speed;
+
+        if (Math.abs(x) > 2 * arcRadius) {
+          direction *= -1;
+        }
+        redPill.center();
+        redPill.move(x, 0, z);
+      }
+
     }
   }
 

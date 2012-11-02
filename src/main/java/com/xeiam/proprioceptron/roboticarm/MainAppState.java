@@ -228,9 +228,9 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
     StringBuilder sb = new StringBuilder();
     sb.append("Level = ");
-    sb.append(roboticArmApp.currentLevelIndex + 1);
+    sb.append(roboticArmApp.currentLevelIndex);
     sb.append("/");
-    sb.append(roboticArmApp.levels.size());
+    sb.append(roboticArmApp.levels.size() - 1);
 
     sb.append(", Blue Pills = ");
     sb.append(score.getNumBluePills());

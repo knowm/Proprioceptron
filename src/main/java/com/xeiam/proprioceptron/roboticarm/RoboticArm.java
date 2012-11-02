@@ -38,6 +38,7 @@ import com.xeiam.proprioceptron.GameState;
 public class RoboticArm extends SimpleApplication implements ActionListener {
 
   protected final int numJoints;
+  protected final int startLevelId;
   protected final int numTargetsPerLevel;
 
   private boolean isRunning = false; // starts paused
@@ -61,14 +62,18 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
   public GameState oldEnvState;
   public GameState newEnvState;
 
-  private Trigger pauseTrigger = new KeyTrigger(KeyInput.KEY_SPACE);
-
   /**
    * Constructor
+   * 
+   * @param numJoints
+   * @param startLevelId - zero-based
+   * @param numTargetsPerLevel
    */
-  public RoboticArm(int numJoints, int numTargetsPerLevel) {
+  public RoboticArm(int numJoints, int startLevelId, int numTargetsPerLevel) {
 
     this.numJoints = numJoints;
+    this.startLevelId = startLevelId;
+    currentLevelIndex = startLevelId;
     this.numTargetsPerLevel = numTargetsPerLevel;
   }
 
@@ -89,8 +94,9 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
 
     // Levels
     levels = new ArrayList<RoboticArmLevelAppState>();
-    levels.add(new RoboticArmLevelAppState(this, numJoints, false, true));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, false, true));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, false, 0.0f));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, false, 1.0f));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, false, 2.0f));
     currentLevelAppState = levels.get(currentLevelIndex);
     for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
       roboticArmLevelAppState.initialize(getStateManager(), this);
@@ -105,6 +111,7 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
     // stateManager.attach(scoreAppState);
 
     // pause unpause
+    Trigger pauseTrigger = new KeyTrigger(KeyInput.KEY_SPACE);
     inputManager.addMapping("Game Pause Unpause", pauseTrigger);
     inputManager.addListener(this, new String[] { "Game Pause Unpause" });
 
