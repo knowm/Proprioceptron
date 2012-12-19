@@ -235,8 +235,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
   private String getHUDText() {
 
-    System.out.println(roboticArmApp.currentLevelIndex);
-
     StringBuilder sb = new StringBuilder();
     sb.append("Level = ");
     sb.append(roboticArmApp.currentLevelIndex);

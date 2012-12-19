@@ -97,11 +97,11 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
 
     // Levels
     levels = new ArrayList<RoboticArmLevelAppState>();
-    levels.add(new RoboticArmLevelAppState(this, numJoints, false, 0.0f));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, false, 6.0f));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, false, 9.0f));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, false, 12.0f));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, false, 15.0f));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, 0.0f));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, 6.0f));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, 9.0f));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, 12.0f));
+    levels.add(new RoboticArmLevelAppState(this, numJoints, 15.0f));
     currentLevelAppState = levels.get(currentLevelIndex);
     for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
       roboticArmLevelAppState.initialize(getStateManager(), this);
@@ -121,13 +121,12 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
     inputManager.addListener(this, new String[] { "Game Pause Unpause" });
 
     // init env state
+    currentLevelAppState.score.initTime(timer.getTimeInSeconds());
     currentLevelAppState.onAction("go!", false, 1f);
   }
 
   @Override
   public void simpleUpdate(float tpf) {
-
-    // System.out.println("here");
 
     // move the joints
     if (jointCommandsQueue != null) {
@@ -146,7 +145,7 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
       EnvState roboticArmEnvState = currentLevelAppState.getEnvState();
 
       if (roboticArmEnvState.wasCollision()) {
-        currentLevelAppState.score.incNumBluePills();
+        currentLevelAppState.score.incNumBluePills(timer.getTimeInSeconds());
         if (currentLevelAppState.score.getNumBluePills() % 100 == 0) { // every 100 pills, reconstruct arm to prevent the joints drifting apart too far.
           currentLevelAppState.reconstructArm();
         }
@@ -157,11 +156,14 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
             currentLevelAppState.setEnabled(false);
             gameOver = true;
             scoreAppState.setEnabled(true);
+            printScores();
+            plotResults();
           } else {
             currentLevelAppState.setEnabled(false);
             currentLevelAppState = levels.get(currentLevelIndex);
             currentLevelAppState.setEnabled(true);
             currentLevelAppState.setHudText();
+            currentLevelAppState.score.initTime(timer.getTimeInSeconds());
           }
         } else {
           currentLevelAppState.placePills();
@@ -170,7 +172,6 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
       }
 
       currentLevelAppState.movePills(tpf);
-      // currentLevelAppState.movePills(speed);
 
       newEnvState = new RoboticArmGameState(roboticArmEnvState, currentLevelAppState.score);
 
@@ -225,6 +226,20 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
         isRunning = !isRunning;
       }
     }
+  }
+
+  /**
+   * Prints the scores for each level
+   */
+  private void printScores() {
+
+    for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
+      System.out.println(roboticArmLevelAppState.score.toString());
+    }
+  }
+
+  private void plotResults() {
+
   }
 
 }

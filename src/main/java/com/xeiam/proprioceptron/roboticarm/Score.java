@@ -15,6 +15,8 @@
  */
 package com.xeiam.proprioceptron.roboticarm;
 
+import java.util.Arrays;
+
 /**
  * The Score for a level
  * 
@@ -23,24 +25,49 @@ package com.xeiam.proprioceptron.roboticarm;
  */
 public class Score {
 
-  private int numBluePills = 0;
-  private int numRedPills = 0;
+  private int[] pillIDs;
+  private int pillIdCounter = 0;
+
+  private float[] timesElapsed;
+  private float lastTime;
+
+  private double[] activationEnergiesRequired;
   private int actuationEnergy = 0;
+
+  /**
+   * Constructor
+   */
+  public Score(int numTargetsPerLevel) {
+
+    pillIDs = new int[numTargetsPerLevel];
+    timesElapsed = new float[numTargetsPerLevel];
+    activationEnergiesRequired = new double[numTargetsPerLevel];
+
+  }
+
+  /**
+   * @param time
+   */
+  public void initTime(float time) {
+
+    lastTime = time;
+  }
 
   /**
    * Increment the number of collisions with blue pills by one
    */
-  public void incNumBluePills() {
+  public void incNumBluePills(float time) {
 
-    numBluePills++;
-  }
+    pillIDs[pillIdCounter] = pillIdCounter;
+    timesElapsed[pillIdCounter] = time - lastTime;
+    activationEnergiesRequired[pillIdCounter] = actuationEnergy;
 
-  /**
-   * Increment the number of collisions with red pills by one
-   */
-  public void incNumRedPills() {
+    // reset everything
+    pillIdCounter++;
+    lastTime = time;
+    actuationEnergy = 0;
 
-    numRedPills++;
+    System.out.println(this.toString());
   }
 
   /**
@@ -56,8 +83,17 @@ public class Score {
    */
   public double getScore() {
 
-    if (numBluePills > 0) {
-      return (double) actuationEnergy / numBluePills;
+    if (pillIdCounter > 0) {
+
+      int sumActivationEnergy = 0;
+      for (int i = 0; i < activationEnergiesRequired.length; i++) {
+        if (activationEnergiesRequired[i] > 0) {
+          sumActivationEnergy += activationEnergiesRequired[i];
+        } else {
+          break;
+        }
+      }
+      return (double) sumActivationEnergy / pillIdCounter;
     } else {
       return 0.0;
     }
@@ -65,12 +101,13 @@ public class Score {
 
   public int getNumBluePills() {
 
-    return numBluePills;
+    return pillIdCounter;
   }
 
-  public int getNumRedPills() {
+  @Override
+  public String toString() {
 
-    return numRedPills;
+    String returnValue = Arrays.toString(pillIDs) + ";" + Arrays.toString(timesElapsed) + ";" + Arrays.toString(activationEnergiesRequired);
+    return returnValue.replaceAll("\\[", " ").replaceAll("\\]", " ");
   }
-
 }

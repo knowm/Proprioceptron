@@ -33,7 +33,6 @@ import com.jme3.util.TangentBinormalGenerator;
  */
 public class RoboticArmLevelAppState extends MainAppState {
 
-  private final boolean hasRedPill;
   private final float pillSpeed;
 
   private boolean movingLeft = true;
@@ -49,15 +48,13 @@ public class RoboticArmLevelAppState extends MainAppState {
    * 
    * @param app
    * @param numJoints
-   * @param hasRedPill
    * @param speed
    */
-  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, boolean hasRedPill, float pillSpeed) {
+  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, float pillSpeed) {
 
     super(app, numJoints);
-    this.hasRedPill = hasRedPill;
     this.pillSpeed = pillSpeed;
-    this.score = new Score();
+    this.score = new Score(((RoboticArm) app).numTargetsPerLevel);
   }
 
   @Override
@@ -99,9 +96,6 @@ public class RoboticArmLevelAppState extends MainAppState {
   public void placePills() {
 
     placePill(bluePill);
-    if (hasRedPill) {
-      placePill(redPill);
-    }
 
   }
 
@@ -132,19 +126,6 @@ public class RoboticArmLevelAppState extends MainAppState {
       bluePill.center();
       bluePill.move(x + (movingLeft ? 1 : -1) * tpf * pillSpeed, 0, z);
 
-      // red pill
-      if (hasRedPill) {
-        z = redPill.getWorldTranslation().z;
-        x = redPill.getWorldTranslation().x;
-        if (movingLeft && x > leftBounds) {
-          movingLeft = false;
-        } else if (!movingLeft && x < rightBounds) {
-          movingLeft = true;
-        }
-        redPill.center();
-        redPill.move(x + (movingLeft ? 1 : -1) * tpf * pillSpeed, 0, z);
-      }
-
     }
   }
 
@@ -165,14 +146,10 @@ public class RoboticArmLevelAppState extends MainAppState {
 
     if (enabled) {
       localRootNode.attachChild(bluePill);
-      if (hasRedPill) {
-        localRootNode.attachChild(redPill);
-      }
+
     } else {
       localRootNode.detachChild(bluePill);
-      if (hasRedPill) {
-        localRootNode.detachChild(redPill);
-      }
+
     }
     super.setEnabled(enabled);
   }
