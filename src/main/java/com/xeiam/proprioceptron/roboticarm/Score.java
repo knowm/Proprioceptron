@@ -99,9 +99,19 @@ public class Score {
     }
   }
 
-  public int getNumBluePills() {
+  public int getPillIdCounter() {
 
     return pillIdCounter;
+  }
+
+  public float[] getTimesElapsed() {
+
+    return timesElapsed;
+  }
+
+  public double[] getActivationEnergiesRequired() {
+
+    return activationEnergiesRequired;
   }
 
   @Override

@@ -242,7 +242,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     sb.append(roboticArmApp.levels.size() - 1);
 
     sb.append(", Blue Pills = ");
-    sb.append(score.getNumBluePills());
+    sb.append(score.getPillIdCounter());
     sb.append("/");
     sb.append(roboticArmApp.numTargetsPerLevel);
 
@@ -333,8 +333,8 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     for (JointCommand jointCommand : jointCommands) {
       score.incActuationEnergy(jointCommand.getSteps());
       for (int i = 0; i < jointCommand.getSteps(); i++) {
-        pivots[jointCommand.getJointNumber()].rotate(0f, jointCommand.getDirection() * 0.2f * tpf, 0f);
-        // pivots[jointCommand.getJointNumber()].rotate(0f, jointCommand.getDirection() * 1f * tpf, 0f);
+        // pivots[jointCommand.getJointNumber()].rotate(0f, jointCommand.getDirection() * 0.2f * tpf, 0f);
+        pivots[jointCommand.getJointNumber()].rotate(0f, jointCommand.getDirection() * 1f * tpf, 0f);
       }
     }
 
