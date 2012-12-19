@@ -235,6 +235,8 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
   private String getHUDText() {
 
+    System.out.println(roboticArmApp.currentLevelIndex);
+
     StringBuilder sb = new StringBuilder();
     sb.append("Level = ");
     sb.append(roboticArmApp.currentLevelIndex);
@@ -328,12 +330,13 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
    * 
    * @param jointCommands
    */
-  public void moveJoints(List<JointCommand> jointCommands, float speed) {
+  public void moveJoints(List<JointCommand> jointCommands, float tpf) {
 
     for (JointCommand jointCommand : jointCommands) {
       score.incActuationEnergy(jointCommand.getSteps());
       for (int i = 0; i < jointCommand.getSteps(); i++) {
-        pivots[jointCommand.getJointNumber()].rotate(0f, jointCommand.getDirection() * .005f * speed, 0f);
+        // pivots[jointCommand.getJointNumber()].rotate(0f, jointCommand.getDirection() * 0.2f * tpf, 0f);
+        pivots[jointCommand.getJointNumber()].rotate(0f, jointCommand.getDirection() * 1f * tpf, 0f);
       }
     }
 

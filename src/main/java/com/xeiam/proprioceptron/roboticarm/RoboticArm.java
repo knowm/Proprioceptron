@@ -62,6 +62,9 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
   public GameState oldEnvState;
   public GameState newEnvState;
 
+  /** a queue for incoming joint movement commands */
+  List<JointCommand> jointCommandsQueue = null;
+
   /**
    * Constructor
    * 
@@ -124,6 +127,14 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
   @Override
   public void simpleUpdate(float tpf) {
 
+    // System.out.println("here");
+
+    // move the joints
+    if (jointCommandsQueue != null) {
+      currentLevelAppState.moveJoints(jointCommandsQueue, tpf);
+      jointCommandsQueue = null;
+    }
+
     if (wasMovement && isRunning && !gameOver) {
 
       wasMovement = false;
@@ -139,9 +150,8 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
         if (currentLevelAppState.score.getNumBluePills() % 100 == 0) { // every 100 pills, reconstruct arm to prevent the joints drifting apart too far.
           currentLevelAppState.reconstructArm();
         }
-        if (currentLevelAppState.score.getNumBluePills() % numTargetsPerLevel == 0) {
+        if (currentLevelAppState.score.getNumBluePills() % numTargetsPerLevel == 0) { // new level
           currentLevelIndex++;
-          currentLevelAppState.setHudText();
 
           if (currentLevelIndex >= levels.size()) { // game over
             currentLevelAppState.setEnabled(false);
@@ -151,6 +161,7 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
             currentLevelAppState.setEnabled(false);
             currentLevelAppState = levels.get(currentLevelIndex);
             currentLevelAppState.setEnabled(true);
+            currentLevelAppState.setHudText();
           }
         } else {
           currentLevelAppState.placePills();
@@ -159,9 +170,11 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
       }
 
       currentLevelAppState.movePills(tpf);
+      // currentLevelAppState.movePills(speed);
 
       newEnvState = new RoboticArmGameState(roboticArmEnvState, currentLevelAppState.score);
 
+      // Notify the AI
       notifyListeners();
     }
   }
@@ -191,7 +204,9 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
    */
   public void moveJoints(List<JointCommand> jointCommands) {
 
-    currentLevelAppState.moveJoints(jointCommands, speed);
+    // add the joint command to be picked up by the simpleUpdate loop
+    jointCommandsQueue = jointCommands;
+    // currentLevelAppState.moveJoints(jointCommands, speed);
   }
 
   @Override
