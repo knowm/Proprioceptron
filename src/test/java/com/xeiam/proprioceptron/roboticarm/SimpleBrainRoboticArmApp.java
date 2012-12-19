@@ -33,7 +33,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
   private static final int NUM_JOINTS = 2;
   private static final int START_LEVEL_ID = 0;
-  private static final int NUM_TARGETS_PER_LEVEL = 3;
+  private static final int NUM_TARGETS_PER_LEVEL = 20;
 
   private final SimpleBrain simpleBrain;
   private final RoboticArm roboticArm;
@@ -93,7 +93,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
       int numJoints = newEnvState.getEnvState().getRelativePositions().length;
       for (int i = 0; i < numJoints; i++) {
-        jointCommands.add(new JointCommand(i, random.nextDouble() > 0.5 ? 1 : -1, random.nextInt(50)));
+        jointCommands.add(new JointCommand(i, random.nextDouble() > 0.5 ? 1 : -1, random.nextInt(100)));
       }
 
       return jointCommands;
