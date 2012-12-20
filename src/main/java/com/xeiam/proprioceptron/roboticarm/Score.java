@@ -25,15 +25,15 @@ import java.util.Arrays;
  */
 public class Score {
 
-  private int levelId;
+  private final int levelId;
 
-  private int[] pillIDs;
+  private final int[] pillIDs;
   private int pillIdCounter = 0;
 
-  private float[] timesElapsed;
+  private final float[] timesElapsed;
   private float lastTime;
 
-  private double[] activationEnergiesRequired;
+  private final double[] activationEnergiesRequired;
   private int actuationEnergy = 0;
 
   /**
@@ -115,6 +115,11 @@ public class Score {
   public double[] getActivationEnergiesRequired() {
 
     return activationEnergiesRequired;
+  }
+
+  public int getLevelId() {
+
+    return levelId;
   }
 
   @Override

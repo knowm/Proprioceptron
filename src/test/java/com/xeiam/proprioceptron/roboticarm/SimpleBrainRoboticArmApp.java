@@ -18,12 +18,17 @@ package com.xeiam.proprioceptron.roboticarm;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jme3.system.AppSettings;
+import com.xeiam.xchart.Chart;
+import com.xeiam.xchart.Series;
+import com.xeiam.xchart.SeriesLineStyle;
+import com.xeiam.xchart.SwingWrapper;
 
 /**
  * Run the Robotic Arm game with a simple test brain completing the feedback loop
@@ -39,6 +44,8 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
   private final SimpleBrain simpleBrain;
   private final RoboticArm roboticArm;
+
+  private final List<Score> scores = new ArrayList<Score>();
 
   /**
    * Constructor
@@ -76,6 +83,8 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
     } else if (pce.getPropertyName().equalsIgnoreCase("LEVEL_SCORE")) {
       Score score = (Score) pce.getNewValue();
       printScores(score);
+    } else if (pce.getPropertyName().equalsIgnoreCase("GAME_OVER")) {
+      plotResults();
     }
 
   }
@@ -117,5 +126,64 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
   private void printScores(Score score) {
 
     System.out.println(score.toString());
+    scores.add(score);
+  }
+
+  private void plotResults() {
+
+    List<Chart> charts = new ArrayList<Chart>();
+
+    Collection<Number> xData = new ArrayList<Number>();
+    Collection<Number> yData = new ArrayList<Number>();
+
+    for (Score score : scores) {
+      for (int i = 0; i < score.getActivationEnergiesRequired().length; i++) {
+        xData.add(score.getLevelId());
+        yData.add(score.getActivationEnergiesRequired()[i]);
+      }
+    }
+
+    // Create Chart
+    Chart chart = new Chart(800, 400);
+
+    // Customize Chart
+    chart.setTitle("Required Activation Energy");
+    chart.setXAxisTitle("Level");
+    chart.setYAxisTitle("Required Activation Energy");
+    chart.setLegendVisible(false);
+
+    // Series 1
+    Series series1 = chart.addSeries("requiredActivationEnergy", xData, yData);
+    series1.setLineStyle(SeriesLineStyle.NONE);
+    charts.add(chart);
+
+    // ////////////////
+
+    xData = new ArrayList<Number>();
+    yData = new ArrayList<Number>();
+
+    for (Score score : scores) {
+      for (int i = 0; i < score.getTimesElapsed().length; i++) {
+        xData.add(score.getLevelId());
+        yData.add(score.getTimesElapsed()[i]);
+      }
+    }
+
+    // Create Chart
+    chart = new Chart(800, 400);
+
+    // Customize Chart
+    chart.setTitle("Elapsed Time (s)");
+    chart.setXAxisTitle("Level");
+    chart.setYAxisTitle("Elapsed Time");
+    chart.setLegendVisible(false);
+
+    // Series 1
+    series1 = chart.addSeries("elapsedTime", xData, yData);
+    series1.setLineStyle(SeriesLineStyle.NONE);
+    charts.add(chart);
+
+    new SwingWrapper(charts, 2, 1).displayChartMatrix();
+
   }
 }

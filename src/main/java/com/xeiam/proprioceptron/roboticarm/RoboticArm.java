@@ -159,8 +159,7 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
             currentLevelAppState.setEnabled(false);
             gameOver = true;
             scoreAppState.setEnabled(true);
-            // printScores();
-            // plotResults();
+            notifyListeners(new PropertyChangeEvent(this, "GAME_OVER", null, null));
           } else {
             currentLevelAppState.setEnabled(false);
             currentLevelAppState = levels.get(currentLevelIndex);
