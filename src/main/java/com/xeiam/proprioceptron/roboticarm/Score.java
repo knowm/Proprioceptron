@@ -33,7 +33,7 @@ public class Score {
   private final float[] timesElapsed;
   private float lastTime;
 
-  private final double[] activationEnergiesRequired;
+  private final int[] activationEnergiesRequired;
   private int actuationEnergy = 0;
 
   /**
@@ -44,7 +44,7 @@ public class Score {
     this.levelId = levelId;
     pillIDs = new int[numTargetsPerLevel];
     timesElapsed = new float[numTargetsPerLevel];
-    activationEnergiesRequired = new double[numTargetsPerLevel];
+    activationEnergiesRequired = new int[numTargetsPerLevel];
 
   }
 
@@ -107,12 +107,17 @@ public class Score {
     return pillIdCounter;
   }
 
+  public int[] getPillIDs() {
+
+    return pillIDs;
+  }
+
   public float[] getTimesElapsed() {
 
     return timesElapsed;
   }
 
-  public double[] getActivationEnergiesRequired() {
+  public int[] getActivationEnergiesRequired() {
 
     return activationEnergiesRequired;
   }
