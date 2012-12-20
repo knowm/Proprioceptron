@@ -25,6 +25,8 @@ import java.util.Arrays;
  */
 public class Score {
 
+  private int levelId;
+
   private int[] pillIDs;
   private int pillIdCounter = 0;
 
@@ -37,8 +39,9 @@ public class Score {
   /**
    * Constructor
    */
-  public Score(int numTargetsPerLevel) {
+  public Score(int levelId, int numTargetsPerLevel) {
 
+    this.levelId = levelId;
     pillIDs = new int[numTargetsPerLevel];
     timesElapsed = new float[numTargetsPerLevel];
     activationEnergiesRequired = new double[numTargetsPerLevel];
@@ -67,7 +70,7 @@ public class Score {
     lastTime = time;
     actuationEnergy = 0;
 
-    System.out.println(this.toString());
+    // System.out.println(this.toString());
   }
 
   /**
@@ -117,7 +120,7 @@ public class Score {
   @Override
   public String toString() {
 
-    String returnValue = Arrays.toString(pillIDs) + ";" + Arrays.toString(timesElapsed) + ";" + Arrays.toString(activationEnergiesRequired);
+    String returnValue = levelId + "; " + Arrays.toString(pillIDs) + ";" + Arrays.toString(timesElapsed) + ";" + Arrays.toString(activationEnergiesRequired);
     return returnValue.replaceAll("\\[", " ").replaceAll("\\]", " ");
   }
 }

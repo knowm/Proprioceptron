@@ -33,6 +33,7 @@ import com.jme3.util.TangentBinormalGenerator;
  */
 public class RoboticArmLevelAppState extends MainAppState {
 
+  private final int levelId;
   private final float pillSpeed;
 
   private boolean movingLeft = true;
@@ -50,11 +51,12 @@ public class RoboticArmLevelAppState extends MainAppState {
    * @param numJoints
    * @param speed
    */
-  public RoboticArmLevelAppState(SimpleApplication app, int numJoints, float pillSpeed) {
+  public RoboticArmLevelAppState(SimpleApplication app, int levelId, int numJoints, float pillSpeed) {
 
     super(app, numJoints);
+    this.levelId = levelId;
     this.pillSpeed = pillSpeed;
-    this.score = new Score(((RoboticArm) app).numTargetsPerLevel);
+    this.score = new Score(levelId, ((RoboticArm) app).numTargetsPerLevel);
   }
 
   @Override
@@ -108,7 +110,7 @@ public class RoboticArmLevelAppState extends MainAppState {
     float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
     float z = (float) (Math.sqrt(arcRadius * arcRadius - x * x)) * (Math.random() > 0.5 ? 1 : -1);
     pill.center();
-    pill.move(x, 0, z);
+    pill.move(x, 0, 0.95f * z); // 0.95 to prevent the pill from being stuck at exactly the arm's maximum reach.
   }
 
   public void movePills(float tpf) {

@@ -20,6 +20,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.jme3.system.AppSettings;
 
@@ -33,7 +35,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
   private static final int NUM_JOINTS = 2;
   private static final int START_LEVEL_ID = 0;
-  private static final int NUM_TARGETS_PER_LEVEL = 20;
+  private static final int NUM_TARGETS_PER_LEVEL = 2;
 
   private final SimpleBrain simpleBrain;
   private final RoboticArm roboticArm;
@@ -42,6 +44,9 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
    * Constructor
    */
   public SimpleBrainRoboticArmApp() {
+
+    // disable jme3 logging
+    Logger.getLogger("com.jme3").setLevel(Level.SEVERE);
 
     simpleBrain = new SimpleBrain();
 
@@ -65,9 +70,14 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
   @Override
   public void propertyChange(PropertyChangeEvent pce) {
 
-    List<JointCommand> jointCommands = simpleBrain.update(pce);
+    if (pce.getPropertyName().equalsIgnoreCase("STATE_CHANGE")) {
+      List<JointCommand> jointCommands = simpleBrain.update(pce);
+      roboticArm.moveJoints(jointCommands);
+    } else if (pce.getPropertyName().equalsIgnoreCase("LEVEL_SCORE")) {
+      Score score = (Score) pce.getNewValue();
+      printScores(score);
+    }
 
-    roboticArm.moveJoints(jointCommands);
   }
 
   private class SimpleBrain {
@@ -79,7 +89,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
      */
     public List<JointCommand> update(PropertyChangeEvent pce) {
 
-      RoboticArmGameState oldEnvState = (RoboticArmGameState) pce.getOldValue();
+      // RoboticArmGameState oldEnvState = (RoboticArmGameState) pce.getOldValue();
       RoboticArmGameState newEnvState = (RoboticArmGameState) pce.getNewValue();
 
       List<JointCommand> jointCommands = new ArrayList<JointCommand>();
@@ -99,5 +109,13 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
       return jointCommands;
 
     }
+  }
+
+  /**
+   * Prints the scores for each level
+   */
+  private void printScores(Score score) {
+
+    System.out.println(score.toString());
   }
 }

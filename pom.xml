@@ -51,11 +51,11 @@
 	</distributionManagement>
 
 	<dependencies>
-	       <dependency>
-            <groupId>com.xeiam</groupId>
-            <artifactId>xchart</artifactId>
-            <version>1.2.1-SNAPSHOT</version>
-        </dependency>
+		<dependency>
+			<groupId>com.xeiam</groupId>
+			<artifactId>xchart</artifactId>
+			<version>1.2.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>com.jme3</groupId>
 			<artifactId>eventbus</artifactId>
@@ -166,26 +166,6 @@
 			<groupId>com.jme3</groupId>
 			<artifactId>nifty-style-black</artifactId>
 			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<!-- test -->
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<version>1.3</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<!-- dep leaves out hamcrest classes -->
-			<artifactId>junit-dep</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hamcrest</groupId>
-					<artifactId>hamcrest-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 

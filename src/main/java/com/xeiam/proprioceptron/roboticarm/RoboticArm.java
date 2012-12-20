@@ -18,7 +18,6 @@ package com.xeiam.proprioceptron.roboticarm;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,10 +28,6 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.Trigger;
 import com.jme3.math.Vector3f;
 import com.xeiam.proprioceptron.GameState;
-import com.xeiam.xchart.Chart;
-import com.xeiam.xchart.Series;
-import com.xeiam.xchart.SeriesLineStyle;
-import com.xeiam.xchart.SwingWrapper;
 
 /**
  * The Main entry point class
@@ -102,11 +97,11 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
 
     // Levels
     levels = new ArrayList<RoboticArmLevelAppState>();
-    levels.add(new RoboticArmLevelAppState(this, numJoints, 0.0f));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, 6.0f));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, 9.0f));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, 12.0f));
-    levels.add(new RoboticArmLevelAppState(this, numJoints, 15.0f));
+    levels.add(new RoboticArmLevelAppState(this, 0, numJoints, 0.0f));
+    levels.add(new RoboticArmLevelAppState(this, 1, numJoints, 6.0f));
+    levels.add(new RoboticArmLevelAppState(this, 2, numJoints, 9.0f));
+    levels.add(new RoboticArmLevelAppState(this, 3, numJoints, 12.0f));
+    levels.add(new RoboticArmLevelAppState(this, 4, numJoints, 15.0f));
     currentLevelAppState = levels.get(currentLevelIndex);
     for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
       roboticArmLevelAppState.initialize(getStateManager(), this);
@@ -155,14 +150,17 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
           currentLevelAppState.reconstructArm();
         }
         if (currentLevelAppState.score.getPillIdCounter() % numTargetsPerLevel == 0) { // new level
+          // send level score
+          notifyListeners(new PropertyChangeEvent(this, "LEVEL_SCORE", null, currentLevelAppState.score));
+
           currentLevelIndex++;
 
           if (currentLevelIndex >= levels.size()) { // game over
             currentLevelAppState.setEnabled(false);
             gameOver = true;
             scoreAppState.setEnabled(true);
-            printScores();
-            plotResults();
+            // printScores();
+            // plotResults();
           } else {
             currentLevelAppState.setEnabled(false);
             currentLevelAppState = levels.get(currentLevelIndex);
@@ -181,7 +179,7 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
       newEnvState = new RoboticArmGameState(roboticArmEnvState, currentLevelAppState.score);
 
       // Notify the AI
-      notifyListeners();
+      notifyListeners(new PropertyChangeEvent(this, "STATE_CHANGE", oldEnvState, newEnvState));
     }
   }
 
@@ -193,9 +191,7 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
   /**
    * Send PropertyChangeEvent to observers (listeners)
    */
-  public void notifyListeners() {
-
-    PropertyChangeEvent pce = new PropertyChangeEvent(this, "", oldEnvState, newEnvState);
+  public void notifyListeners(PropertyChangeEvent pce) {
 
     for (Iterator<PropertyChangeListener> iterator = listeners.iterator(); iterator.hasNext();) {
       PropertyChangeListener observer = iterator.next();
@@ -233,73 +229,4 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
     }
   }
 
-  /**
-   * Prints the scores for each level
-   */
-  private void printScores() {
-
-    for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
-      System.out.println(roboticArmLevelAppState.score.toString());
-    }
-  }
-
-  private void plotResults() {
-
-    List<Chart> charts = new ArrayList<Chart>();
-
-    Collection<Number> xData = new ArrayList<Number>();
-    Collection<Number> yData = new ArrayList<Number>();
-
-    int levelCounter = 0;
-    for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
-      for (int i = 0; i < roboticArmLevelAppState.score.getActivationEnergiesRequired().length; i++) {
-        xData.add(levelCounter);
-        yData.add(roboticArmLevelAppState.score.getActivationEnergiesRequired()[i]);
-      }
-      levelCounter++;
-    }
-
-    // Create Chart
-    Chart chart = new Chart(800, 400);
-
-    // Customize Chart
-    chart.setTitle("Required Activation Energy");
-    chart.setXAxisTitle("Level");
-    chart.setYAxisTitle("Required Activation Energy");
-    chart.setLegendVisible(false);
-
-    // Series 1
-    Series series1 = chart.addSeries("requiredActivateionEnergy", xData, yData);
-    series1.setLineStyle(SeriesLineStyle.NONE);
-    charts.add(chart);
-
-    xData = new ArrayList<Number>();
-    yData = new ArrayList<Number>();
-
-    levelCounter = 0;
-    for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
-      for (int i = 0; i < roboticArmLevelAppState.score.getActivationEnergiesRequired().length; i++) {
-        xData.add(levelCounter);
-        yData.add(roboticArmLevelAppState.score.getTimesElapsed()[i]);
-      }
-      levelCounter++;
-    }
-
-    // Create Chart
-    chart = new Chart(800, 400);
-
-    // Customize Chart
-    chart.setTitle("Elapsed Time");
-    chart.setXAxisTitle("Level");
-    chart.setYAxisTitle("Elapsed Time");
-    chart.setLegendVisible(false);
-
-    // Series 1
-    series1 = chart.addSeries("elapsedTime", xData, yData);
-    series1.setLineStyle(SeriesLineStyle.NONE);
-    charts.add(chart);
-
-    new SwingWrapper(charts, 2, 1).displayChartMatrix();
-
-  }
 }
