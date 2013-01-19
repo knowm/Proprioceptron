@@ -5,7 +5,7 @@
 	<name>Proprioceptron</name>
 	<groupId>com.xeiam</groupId>
 	<artifactId>proprioceptron</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<description>A virtual environment for testing and simulating machine learning algorithms</description>
 	<url>http://xeiam.com</url>
