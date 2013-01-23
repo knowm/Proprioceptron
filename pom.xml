@@ -39,22 +39,23 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>xeiam_oss.snapshots</id>
-			<name>Nexus Snapshots Repo</name>
-			<url>http://nexus.xeiam.com/content/repositories/snapshots/</url>
+			<id>xeiam_oss.sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>
-			<id>xeiam_oss.releases</id>
-			<name>Nexus Release Repo</name>
-			<url>http://nexus.xeiam.com/content/repositories/releases/</url>
+			<id>xeiam_oss.sonatype-nexus-staging</id>
+			<name>Nexus Release Repository</name>
+			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
+		<downloadUrl>https://oss.sonatype.org/content/groups/public/com/xeiam/proprioceptron</downloadUrl>
 	</distributionManagement>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.xeiam</groupId>
+			<groupId>com.xeiam.xchart</groupId>
 			<artifactId>xchart</artifactId>
-			<version>1.3.0</version>
+			<version>1.3.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.jme3</groupId>
