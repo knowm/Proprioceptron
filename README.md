@@ -1,26 +1,22 @@
-Proprioceptron
-==========
+## Proprioceptron
 
 A virtual environment for testing and simulating machine learning algorithms
 
-Maven
-==========
-The Proprioceptron Java artifacts are currently hosted on the Xeiam Nexus repository here:
+## Maven
+For snapshots, add the following to your pom.xml file:
 
-    <repositories>
-        <repository>
-            <id>xeiam_oss-snapshot</id>
-            <snapshots />
-            <url>http://nexus.xeiam.com/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>xeiam_oss-release</id>
-            <releases />
-            <url>http://nexus.xeiam.com/content/repositories/releases/</url>
-        </repository>
-    </repositories>
+    <repository>
+      <id>sonatype-oss-snapshots</id>
+      <snapshots/>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+    
+    <dependency>
+      <groupId>com.xeiam</groupId>
+      <artifactId>proprioceptron</artifactId>
+      <version>1.0.1-SNAPSHOT</version>
+    </dependency>
 
-Building
-==========
+## Building
 mvn clean package  
 mvn javadoc:javadoc  
