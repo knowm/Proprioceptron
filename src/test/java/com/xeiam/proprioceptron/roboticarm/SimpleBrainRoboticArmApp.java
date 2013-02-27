@@ -27,8 +27,8 @@ import java.util.logging.Logger;
 import com.jme3.system.AppSettings;
 import com.xeiam.xchart.Chart;
 import com.xeiam.xchart.Series;
-import com.xeiam.xchart.SeriesLineStyle;
 import com.xeiam.xchart.SwingWrapper;
+import com.xeiam.xchart.style.SeriesLineStyle;
 
 /**
  * Run the Robotic Arm game with a simple test brain completing the feedback loop
@@ -147,10 +147,10 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
     Chart chart = new Chart(800, 400);
 
     // Customize Chart
-    chart.setTitle("Required Activation Energy");
+    chart.setChartTitle("Required Activation Energy");
     chart.setXAxisTitle("Level");
     chart.setYAxisTitle("Required Activation Energy");
-    chart.setLegendVisible(false);
+    chart.getStyleManager().setLegendVisible(false);
 
     // Series 1
     Series series1 = chart.addSeries("requiredActivationEnergy", xData, yData);
@@ -173,10 +173,10 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
     chart = new Chart(800, 400);
 
     // Customize Chart
-    chart.setTitle("Elapsed Time (s)");
+    chart.setChartTitle("Elapsed Time (s)");
     chart.setXAxisTitle("Level");
     chart.setYAxisTitle("Elapsed Time");
-    chart.setLegendVisible(false);
+    chart.getStyleManager().setLegendVisible(false);
 
     // Series 1
     series1 = chart.addSeries("elapsedTime", xData, yData);
