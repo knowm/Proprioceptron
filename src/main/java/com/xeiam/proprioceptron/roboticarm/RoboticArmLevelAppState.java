@@ -110,7 +110,7 @@ public class RoboticArmLevelAppState extends MainAppState {
     float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
     float z = (float) (Math.sqrt(arcRadius * arcRadius - x * x)) * (Math.random() > 0.5 ? 1 : -1);
     pill.center();
-    pill.move(0.85f * x, 0, 0.85f * z); // 0.95 to prevent the pill from being stuck at exactly the arm's maximum reach.
+    pill.move(0.8f * x, 0, 0.8f * z); // 0.8 to prevent the pill from being stuck at exactly the arm's maximum reach.
   }
 
   public void movePills(float tpf) {

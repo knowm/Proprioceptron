@@ -98,10 +98,10 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
     // Levels
     levels = new ArrayList<RoboticArmLevelAppState>();
     levels.add(new RoboticArmLevelAppState(this, 0, numJoints, 0.0f));
-    levels.add(new RoboticArmLevelAppState(this, 1, numJoints, 6.0f));
-    levels.add(new RoboticArmLevelAppState(this, 2, numJoints, 9.0f));
-    levels.add(new RoboticArmLevelAppState(this, 3, numJoints, 12.0f));
-    levels.add(new RoboticArmLevelAppState(this, 4, numJoints, 15.0f));
+    // levels.add(new RoboticArmLevelAppState(this, 1, numJoints, 6.0f));
+    // levels.add(new RoboticArmLevelAppState(this, 2, numJoints, 9.0f));
+    // levels.add(new RoboticArmLevelAppState(this, 3, numJoints, 12.0f));
+    // levels.add(new RoboticArmLevelAppState(this, 4, numJoints, 15.0f));
     currentLevelAppState = levels.get(currentLevelIndex);
     for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
       roboticArmLevelAppState.initialize(getStateManager(), this);

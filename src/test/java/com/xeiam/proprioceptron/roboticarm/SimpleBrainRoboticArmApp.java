@@ -27,8 +27,8 @@ import java.util.logging.Logger;
 import com.jme3.system.AppSettings;
 import com.xeiam.xchart.Chart;
 import com.xeiam.xchart.Series;
+import com.xeiam.xchart.SeriesLineStyle;
 import com.xeiam.xchart.SwingWrapper;
-import com.xeiam.xchart.style.SeriesLineStyle;
 
 /**
  * Run the Robotic Arm game with a simple test brain completing the feedback loop
