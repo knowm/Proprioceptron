@@ -43,6 +43,7 @@ public class RoboticArmLevelAppState extends MainAppState {
 
   private final float leftBounds = SECTION_LENGTH * numJoints * 2.3f;
   private final float rightBounds = -1 * SECTION_LENGTH * numJoints * 2.3f;
+  private final float radius = .85f;
 
   /**
    * Constructor
@@ -110,7 +111,7 @@ public class RoboticArmLevelAppState extends MainAppState {
     float x = (float) (Math.random() * arcRadius * (Math.random() > 0.5 ? 1 : -1));
     float z = (float) (Math.sqrt(arcRadius * arcRadius - x * x)) * (Math.random() > 0.5 ? 1 : -1);
     pill.center();
-    pill.move(0.5f * x, 0, 0.5f * z); // 0.5 to prevent the pill from being stuck at exactly the arm's maximum reach.
+    pill.move(radius * x, 0, radius * z); // some radius to prevent the pill from being stuck at exactly the arm's maximum reach.
   }
 
   public void movePills(float tpf) {
