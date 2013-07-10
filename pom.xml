@@ -5,7 +5,7 @@
 	<name>Proprioceptron</name>
 	<groupId>com.xeiam</groupId>
 	<artifactId>proprioceptron</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description>A virtual environment for testing and simulating machine learning algorithms</description>
 	<url>http://xeiam.com</url>
@@ -39,12 +39,12 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>xeiam_oss.sonatype-nexus-snapshots</id>
+			<id>sonatype-nexus-snapshots</id>
 			<name>Sonatype Nexus Snapshots</name>
 			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>
-			<id>xeiam_oss.sonatype-nexus-staging</id>
+			<id>sonatype-nexus-staging</id>
 			<name>Nexus Release Repository</name>
 			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
@@ -225,10 +225,10 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-    
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
 </project>
