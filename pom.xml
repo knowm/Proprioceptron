@@ -2,11 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<name>Proprioceptron</name>
-	<groupId>com.xeiam</groupId>
-	<artifactId>proprioceptron</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<name>proprioceptron-parent</name>
+	<groupId>com.xeiam.proprioceptron</groupId>
+	<artifactId>proprioceptron-parent</artifactId>
+	<version>1.1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<description>A virtual environment for testing and simulating machine learning algorithms</description>
 	<url>http://xeiam.com</url>
 
@@ -18,6 +18,7 @@
 			<name>Alex Nugent</name>
 		</developer>
 	</developers>
+
 	<licenses>
 		<license>
 			<name>Apache 2</name>
@@ -26,16 +27,21 @@
 			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
+
 	<issueManagement>
 		<system>GitHub</system>
 		<url>https://github.com/timmolter/Proprioceptron/issues</url>
 	</issueManagement>
+
 	<scm>
 		<url>https://github.com/timmolter/Proprioceptron</url>
 	</scm>
-	<ciManagement>
-		<url>http://ci.xeiam.com/</url>
-	</ciManagement>
+
+	<modules>
+		<module>proprioceptron-jme3</module>
+		<module>proprioceptron-core</module>
+		<module>proprioceptron-sample</module>
+	</modules>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -51,135 +57,25 @@
 		<downloadUrl>https://oss.sonatype.org/content/groups/public/com/xeiam/proprioceptron</downloadUrl>
 	</distributionManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.xeiam.xchart</groupId>
-			<artifactId>xchart</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>eventbus</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>j-ogg-oggd</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>j-ogg-vorbisd</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-jogg</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-core</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-jbullet</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jbullet</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-lwjgl</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-lwjgl-natives</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>lwjgl</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-blender</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-desktop</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-plugins</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-terrain</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jinput</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>stack-alloc</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>vecmath</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jME3-niftygui</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>nifty</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>nifty-default-controls</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>nifty-examples</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>nifty-style-black</artifactId>
-			<version>3.0.0.20120512-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
-
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.xeiam.xchart</groupId>
+				<artifactId>xchart</artifactId>
+				<version>2.3.1</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<plugins>
-			<!-- Ensure compilation is done under Java 6 in all environments -->
+			<!-- Ensure compilation is done under Java 7 in all environments -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<showDeprecation>true</showDeprecation>
 					<showWarnings>true</showWarnings>
 				</configuration>
@@ -212,23 +108,30 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12.3</version>
-				<configuration>
-					<excludes>
-						<exclude>**/*App*.java</exclude>
-						<exclude>**/jme/*.java</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
+
 
 </project>
