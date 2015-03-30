@@ -38,7 +38,6 @@
 	</scm>
 
 	<modules>
-		<!-- <module>proprioceptron-jme3</module> -->
 		<module>proprioceptron-core</module>
 		<module>proprioceptron-sample</module>
 	</modules>
