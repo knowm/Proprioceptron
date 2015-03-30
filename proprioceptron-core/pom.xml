@@ -29,6 +29,14 @@
 		</dependency>
 		<dependency>
 			<groupId>com.jme3</groupId>
+			<artifactId>jme3-lwjgl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.jme3</groupId>
+			<artifactId>jme3-desktop</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.jme3</groupId>
 			<artifactId>jme3-bullet-natives</artifactId>
 		</dependency>
 
