@@ -31,7 +31,7 @@ import com.xeiam.proprioceptron.GameState;
 
 /**
  * The Main entry point class
- * 
+ *
  * @author timmolter
  * @create Sep 25, 2012
  */
@@ -67,7 +67,7 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
 
   /**
    * Constructor
-   * 
+   *
    * @param numJoints
    * @param startLevelId - zero-based
    * @param numTargetsPerLevel
@@ -99,9 +99,9 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
     levels = new ArrayList<RoboticArmLevelAppState>();
     levels.add(new RoboticArmLevelAppState(this, 0, numJoints, 0.0f));
     levels.add(new RoboticArmLevelAppState(this, 1, numJoints, 6.0f));
-    levels.add(new RoboticArmLevelAppState(this, 2, numJoints, 9.0f));
-    levels.add(new RoboticArmLevelAppState(this, 3, numJoints, 12.0f));
-    levels.add(new RoboticArmLevelAppState(this, 4, numJoints, 15.0f));
+    // levels.add(new RoboticArmLevelAppState(this, 2, numJoints, 9.0f));
+    // levels.add(new RoboticArmLevelAppState(this, 3, numJoints, 12.0f));
+    // levels.add(new RoboticArmLevelAppState(this, 4, numJoints, 15.0f));
     currentLevelAppState = levels.get(currentLevelIndex);
     for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
       roboticArmLevelAppState.initialize(getStateManager(), this);
@@ -156,18 +156,27 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
           currentLevelIndex++;
 
           if (currentLevelIndex >= levels.size()) { // game over
+            currentLevelIndex = 0;
+            // currentLevelAppState.setEnabled(false);
+            // gameOver = true;
+            // scoreAppState.setEnabled(true);
+            // notifyListeners(new PropertyChangeEvent(this, "GAME_OVER", null, null));
             currentLevelAppState.setEnabled(false);
-            gameOver = true;
-            scoreAppState.setEnabled(true);
-            notifyListeners(new PropertyChangeEvent(this, "GAME_OVER", null, null));
-          } else {
+            currentLevelAppState = levels.get(currentLevelIndex);
+            currentLevelAppState.setEnabled(true);
+            currentLevelAppState.setHudText();
+            currentLevelAppState.score.initTime(timer.getTimeInSeconds());
+
+          }
+          else {
             currentLevelAppState.setEnabled(false);
             currentLevelAppState = levels.get(currentLevelIndex);
             currentLevelAppState.setEnabled(true);
             currentLevelAppState.setHudText();
             currentLevelAppState.score.initTime(timer.getTimeInSeconds());
           }
-        } else {
+        }
+        else {
           currentLevelAppState.placePills();
           currentLevelAppState.setHudText();
         }
@@ -200,7 +209,7 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
 
   /**
    * This is where JointCommands come in from an AI algorithm
-   * 
+   *
    * @param jointCommands
    */
   public void moveJoints(List<JointCommand> jointCommands) {
@@ -219,7 +228,8 @@ public class RoboticArm extends SimpleApplication implements ActionListener {
         if (isRunning) {
           currentLevelAppState.setEnabled(false);
           scoreAppState.setEnabled(true);
-        } else {
+        }
+        else {
           scoreAppState.setEnabled(false);
           currentLevelAppState.setEnabled(true);
         }
