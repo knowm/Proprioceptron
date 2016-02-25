@@ -13,9 +13,9 @@ For snapshots, add the following to your pom.xml file:
     </repository>
     
     <dependency>
-      <groupId>com.xeiam</groupId>
-      <artifactId>proprioceptron</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <groupId>org.knowm.proprioceptron</groupId>
+      <artifactId>proprioceptron-core</artifactId>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
 
 ## Building
@@ -27,4 +27,3 @@ For snapshots, add the following to your pom.xml file:
 ## Bugs
 
 Please report any bugs or submit feature requests to [Proprioceptron's Github issue tracker](https://github.com/timmolter/Proprioceptron/issues).  
-    

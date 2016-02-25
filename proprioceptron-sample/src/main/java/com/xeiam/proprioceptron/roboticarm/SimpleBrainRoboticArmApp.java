@@ -18,21 +18,22 @@ package com.xeiam.proprioceptron.roboticarm;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.knowm.xchart.ChartBuilder_XY;
+import org.knowm.xchart.Chart_XY;
+import org.knowm.xchart.Series_XY.ChartXYSeriesRenderStyle;
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.internal.chartpart.Chart;
+
 import com.jme3.system.AppSettings;
-import com.xeiam.xchart.Chart;
-import com.xeiam.xchart.Series;
-import com.xeiam.xchart.SeriesLineStyle;
-import com.xeiam.xchart.SwingWrapper;
 
 /**
  * Run the Robotic Arm game with a simple test brain completing the feedback loop
- * 
+ *
  * @author timmolter
  * @create Sep 28, 2012
  */
@@ -133,8 +134,8 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
     List<Chart> charts = new ArrayList<Chart>();
 
-    Collection<Number> xData = new ArrayList<Number>();
-    Collection<Number> yData = new ArrayList<Number>();
+    List<Number> xData = new ArrayList<Number>();
+    List<Number> yData = new ArrayList<Number>();
 
     for (Score score : scores) {
       for (int i = 0; i < score.getActivationEnergiesRequired().length; i++) {
@@ -144,17 +145,15 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
     }
 
     // Create Chart
-    Chart chart = new Chart(800, 400);
+    Chart_XY chart = new ChartBuilder_XY().width(800).height(400).title("Required Activation Energy").xAxisTitle("Level")
+        .yAxisTitle("Required Activation Energy").build();
 
     // Customize Chart
-    chart.setChartTitle("Required Activation Energy");
-    chart.setXAxisTitle("Level");
-    chart.setYAxisTitle("Required Activation Energy");
-    chart.getStyleManager().setLegendVisible(false);
+    chart.getStyler().setDefaultSeriesRenderStyle(ChartXYSeriesRenderStyle.Scatter);
+    chart.getStyler().setLegendVisible(false);
 
     // Series 1
-    Series series1 = chart.addSeries("requiredActivationEnergy", xData, yData);
-    series1.setLineStyle(SeriesLineStyle.NONE);
+    chart.addSeries("requiredActivationEnergy", xData, yData);
     charts.add(chart);
 
     // ////////////////
@@ -170,17 +169,15 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
     }
 
     // Create Chart
-    chart = new Chart(800, 400);
+    // Create Chart
+    chart = new ChartBuilder_XY().width(800).height(400).title("Elapsed Time (s)").xAxisTitle("Level").yAxisTitle("Elapsed Time").build();
 
     // Customize Chart
-    chart.setChartTitle("Elapsed Time (s)");
-    chart.setXAxisTitle("Level");
-    chart.setYAxisTitle("Elapsed Time");
-    chart.getStyleManager().setLegendVisible(false);
+    chart.getStyler().setDefaultSeriesRenderStyle(ChartXYSeriesRenderStyle.Scatter);
+    chart.getStyler().setLegendVisible(false);
 
     // Series 1
-    series1 = chart.addSeries("elapsedTime", xData, yData);
-    series1.setLineStyle(SeriesLineStyle.NONE);
+    chart.addSeries("elapsedTime", xData, yData);
     charts.add(chart);
 
     new SwingWrapper(charts, 2, 1).displayChartMatrix();
