@@ -27,3 +27,8 @@ For snapshots, add the following to your pom.xml file:
 ## Bugs
 
 Please report any bugs or submit feature requests to [Proprioceptron's Github issue tracker](https://github.com/timmolter/Proprioceptron/issues).  
+
+## Continuous Integration
+
+[![Build Status](https://travis-ci.org/timmolter/Proprioceptron.png?branch=develop)](https://travis-ci.org/timmolter/Proprioceptron.png)  
+[Build History](https://travis-ci.org/timmolter/Proprioceptron/builds)  
