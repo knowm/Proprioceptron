@@ -19,7 +19,7 @@ import java.util.Arrays;
 
 /**
  * The Score for a level
- * 
+ *
  * @author timmolter
  * @create Nov 1, 2012
  */
@@ -27,7 +27,7 @@ public class Score {
 
   private final int levelId;
 
-  private final int[] pillIDs;
+  private int[] pillIDs;
   private int pillIdCounter = 0;
 
   private final float[] timesElapsed;
@@ -61,6 +61,11 @@ public class Score {
    */
   public void incNumBluePills(float time) {
 
+    if (pillIdCounter > pillIDs.length - 1) {// quick hack.
+      pillIdCounter = 0;
+      pillIDs = new int[pillIDs.length];
+    }
+
     pillIDs[pillIdCounter] = pillIdCounter;
     timesElapsed[pillIdCounter] = time - lastTime;
     activationEnergiesRequired[pillIdCounter] = actuationEnergy;
@@ -92,12 +97,14 @@ public class Score {
       for (int i = 0; i < activationEnergiesRequired.length; i++) {
         if (activationEnergiesRequired[i] > 0) {
           sumActivationEnergy += activationEnergiesRequired[i];
-        } else {
+        }
+        else {
           break;
         }
       }
       return (double) sumActivationEnergy / pillIdCounter;
-    } else {
+    }
+    else {
       return 0.0;
     }
   }

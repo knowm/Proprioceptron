@@ -43,7 +43,7 @@ import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * Defines the platform and the robotic arm.
- * 
+ *
  * @author timmolter
  * @create Nov 1, 2012
  */
@@ -88,7 +88,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
   /**
    * Constructor
-   * 
+   *
    * @param app
    */
   public MainAppState(SimpleApplication app, int numJoints) {
@@ -123,7 +123,8 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
     // create floor
     Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
+    material.setColor("Color", ColorRGBA.Gray);
+    // material.setTexture("ColorMap", assetManager.loadTexture("Textures/concrete_cracked.jpeg"));
     float dimension = SECTION_LENGTH * numJoints * 2.3f;
     Box floorBox = new Box(dimension, .5f, dimension);
     Geometry floorGeometry = new Geometry("Floor", floorBox);
@@ -161,9 +162,15 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     // Material for Robotic Arm
     Material matRoboticArm = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
     matRoboticArm.setBoolean("UseMaterialColors", true);
-    matRoboticArm.setColor("Diffuse", new ColorRGBA(.7f, 1.0f, .7f, 1f));
+    matRoboticArm.setColor("Diffuse", new ColorRGBA(.1f, 1.0f, .7f, 1f));
     matRoboticArm.setColor("Specular", new ColorRGBA(.7f, 1.0f, .7f, 1f));
     matRoboticArm.setFloat("Shininess", 50); // [1,128] lower is shinier
+
+    Material matRoboticArmHead = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+    matRoboticArmHead.setBoolean("UseMaterialColors", true);
+    matRoboticArmHead.setColor("Diffuse", new ColorRGBA(1f, 1.0f, .7f, 1f));
+    matRoboticArmHead.setColor("Specular", new ColorRGBA(1f, 1.0f, .7f, 1f));
+    matRoboticArmHead.setFloat("Shininess", 50); // [1,128] lower is shinier
 
     // elongated box for arm sections
     Box box = new Box(new Vector3f(0, 0, SECTION_LENGTH), SECTION_CROSS_DIM, SECTION_CROSS_DIM, SECTION_LENGTH);
@@ -194,7 +201,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     sphereHead.setTextureMode(Sphere.TextureMode.Projected);
     TangentBinormalGenerator.generate(sphereHead);
     head = new Geometry("head", sphereHead);
-    head.setMaterial(matRoboticArm);
+    head.setMaterial(matRoboticArmHead);
 
     // Create eyes
     Sphere sphereEye = new Sphere(20, 20, EYE_RADIUS);
@@ -327,7 +334,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
   /**
    * This is where JointCommands come in from an AI algorithm
-   * 
+   *
    * @param jointCommands
    */
   public void moveJoints(List<JointCommand> jointCommands, float tpf) {
