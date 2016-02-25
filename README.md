@@ -24,6 +24,12 @@ For snapshots, add the following to your pom.xml file:
     mvn javadoc:javadoc  
     mvn clean deploy  
     
+#### maven-license-plugin
+
+    mvn license:check
+    mvn license:format
+    mvn license:remove 
+       
 ## Bugs
 
 Please report any bugs or submit feature requests to [Proprioceptron's Github issue tracker](https://github.com/timmolter/Proprioceptron/issues).  
