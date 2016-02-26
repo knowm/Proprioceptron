@@ -42,7 +42,7 @@ public class RoboticArmRandomApp extends AbstractRoboticArmApp {
 
     roboticArmBrainRandom = new RoboticArmBrainRandom(NUM_JOINTS, BUFFER_LENGTH, NUM_FIBERS_PER_MUSCLE);
 
-    roboticArm = new RoboticArm1(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
+    roboticArm = new RoboticArmJMEApp1(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
 
     init(NUM_JOINTS);
 

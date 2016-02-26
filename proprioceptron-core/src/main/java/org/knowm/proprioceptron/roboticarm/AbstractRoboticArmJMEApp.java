@@ -18,9 +18,9 @@ import com.jme3.math.Vector3f;
 /**
  * @author timmolter
  */
-public abstract class AbstractRoboticArm extends SimpleApplication implements ActionListener {
+public abstract class AbstractRoboticArmJMEApp extends SimpleApplication implements ActionListener {
 
-  public abstract List<RoboticArmLevelAppState> initLevels();
+  public abstract List<AbstractRoboticArmAppState> initLevels();
 
   protected final int numJoints;
   protected final int startLevelId;
@@ -33,8 +33,8 @@ public abstract class AbstractRoboticArm extends SimpleApplication implements Ac
   protected boolean wasMovement = false;
 
   /** Levels */
-  protected List<RoboticArmLevelAppState> levels;
-  protected RoboticArmLevelAppState currentLevelAppState;
+  protected List<AbstractRoboticArmAppState> levels;
+  protected AbstractRoboticArmAppState currentLevelAppState;
   protected int currentLevelIndex = 0;
 
   /** ScoreAppState */
@@ -57,7 +57,7 @@ public abstract class AbstractRoboticArm extends SimpleApplication implements Ac
    * @param startLevelId - zero-based
    * @param numTargetsPerLevel
    */
-  public AbstractRoboticArm(int numJoints, int startLevelId, int numTargetsPerLevel) {
+  public AbstractRoboticArmJMEApp(int numJoints, int startLevelId, int numTargetsPerLevel) {
 
     this.numJoints = numJoints;
     this.startLevelId = startLevelId;
@@ -84,7 +84,7 @@ public abstract class AbstractRoboticArm extends SimpleApplication implements Ac
     // Levels
     this.levels = initLevels();
     currentLevelAppState = levels.get(currentLevelIndex);
-    for (RoboticArmLevelAppState roboticArmLevelAppState : levels) {
+    for (AbstractRoboticArmAppState roboticArmLevelAppState : levels) {
       roboticArmLevelAppState.initialize(getStateManager(), this);
     }
     // currentLevelAppState.setEnabled(false);
@@ -232,7 +232,7 @@ public abstract class AbstractRoboticArm extends SimpleApplication implements Ac
     this.wasMovement = wasMovement;
   }
 
-  public List<RoboticArmLevelAppState> getLevels() {
+  public List<AbstractRoboticArmAppState> getLevels() {
     return levels;
   }
 }

@@ -30,7 +30,7 @@ import com.jme3.system.AppSettings;
  */
 public abstract class AbstractRoboticArmApp implements PropertyChangeListener {
 
-  protected AbstractRoboticArm roboticArm;
+  protected AbstractRoboticArmJMEApp roboticArm;
   protected final List<Score> scores = new ArrayList<Score>();
 
   private int numJoints;

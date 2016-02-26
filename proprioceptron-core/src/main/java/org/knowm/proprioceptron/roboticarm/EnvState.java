@@ -28,6 +28,8 @@ import com.jme3.math.Vector3f;
  */
 public final class EnvState {
 
+  private final Vector3f headCoords;
+  private final Vector3f targetCoords;
   private final float distLeftEye;
   private final float distRightEye;
   private final float distHead;
@@ -39,19 +41,32 @@ public final class EnvState {
   /**
    * Constructor
    *
+   * @param targetCoords
+   * @param headCoords
    * @param distLeftEye
    * @param distRightEye
    * @param distHead
    * @param relativePositions
    * @param wasCollision
    */
-  public EnvState(float distLeftEye, float distRightEye, float distHead, Vector3f[] relativePositions, boolean wasCollision) {
+  public EnvState(Vector3f headCoords, Vector3f targetCoords, float distLeftEye, float distRightEye, float distHead, Vector3f[] relativePositions,
+      boolean wasCollision) {
 
+    this.headCoords = headCoords;
+    this.targetCoords = targetCoords;
     this.distLeftEye = distLeftEye;
     this.distRightEye = distRightEye;
     this.distHead = distHead;
     this.relativePositions = relativePositions;
     this.wasCollision = wasCollision;
+  }
+
+  public Vector3f getHeadCoords() {
+    return headCoords;
+  }
+
+  public Vector3f getTargetCoords() {
+    return targetCoords;
   }
 
   public float getDistLeftEye() {
@@ -84,9 +99,8 @@ public final class EnvState {
 
   @Override
   public String toString() {
-
-    return "EnvState [distLeftEye=" + distLeftEye + ", distRightEye=" + distRightEye + ", distHead=" + distHead + ", relativePositions="
-        + Arrays.toString(relativePositions) + ", wasCollision=" + wasCollision + "]";
+    return "EnvState [headCoords=" + headCoords + ", targetCoords=" + targetCoords + ", distLeftEye=" + distLeftEye + ", distRightEye=" + distRightEye
+        + ", distHead=" + distHead + ", relativePositions=" + Arrays.toString(relativePositions) + ", wasCollision=" + wasCollision + "]";
   }
 
 }

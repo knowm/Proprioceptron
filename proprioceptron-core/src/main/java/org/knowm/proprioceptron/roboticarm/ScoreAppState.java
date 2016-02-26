@@ -35,7 +35,7 @@ import com.jme3.scene.Node;
 public class ScoreAppState extends AbstractAppState {
 
   BitmapText hudText;
-  AbstractRoboticArm roboticArmApp;
+  AbstractRoboticArmJMEApp roboticArmApp;
 
   /** JME */
   protected ViewPort viewPort;
@@ -62,7 +62,7 @@ public class ScoreAppState extends AbstractAppState {
     this.stateManager = app.getStateManager();
     this.assetManager = app.getAssetManager();
 
-    this.roboticArmApp = (AbstractRoboticArm) app;
+    this.roboticArmApp = (AbstractRoboticArmJMEApp) app;
   }
 
   @Override
@@ -87,7 +87,7 @@ public class ScoreAppState extends AbstractAppState {
     StringBuilder sb = new StringBuilder();
 
     for (int i = 0; i < roboticArmApp.getLevels().size(); i++) {
-      RoboticArmLevelAppState roboticArmLevelAppState = roboticArmApp.getLevels().get(i);
+      AbstractRoboticArmAppState roboticArmLevelAppState = roboticArmApp.getLevels().get(i);
       sb.append("Level " + i + ": ");
       sb.append(roboticArmLevelAppState.score.getScore() + "\n");
     }

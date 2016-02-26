@@ -14,22 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.knowm.proprioceptron.roboticarm.arm1;
+package org.knowm.proprioceptron.roboticarm.arm2;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.knowm.proprioceptron.roboticarm.AbstractRoboticArm;
-import org.knowm.proprioceptron.roboticarm.RoboticArmLevelAppState;
+import org.knowm.proprioceptron.roboticarm.AbstractRoboticArmAppState;
+import org.knowm.proprioceptron.roboticarm.AbstractRoboticArmJMEApp;
 
 /**
  * The Main entry point class
  *
  * @author timmolter
- * @create Sep 25, 2012
  */
-public class RoboticArm1 extends AbstractRoboticArm {
-
+public class RoboticArmJMEApp2 extends AbstractRoboticArmJMEApp {
   /**
    * Constructor
    *
@@ -37,19 +35,16 @@ public class RoboticArm1 extends AbstractRoboticArm {
    * @param startLevelId
    * @param numTargetsPerLevel
    */
-  public RoboticArm1(int numJoints, int startLevelId, int numTargetsPerLevel) {
+  public RoboticArmJMEApp2(int numJoints, int startLevelId, int numTargetsPerLevel) {
     super(numJoints, startLevelId, numTargetsPerLevel);
   }
 
   @Override
-  public List<RoboticArmLevelAppState> initLevels() {
+  public List<AbstractRoboticArmAppState> initLevels() {
 
-    List<RoboticArmLevelAppState> levels = new ArrayList<RoboticArmLevelAppState>();
-    levels.add(new RoboticArmLevelAppState(this, 0, numJoints, 0.0f));
-    levels.add(new RoboticArmLevelAppState(this, 1, numJoints, 6.0f));
-    // levels.add(new RoboticArmLevelAppState(this, 2, numJoints, 9.0f));
-    // levels.add(new RoboticArmLevelAppState(this, 3, numJoints, 12.0f));
-    // levels.add(new RoboticArmLevelAppState(this, 4, numJoints, 15.0f));
+    List<AbstractRoboticArmAppState> levels = new ArrayList<AbstractRoboticArmAppState>();
+    levels.add(new RoboticArmLevelAppState2(this, 0, numJoints, 0.0f));
+    levels.add(new RoboticArmLevelAppState2(this, 1, numJoints, 1.0f));
     return levels;
   }
 

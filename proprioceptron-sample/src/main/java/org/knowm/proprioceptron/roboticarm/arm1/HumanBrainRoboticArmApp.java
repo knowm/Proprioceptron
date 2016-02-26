@@ -30,14 +30,14 @@ public class HumanBrainRoboticArmApp {
   private static final int START_LEVEL_ID = 1;
   private static final int NUM_TARGETS_PER_LEVEL = 2;
 
-  private final RoboticArm1 roboticArm;
+  private final RoboticArmJMEApp1 roboticArm;
 
   /**
    * Constructor
    */
   public HumanBrainRoboticArmApp() {
 
-    roboticArm = new RoboticArm1(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
+    roboticArm = new RoboticArmJMEApp1(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
     roboticArm.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(480, 480);

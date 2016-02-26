@@ -48,7 +48,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
   private static final int NUM_TARGETS_PER_LEVEL = 2;
 
   private final SimpleBrain simpleBrain;
-  private final RoboticArm1 roboticArm;
+  private final RoboticArmJMEApp1 roboticArm;
 
   private final List<Score> scores = new ArrayList<Score>();
 
@@ -62,7 +62,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
     simpleBrain = new SimpleBrain();
 
-    roboticArm = new RoboticArm1(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
+    roboticArm = new RoboticArmJMEApp1(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
     roboticArm.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(480, 480);

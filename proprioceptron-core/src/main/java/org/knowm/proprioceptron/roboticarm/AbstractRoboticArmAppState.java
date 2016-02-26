@@ -39,8 +39,6 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
-import com.jme3.scene.shape.Sphere;
-import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * Defines the platform and the robotic arm.
@@ -48,28 +46,26 @@ import com.jme3.util.TangentBinormalGenerator;
  * @author timmolter
  * @create Nov 1, 2012
  */
-public abstract class MainAppState extends AbstractAppState implements AnalogListener, ActionListener {
+public abstract class AbstractRoboticArmAppState extends AbstractAppState implements AnalogListener, ActionListener {
 
-  public static final float JOINT_RADIUS = 0.3f;
-  public static final float HEAD_RADIUS = 0.3f;
-  public static final float EYE_RADIUS = 0.1f;
-  public static final float TARGET_RADIUS = 0.3f;
+  public abstract Vector3f getBluePillWorldTranslation();
+
+  public abstract Vector3f getRedPillWorldTranslation();
+
+  public abstract EnvState getEnvState();
+
+  public abstract void constructArm();
+
+  public abstract void placePills();
+
+  public abstract void movePills(float tpf);
 
   public static final float SECTION_LENGTH = 1.0f;
-  public static final float SECTION_CROSS_DIM = 0.1f;
 
   /** Robotic Arm */
-  AbstractRoboticArm roboticArmApp;
-  int numJoints;
-
-  /** Arm */
-  private Node[] pivots;
-  private Geometry[] sections;
-  private Geometry[] joints;
-  private Node headNode;
-  private Geometry head;
-  private Geometry leftEye;
-  private Geometry rightEye;
+  AbstractRoboticArmJMEApp roboticArmApp;
+  public int numJoints;
+  public Node[] pivots;
 
   /** Score */
   protected Score score;
@@ -91,8 +87,9 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
    * Constructor
    *
    * @param app
+   * @param numJoints
    */
-  public MainAppState(SimpleApplication app, int numJoints) {
+  public AbstractRoboticArmAppState(SimpleApplication app, int numJoints) {
 
     this.rootNode = app.getRootNode();
     this.viewPort = app.getViewPort();
@@ -101,13 +98,9 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     this.stateManager = app.getStateManager();
     this.assetManager = app.getAssetManager();
 
-    this.roboticArmApp = (AbstractRoboticArm) app;
+    this.roboticArmApp = (AbstractRoboticArmJMEApp) app;
     this.numJoints = numJoints;
   }
-
-  public abstract Vector3f getBluePillWorldTranslation();
-
-  public abstract Vector3f getRedPillWorldTranslation();
 
   @Override
   public void initialize(AppStateManager stateManager, Application app) {
@@ -130,16 +123,9 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     Box floorBox = new Box(dimension, .5f, dimension);
     Geometry floorGeometry = new Geometry("Floor", floorBox);
     floorGeometry.setMaterial(material);
-    floorGeometry.setLocalTranslation(0, -1.0f * HEAD_RADIUS - .5f, 0);
+    floorGeometry.setLocalTranslation(0, -.5f, 0);
     floorGeometry.addControl(new RigidBodyControl(0));
     localRootNode.attachChild(floorGeometry);
-
-    pivots = new Node[numJoints];
-    sections = new Geometry[numJoints];
-    joints = new Geometry[numJoints];
-
-    // Create robotic Arm
-    constructArm();
 
     // Load the HUD
     BitmapFont guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
@@ -156,84 +142,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
     localRootNode.detachChild(pivots[0]);
     constructArm();
-  }
-
-  public void constructArm() {
-
-    // Material for Robotic Arm
-    Material matRoboticArm = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-    matRoboticArm.setBoolean("UseMaterialColors", true);
-    matRoboticArm.setColor("Diffuse", new ColorRGBA(.1f, 1.0f, .7f, 1f));
-    matRoboticArm.setColor("Specular", new ColorRGBA(.7f, 1.0f, .7f, 1f));
-    matRoboticArm.setFloat("Shininess", 50); // [1,128] lower is shinier
-
-    Material matRoboticArmHead = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-    matRoboticArmHead.setBoolean("UseMaterialColors", true);
-    matRoboticArmHead.setColor("Diffuse", new ColorRGBA(1f, 1.0f, .7f, 1f));
-    matRoboticArmHead.setColor("Specular", new ColorRGBA(1f, 1.0f, .7f, 1f));
-    matRoboticArmHead.setFloat("Shininess", 50); // [1,128] lower is shinier
-
-    // elongated box for arm sections
-    Box box = new Box(new Vector3f(0, 0, SECTION_LENGTH), SECTION_CROSS_DIM, SECTION_CROSS_DIM, SECTION_LENGTH);
-    Sphere sphereJoint = new Sphere(20, 20, JOINT_RADIUS);
-    sphereJoint.setTextureMode(Sphere.TextureMode.Projected);
-    TangentBinormalGenerator.generate(sphereJoint);
-    for (int i = 0; i < numJoints; i++) {
-
-      // Create pivots
-      Node pivot = new Node("pivot");
-      pivots[i] = pivot;
-
-      // Create sections
-      Geometry section = new Geometry("Box", box);
-      section.setMaterial(matRoboticArm);
-      sections[i] = section;
-
-      // create joints
-      Geometry sphere = new Geometry("joint", sphereJoint);
-      sphere.setMaterial(matRoboticArm);
-      joints[i] = sphere;
-
-    }
-
-    // Create Head
-    headNode = new Node("headNode");
-    Sphere sphereHead = new Sphere(20, 20, HEAD_RADIUS);
-    sphereHead.setTextureMode(Sphere.TextureMode.Projected);
-    TangentBinormalGenerator.generate(sphereHead);
-    head = new Geometry("head", sphereHead);
-    head.setMaterial(matRoboticArmHead);
-
-    // Create eyes
-    Sphere sphereEye = new Sphere(20, 20, EYE_RADIUS);
-    leftEye = new Geometry("leftEye", sphereEye);
-    leftEye.setMaterial(matRoboticArm);
-    rightEye = new Geometry("rightEye", sphereEye);
-    rightEye.setMaterial(matRoboticArm);
-
-    localRootNode.attachChild(pivots[0]);
-    for (int i = 0; i < numJoints; i++) {
-
-      if (i > 0) {
-        pivots[i].move(0, 0, 2 * SECTION_LENGTH);
-      }
-
-      pivots[i].attachChild(sections[i]);
-      pivots[i].attachChild(joints[i]);
-      if (i < numJoints - 1) {
-        pivots[i].attachChild(pivots[i + 1]);
-      }
-    }
-
-    // place Head
-    headNode.move(0, 0, 2 * SECTION_LENGTH);
-    headNode.attachChild(head);
-    float shift = (float) Math.sqrt(HEAD_RADIUS * HEAD_RADIUS / 2.0);
-    leftEye.move(shift, 0, shift);
-    headNode.attachChild(leftEye);
-    rightEye.move(-1.0f * shift, 0, shift);
-    headNode.attachChild(rightEye);
-    pivots[numJoints - 1].attachChild(headNode);
   }
 
   protected void setHudText() {
@@ -305,32 +213,6 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
     score.incActuationEnergy(1);
     pivots[jointNum].rotate(0f, direction * 3f * tpf, 0f);
-  }
-
-  protected EnvState getEnvState() {
-
-    Vector3f[] relativePositions = new Vector3f[numJoints];
-    for (int i = 0; i < numJoints; i++) {
-      if (i == (numJoints - 1)) { // head relative to last joint
-        relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation())
-            .divide(2 * SECTION_LENGTH);
-      } else {
-        relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * SECTION_LENGTH);
-      }
-    }
-
-    // env state - target
-    Vector3f targetCoords = getBluePillWorldTranslation();
-    Vector3f leftEyeCoords = leftEye.getWorldTranslation();
-    float distL = leftEyeCoords.distance(targetCoords) - TARGET_RADIUS;
-    Vector3f rightEyeCoords = rightEye.getWorldTranslation();
-    float distR = rightEyeCoords.distance(targetCoords) - TARGET_RADIUS;
-    Vector3f headCoords = head.getWorldTranslation();
-    float headDistance = headCoords.distance(targetCoords) - TARGET_RADIUS - HEAD_RADIUS;
-    boolean wasCollision = headDistance < 0.005f;
-
-    EnvState roboticArmEnvState = new EnvState(distL, distR, headDistance, relativePositions, wasCollision);
-    return roboticArmEnvState;
   }
 
   /**

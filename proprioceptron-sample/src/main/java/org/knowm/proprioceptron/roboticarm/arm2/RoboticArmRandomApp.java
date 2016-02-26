@@ -26,9 +26,9 @@ import org.knowm.proprioceptron.roboticarm.AbstractRoboticArmBrain;
  */
 public class RoboticArmRandomApp extends AbstractRoboticArmApp {
 
-  private static final int NUM_JOINTS = 4;
+  private static final int NUM_JOINTS = 3;
   private static final int START_LEVEL_ID = 0;
-  private static final int NUM_TARGETS_PER_LEVEL = 50;
+  private static final int NUM_TARGETS_PER_LEVEL = 10;
 
   private static final int NUM_FIBERS_PER_MUSCLE = 100;
   private static final int BUFFER_LENGTH = 1;
@@ -42,7 +42,7 @@ public class RoboticArmRandomApp extends AbstractRoboticArmApp {
 
     roboticArmBrainRandom = new RoboticArmBrainRandom(NUM_JOINTS, BUFFER_LENGTH, NUM_FIBERS_PER_MUSCLE);
 
-    roboticArm = new RoboticArm2(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
+    roboticArm = new RoboticArmJMEApp2(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
 
     init(NUM_JOINTS);
 
