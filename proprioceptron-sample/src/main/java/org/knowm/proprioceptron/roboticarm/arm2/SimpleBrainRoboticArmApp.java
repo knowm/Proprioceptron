@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.knowm.proprioceptron.roboticarm;
+package org.knowm.proprioceptron.roboticarm.arm2;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -24,6 +24,9 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.knowm.proprioceptron.roboticarm.JointCommand;
+import org.knowm.proprioceptron.roboticarm.RoboticArmGameState;
+import org.knowm.proprioceptron.roboticarm.Score;
 import org.knowm.xchart.ChartBuilder_XY;
 import org.knowm.xchart.Chart_XY;
 import org.knowm.xchart.Series_XY.ChartXYSeriesRenderStyle;
@@ -31,10 +34,6 @@ import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.internal.chartpart.Chart;
 
 import com.jme3.system.AppSettings;
-import com.xeiam.proprioceptron.roboticarm.JointCommand;
-import com.xeiam.proprioceptron.roboticarm.RoboticArm;
-import com.xeiam.proprioceptron.roboticarm.RoboticArmGameState;
-import com.xeiam.proprioceptron.roboticarm.Score;
 
 /**
  * Run the Robotic Arm game with a simple test brain completing the feedback loop
@@ -49,7 +48,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
   private static final int NUM_TARGETS_PER_LEVEL = 2;
 
   private final SimpleBrain simpleBrain;
-  private final RoboticArm roboticArm;
+  private final RoboticArm2 roboticArm;
 
   private final List<Score> scores = new ArrayList<Score>();
 
@@ -63,7 +62,7 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
     simpleBrain = new SimpleBrain();
 
-    roboticArm = new RoboticArm(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
+    roboticArm = new RoboticArm2(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
     roboticArm.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
     settings.setResolution(480, 480);

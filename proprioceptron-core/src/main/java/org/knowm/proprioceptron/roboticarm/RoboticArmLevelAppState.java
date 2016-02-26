@@ -28,7 +28,7 @@ import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * A level
- * 
+ *
  * @author timmolter
  * @create Oct 31, 2012
  */
@@ -48,17 +48,18 @@ public class RoboticArmLevelAppState extends MainAppState {
 
   /**
    * Constructor
-   * 
+   *
    * @param app
+   * @param levelId
    * @param numJoints
-   * @param speed
+   * @param pillSpeed
    */
   public RoboticArmLevelAppState(SimpleApplication app, int levelId, int numJoints, float pillSpeed) {
 
     super(app, numJoints);
     this.levelId = levelId;
     this.pillSpeed = pillSpeed;
-    this.score = new Score(levelId, ((RoboticArm) app).numTargetsPerLevel);
+    this.score = new Score(levelId, ((AbstractRoboticArm) app).numTargetsPerLevel);
   }
 
   @Override
@@ -124,8 +125,7 @@ public class RoboticArmLevelAppState extends MainAppState {
       float x = bluePill.getWorldTranslation().x;
       if (movingLeft && x > leftBounds) {
         movingLeft = false;
-      }
-      else if (!movingLeft && x < rightBounds) {
+      } else if (!movingLeft && x < rightBounds) {
         movingLeft = true;
       }
       bluePill.center();
@@ -152,8 +152,7 @@ public class RoboticArmLevelAppState extends MainAppState {
     if (enabled) {
       localRootNode.attachChild(bluePill);
 
-    }
-    else {
+    } else {
       localRootNode.detachChild(bluePill);
 
     }

@@ -24,16 +24,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jme3.system.AppSettings;
-import com.xeiam.proprioceptron.roboticarm.JointCommand;
-import com.xeiam.proprioceptron.roboticarm.RoboticArm;
-import com.xeiam.proprioceptron.roboticarm.Score;
 
 /**
  * @author timmolter
  */
 public abstract class AbstractRoboticArmApp implements PropertyChangeListener {
 
-  protected RoboticArm roboticArm;
+  protected AbstractRoboticArm roboticArm;
   protected final List<Score> scores = new ArrayList<Score>();
 
   private int numJoints;
@@ -63,12 +60,10 @@ public abstract class AbstractRoboticArmApp implements PropertyChangeListener {
     if (pce.getPropertyName().equalsIgnoreCase("STATE_CHANGE")) {
       List<JointCommand> jointCommands = getRoboticArmBrain().update(pce);
       roboticArm.moveJoints(jointCommands);
-    }
-    else if (pce.getPropertyName().equalsIgnoreCase("LEVEL_SCORE")) {
+    } else if (pce.getPropertyName().equalsIgnoreCase("LEVEL_SCORE")) {
       Score score = (Score) pce.getNewValue();
       printScores(score);
-    }
-    else if (pce.getPropertyName().equalsIgnoreCase("GAME_OVER")) {
+    } else if (pce.getPropertyName().equalsIgnoreCase("GAME_OVER")) {
 
     }
   }

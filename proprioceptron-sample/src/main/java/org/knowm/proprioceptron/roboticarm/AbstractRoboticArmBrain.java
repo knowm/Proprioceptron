@@ -19,8 +19,6 @@ package org.knowm.proprioceptron.roboticarm;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
-import com.xeiam.proprioceptron.roboticarm.JointCommand;
-
 /**
  * @author timmolter
  */

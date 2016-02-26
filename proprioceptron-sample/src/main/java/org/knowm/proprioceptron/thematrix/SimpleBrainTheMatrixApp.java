@@ -20,13 +20,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Random;
 
+import org.knowm.proprioceptron.thematrix.ObjectFactory.GameView;
+
 import com.jme3.math.FastMath;
 import com.jme3.system.AppSettings;
-import com.xeiam.proprioceptron.thematrix.AIAppState;
-import com.xeiam.proprioceptron.thematrix.PlayerCommand;
-import com.xeiam.proprioceptron.thematrix.TheMatrix;
-import com.xeiam.proprioceptron.thematrix.TheMatrixEnvState;
-import com.xeiam.proprioceptron.thematrix.ObjectFactory.GameView;
 
 /**
  * @author timmolter

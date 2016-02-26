@@ -59,7 +59,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
   public static final float SECTION_CROSS_DIM = 0.1f;
 
   /** Robotic Arm */
-  RoboticArm roboticArmApp;
+  AbstractRoboticArm roboticArmApp;
   int numJoints;
 
   /** Arm */
@@ -101,7 +101,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     this.stateManager = app.getStateManager();
     this.assetManager = app.getAssetManager();
 
-    this.roboticArmApp = (RoboticArm) app;
+    this.roboticArmApp = (AbstractRoboticArm) app;
     this.numJoints = numJoints;
   }
 
@@ -245,14 +245,14 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
     StringBuilder sb = new StringBuilder();
     sb.append("Level = ");
-    sb.append(roboticArmApp.currentLevelIndex);
+    sb.append(roboticArmApp.getCurrentLevelIndex());
     sb.append("/");
-    sb.append(roboticArmApp.levels.size() - 1);
+    sb.append(roboticArmApp.getLevels().size() - 1);
 
     sb.append(", Blue Pills = ");
     sb.append(score.getPillIdCounter());
     sb.append("/");
-    sb.append(roboticArmApp.numTargetsPerLevel);
+    sb.append(roboticArmApp.getNumTargetsPerLevel());
 
     sb.append(", Score = ");
     sb.append(score.getScore());
@@ -262,9 +262,9 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
   protected void setupKeys() {
 
-    int[] keyArray =
-        new int[] { KeyInput.KEY_P, KeyInput.KEY_L, KeyInput.KEY_O, KeyInput.KEY_K, KeyInput.KEY_I, KeyInput.KEY_J, KeyInput.KEY_U, KeyInput.KEY_H, KeyInput.KEY_Y, KeyInput.KEY_G, KeyInput.KEY_T,
-            KeyInput.KEY_F, KeyInput.KEY_R, KeyInput.KEY_D, KeyInput.KEY_E, KeyInput.KEY_S, KeyInput.KEY_W, KeyInput.KEY_A, };
+    int[] keyArray = new int[] { KeyInput.KEY_P, KeyInput.KEY_L, KeyInput.KEY_O, KeyInput.KEY_K, KeyInput.KEY_I, KeyInput.KEY_J, KeyInput.KEY_U,
+        KeyInput.KEY_H, KeyInput.KEY_Y, KeyInput.KEY_G, KeyInput.KEY_T, KeyInput.KEY_F, KeyInput.KEY_R, KeyInput.KEY_D, KeyInput.KEY_E,
+        KeyInput.KEY_S, KeyInput.KEY_W, KeyInput.KEY_A, };
 
     for (int i = 0; i < numJoints; i++) {
       if (i < 9) { // only up to 9 joints (18 keys) bounded
@@ -291,7 +291,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
 
     // detect when buttons were released
     if (!keyPressed) {
-      roboticArmApp.wasMovement = true;
+      roboticArmApp.setWasMovement(true);
     }
   }
 
@@ -312,9 +312,9 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
     Vector3f[] relativePositions = new Vector3f[numJoints];
     for (int i = 0; i < numJoints; i++) {
       if (i == (numJoints - 1)) { // head relative to last joint
-        relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation()).divide(2 * SECTION_LENGTH);
-      }
-      else {
+        relativePositions[numJoints - 1] = head.getWorldTranslation().subtract(joints[numJoints - 1].getWorldTranslation())
+            .divide(2 * SECTION_LENGTH);
+      } else {
         relativePositions[i] = joints[i + 1].getWorldTranslation().subtract(joints[i].getWorldTranslation()).divide(2 * SECTION_LENGTH);
       }
     }
@@ -361,8 +361,7 @@ public abstract class MainAppState extends AbstractAppState implements AnalogLis
       guiNode.attachChild(localGuiNode);
       viewPort.setBackgroundColor(backgroundColor);
       setupKeys();
-    }
-    else {
+    } else {
       rootNode.detachChild(localRootNode);
       guiNode.detachChild(localGuiNode);
       clearKeyMappings();

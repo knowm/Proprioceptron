@@ -14,40 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.knowm.proprioceptron.thematrix;
-
-import org.knowm.proprioceptron.thematrix.ObjectFactory.GameView;
+package org.knowm.proprioceptron.roboticarm.arm2;
 
 import com.jme3.system.AppSettings;
 
 /**
+ * Run the Robotic Arm game with human input via keyboard keys PLOKIJUHYGTFRDESWA.
+ *
  * @author timmolter
- * @create Oct 5, 2012
+ * @create Sep 28, 2012
  */
-public class HumanBrainTheMatrixApp {
+public class HumanBrainRoboticArmApp {
+
+  private static final int NUM_JOINTS = 2;
+  private static final int START_LEVEL_ID = 1;
+  private static final int NUM_TARGETS_PER_LEVEL = 2;
+
+  private final RoboticArm2 roboticArm;
 
   /**
    * Constructor
    */
-  public HumanBrainTheMatrixApp() {
+  public HumanBrainRoboticArmApp() {
 
-    // switching game logic between human and AI versions is too complicated to manage without the AIAppState and HumanAppState delegates.
-
-    TheMatrix theMatrix = new TheMatrix(GameView.GOD_VIEW, new HumanAppState());
-    theMatrix.setShowSettings(false);
+    roboticArm = new RoboticArm2(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
+    roboticArm.setShowSettings(false);
     AppSettings settings = new AppSettings(true);
-    settings.setResolution(1300, 700);
-    settings.setTitle("The Matrix");
-    theMatrix.setSettings(settings);
-    theMatrix.start();
+    settings.setResolution(480, 480);
+    settings.setTitle("Proprioceptron - Human Input");
+    settings.setFrameRate(60);
+    roboticArm.setSettings(settings);
+    roboticArm.start();
+
   }
 
-  /**
-   * @param args
-   */
   public static void main(String[] args) {
 
-    new HumanBrainTheMatrixApp();
+    new HumanBrainRoboticArmApp();
   }
 
 }

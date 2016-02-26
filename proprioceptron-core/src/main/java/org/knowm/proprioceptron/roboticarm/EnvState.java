@@ -22,7 +22,7 @@ import com.jme3.math.Vector3f;
 
 /**
  * Stores environment state
- * 
+ *
  * @author timmolter
  * @create Sep 28, 2012
  */
@@ -38,7 +38,7 @@ public final class EnvState {
 
   /**
    * Constructor
-   * 
+   *
    * @param distLeftEye
    * @param distRightEye
    * @param distHead
@@ -85,7 +85,8 @@ public final class EnvState {
   @Override
   public String toString() {
 
-    return "EnvState [distLeftEye=" + distLeftEye + ", distRightEye=" + distRightEye + ", distHead=" + distHead + ", relativePositions=" + Arrays.toString(relativePositions) + ", wasCollision=" + wasCollision + "]";
+    return "EnvState [distLeftEye=" + distLeftEye + ", distRightEye=" + distRightEye + ", distHead=" + distHead + ", relativePositions="
+        + Arrays.toString(relativePositions) + ", wasCollision=" + wasCollision + "]";
   }
 
 }

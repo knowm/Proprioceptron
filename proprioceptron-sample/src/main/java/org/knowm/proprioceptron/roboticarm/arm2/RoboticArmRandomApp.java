@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.knowm.proprioceptron.roboticarm;
+package org.knowm.proprioceptron.roboticarm.arm2;
 
-import com.xeiam.proprioceptron.roboticarm.RoboticArm;
+import org.knowm.proprioceptron.roboticarm.AbstractRoboticArmApp;
+import org.knowm.proprioceptron.roboticarm.AbstractRoboticArmBrain;
 
 /**
  * Run the Robotic Arm game with only the Classifier.
- * 
+ *
  * @author alexnugent
  */
 public class RoboticArmRandomApp extends AbstractRoboticArmApp {
@@ -41,7 +42,7 @@ public class RoboticArmRandomApp extends AbstractRoboticArmApp {
 
     roboticArmBrainRandom = new RoboticArmBrainRandom(NUM_JOINTS, BUFFER_LENGTH, NUM_FIBERS_PER_MUSCLE);
 
-    roboticArm = new RoboticArm(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
+    roboticArm = new RoboticArm2(NUM_JOINTS, START_LEVEL_ID, NUM_TARGETS_PER_LEVEL);
 
     init(NUM_JOINTS);
 

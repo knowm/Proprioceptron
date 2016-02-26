@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.knowm.proprioceptron.roboticarm;
+package org.knowm.proprioceptron.roboticarm.arm1;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.xeiam.proprioceptron.roboticarm.JointCommand;
-import com.xeiam.proprioceptron.roboticarm.RoboticArmGameState;
+import org.knowm.proprioceptron.roboticarm.AbstractRoboticArmBrain;
+import org.knowm.proprioceptron.roboticarm.JointCommand;
+import org.knowm.proprioceptron.roboticarm.RoboticArmGameState;
 
 /**
  * @author timmolter
@@ -33,7 +34,7 @@ public class RoboticArmBrainRandom extends AbstractRoboticArmBrain {
 
   /**
    * Constructor
-   * 
+   *
    * @param numJoints
    */
   public RoboticArmBrainRandom(int numJoints, int bufferLength, int numFibersPerMuscle) {

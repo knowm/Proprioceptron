@@ -20,7 +20,7 @@ import org.knowm.proprioceptron.GameState;
 
 /**
  * Encapsulates the EnvState and the score
- * 
+ *
  * @author timmolter
  * @create Sep 28, 2012
  */
@@ -31,7 +31,7 @@ public final class RoboticArmGameState implements GameState {
 
   /**
    * Constructor
-   * 
+   *
    * @param roboticArmEnvState
    */
   public RoboticArmGameState(EnvState envState, Score score) {
