@@ -27,10 +27,10 @@ import java.util.logging.Logger;
 import org.knowm.proprioceptron.roboticarm.JointCommand;
 import org.knowm.proprioceptron.roboticarm.RoboticArmGameState;
 import org.knowm.proprioceptron.roboticarm.Score;
-import org.knowm.xchart.ChartBuilder_XY;
-import org.knowm.xchart.Chart_XY;
-import org.knowm.xchart.Series_XY.ChartXYSeriesRenderStyle;
 import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.internal.chartpart.Chart;
 
 import com.jme3.system.AppSettings;
@@ -149,11 +149,11 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
     }
 
     // Create Chart
-    Chart_XY chart = new ChartBuilder_XY().width(800).height(400).title("Required Activation Energy").xAxisTitle("Level")
+    XYChart chart = new XYChartBuilder().width(800).height(400).title("Required Activation Energy").xAxisTitle("Level")
         .yAxisTitle("Required Activation Energy").build();
 
     // Customize Chart
-    chart.getStyler().setDefaultSeriesRenderStyle(ChartXYSeriesRenderStyle.Scatter);
+    chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
     chart.getStyler().setLegendVisible(false);
 
     // Series 1
@@ -174,10 +174,10 @@ public class SimpleBrainRoboticArmApp implements PropertyChangeListener {
 
     // Create Chart
     // Create Chart
-    chart = new ChartBuilder_XY().width(800).height(400).title("Elapsed Time (s)").xAxisTitle("Level").yAxisTitle("Elapsed Time").build();
+    chart = new XYChartBuilder().width(800).height(400).title("Elapsed Time (s)").xAxisTitle("Level").yAxisTitle("Elapsed Time").build();
 
     // Customize Chart
-    chart.getStyler().setDefaultSeriesRenderStyle(ChartXYSeriesRenderStyle.Scatter);
+    chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
     chart.getStyler().setLegendVisible(false);
 
     // Series 1
