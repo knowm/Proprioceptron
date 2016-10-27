@@ -94,7 +94,8 @@ public class ScoreAppState extends AbstractAppState {
     sb.append("\n");
     if (roboticArmApp.gameOver) {
       sb.append("Game Over.");
-    } else {
+    }
+    else {
       sb.append("Press space bar to continue...");
     }
     return sb.toString();
@@ -110,7 +111,8 @@ public class ScoreAppState extends AbstractAppState {
       rootNode.attachChild(localRootNode);
       guiNode.attachChild(localGuiNode);
       hudText.setText(getHUDText());
-    } else {
+    }
+    else {
       rootNode.detachChild(localRootNode);
       guiNode.detachChild(localGuiNode);
     }

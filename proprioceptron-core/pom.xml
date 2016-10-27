@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.knowm.proprioceptron</groupId>
 		<artifactId>proprioceptron-parent</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
+		<version>1.1.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>proprioceptron-core</artifactId>
@@ -15,10 +15,10 @@
 			<groupId>com.jme3</groupId>
 			<artifactId>jme3-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.jme3</groupId>
-			<artifactId>jme3-bullet</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.jme3-lib</groupId> -->
+<!-- 			<artifactId>jbullet</artifactId> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>com.jme3</groupId>
 			<artifactId>jme3-jbullet</artifactId>
