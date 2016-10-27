@@ -84,11 +84,6 @@
 				<artifactId>jme3-core</artifactId>
 				<version>${jme3.version}</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>com.jme3-lib</groupId> -->
-<!-- 				<artifactId>jbullet</artifactId> -->
-<!-- 				<version>3.0.10-jme</version> -->
-<!-- 			</dependency> -->
 			<dependency>
 				<groupId>com.jme3</groupId>
 				<artifactId>jme3-jbullet</artifactId>
@@ -111,6 +106,38 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
 	<build>
 		<plugins>
 			<!-- Ensure compilation is done under Java 7 in all environments -->
