@@ -15,7 +15,7 @@ For snapshots, add the following to your pom.xml file:
     <dependency>
       <groupId>org.knowm.proprioceptron</groupId>
       <artifactId>proprioceptron-core</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
+      <version>1.1.2-SNAPSHOT</version>
     </dependency>
 
 ## Building
