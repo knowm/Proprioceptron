@@ -4,7 +4,7 @@
 	<name>proprioceptron-parent</name>
 	<groupId>org.knowm.proprioceptron</groupId>
 	<artifactId>proprioceptron-parent</artifactId>
-	<version>1.1.1</version>
+	<version>1.1.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>A virtual environment for testing and simulating machine learning algorithms</description>
 	<url>http://knowm.org</url>
@@ -41,7 +41,7 @@
 		<connection>scm:git:git@github.com:timmolter/Proprioceptron.git</connection>
 		<developerConnection>scm:git:git@github.com:timmolter/Proprioceptron.git</developerConnection>
 		<url>git@github.com:timmolter/Proprioceptron.git</url>
-		<tag>proprioceptron-1.1.1</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 
